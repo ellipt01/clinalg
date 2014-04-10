@@ -1,4 +1,0 @@
-libclinalg
-==========
-
-C linalg
