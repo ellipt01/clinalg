@@ -19,23 +19,33 @@ extern void	dscal_ (long *n, double *alpha, double *x, long *incx);
 extern void	daxpy_ (long *n, double *alpha, double *x, long *incx, double *y, long *incy);
 
 void
-c_vector_add_constant (c_vector *v, const double x)
+c_vector_add_constant (c_vector *x, const double c)
 {
 	int		i;
-	if (c_vector_is_empty (v)) c_error ("c_vector_add_constant", "vector is empty.");
-	for (i = 0; i < v->size; i++) v->data[i * v->stride] += x;
+	if (c_vector_is_empty (x)) c_error ("c_vector_add_constant", "vector is empty.");
+	for (i = 0; i < x->size; i++) x->data[i * x->stride] += c;
 	return;
 }
 
 double
-c_vector_mean (const c_vector *v)
+c_vector_sum (const c_vector *x)
 {
 	int	i;
 	double	sum;
-	if (c_vector_is_empty (v)) c_error ("c_vector_mean", "vector is empty.");
+	if (c_vector_is_empty (x)) c_error ("c_vector_mean", "vector is empty.");
 	/* x = sum x / N */
-	for (i = 0, sum = 0.0; i < v->size; i++) sum += v->data[i * v->stride];
-	return sum / (double) v->size;
+	for (i = 0, sum = 0.0; i < x->size; i++) sum += x->data[i * x->stride];
+	return sum;
+}
+
+double
+c_vector_mean (const c_vector *x)
+{
+	double	sum;
+	if (c_vector_is_empty (x)) c_error ("c_vector_mean", "vector is empty.");
+	/* x = sum x / N */
+	sum = c_vector_sum (x);
+	return sum / (double) x->size;
 }
 
 void
@@ -57,51 +67,51 @@ c_vector_sub (c_vector *y, const c_vector *x)
 }
 
 double
-c_vector_asum (const c_vector *v)
+c_vector_asum (const c_vector *x)
 {
 	long	n;
 	long	incv;
-	if (c_vector_is_empty (v)) c_error ("c_vector_asum", "vector is empty.");
+	if (c_vector_is_empty (x)) c_error ("c_vector_asum", "vector is empty.");
 	/* x = sum |x| */
-	n = (long) v->size;
-	incv = (long) v->stride;
-	return dasum_ (&n, v->data, &incv);
+	n = (long) x->size;
+	incv = (long) x->stride;
+	return dasum_ (&n, x->data, &incv);
 }
 
 int
-c_vector_amax (const c_vector *v)
+c_vector_amax (const c_vector *x)
 {
 	long	n;
 	long	incv;
-	if (c_vector_is_empty (v)) c_error ("c_vector_amax", "vector is empty.");
+	if (c_vector_is_empty (x)) c_error ("c_vector_amax", "vector is empty.");
 
-	n = (long) v->size;
-	incv = (long) v->stride;
-	return (int) idamax_ (&n, v->data, &incv) - 1;
+	n = (long) x->size;
+	incv = (long) x->stride;
+	return (int) idamax_ (&n, x->data, &incv) - 1;
 }
 
 void
-c_vector_scale (c_vector *v, double alpha)
+c_vector_scale (c_vector *x, double alpha)
 {
 	long	n;
 	long	incv;
-	if (c_vector_is_empty (v)) c_error ("c_vector_scale", "vector is empty.");
+	if (c_vector_is_empty (x)) c_error ("c_vector_scale", "vector is empty.");
 	/* x = alpha * x */
-	n = (long) v->size;
-	incv = (long) v->stride;
-	dscal_ (&n, &alpha, v->data, &incv);
+	n = (long) x->size;
+	incv = (long) x->stride;
+	dscal_ (&n, &alpha, x->data, &incv);
 	return;
 }
 
 double
-c_vector_nrm (const c_vector *v)
+c_vector_nrm (const c_vector *x)
 {
 	long	n;
 	long	incv;
-	if (c_vector_is_empty (v)) c_error ("c_vector_nrm", "vector is empty.");
-	n = (long) v->size;
-	incv = (long) v->stride;
-	return dnrm2_ (&n, v->data, &incv);
+	if (c_vector_is_empty (x)) c_error ("c_vector_nrm", "vector is empty.");
+	n = (long) x->size;
+	incv = (long) x->stride;
+	return dnrm2_ (&n, x->data, &incv);
 }
 
 void

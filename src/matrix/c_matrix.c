@@ -180,6 +180,28 @@ c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *x)
 	return;
 }
 
+c_vector *
+c_matrix_column (c_matrix *a, int index)
+{
+	c_vector	*x;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_column", "matrix is empty.");
+	if (index < 0 || a->size2 <= index) c_error ("c_matrix_column", "index is invalid.");
+
+	x = c_vector_view_array (a->size1, 1, a->data + index * a->lda);
+	return x;
+}
+
+c_vector *
+c_matrix_row (c_matrix *a, int index)
+{
+	c_vector	*x;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_row", "matrix is empty.");
+	if (index < 0 || a->size1 <= index) c_error ("c_matrix_row", "index is invalid.");
+
+	x = c_vector_view_array (a->size2, a->lda, a->data + index);
+	return x;
+}
+
 void
 c_matrix_add_row (c_matrix *a)
 {
@@ -302,11 +324,25 @@ c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format)
 	int	i, j, k;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_fprintf", "matrix is empty.");
 	k = 0;
+	for (j = 0; j < a->size2; j++) {
+		for (i = 0; i < a->size1; i++) {
+			fprintf (stream, format, c_matrix_get (a, i, j));
+			fprintf (stream, "\n");
+		}
+		fprintf (stream, "\n");
+	}
+	return;
+}
+
+void
+c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format)
+{
+	int	i, j;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_fprintf2", "matrix is empty.");
 	for (i = 0; i < a->size1; i++) {
 		for (j = 0; j < a->size2; j++) {
 			fprintf (stream, format, c_matrix_get (a, i, j));
-			if (j < a->size2 - 1) fprintf (stream, "%s", " ");
-			k++;
+			if (j < a->size2 - 1) fprintf (stream, " ");
 		}
 		fprintf (stream, "\n");
 	}

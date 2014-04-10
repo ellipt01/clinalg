@@ -124,19 +124,14 @@ c_linalg_LU_solve (c_matrix *a, c_vector *b, long *p)
 }
 
 int
-c_linalg_LU_invert (c_matrix *a)
+c_linalg_LU_invert (c_matrix *a, long *p)
 {
 	int			info;
-	long		*p;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_invert", "matrix is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_LU_invert", "matrix must be square.");
 
-	info = c_linalg_lapack_dgetrf (a, &p);
-	if (info != 0) c_error ("c_linalg_LU_invert", "DGETRF failed.");
-
 	info = c_linalg_lapack_dgetri (a, p);
-	free (p);
 
 	return (int) info;
 }

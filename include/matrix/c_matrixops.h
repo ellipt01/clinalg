@@ -13,8 +13,12 @@ extern "C" {
 #endif
 
 /* c_matrixops.c */
+c_matrix		*c_matrix_transpose (c_matrix *a);
 c_vector		*c_matrix_dot_vector (double alpha, const c_matrix *a, const c_vector *v, double beta);
 c_vector		*c_matrix_transpose_dot_vector (double alpha, const c_matrix *a, const c_vector *x, double beta);
+c_matrix		*c_matrix_dot_matrix (double alpha, const c_matrix *a, const c_matrix *b, double beta);
+c_matrix		*c_matrix_dot_matrix_transpose (double alpha, const c_matrix *a, const c_matrix *b, double beta);
+c_matrix		*c_matrix_transpose_dot_matrix (double alpha, const c_matrix *a, const c_matrix *b, double beta);
 
 #ifdef __cplusplus
 }
