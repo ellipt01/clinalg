@@ -17,7 +17,8 @@ libclinalg_la_SOURCES = \
 	matrix/c_matrixops.c\
 	matrix/c_vectorops.c\
 	c_linalg_lu.c\
-	c_linalg_cholesky.c
+	c_linalg_cholesky.c\
+	c_linalg_qr.c
 
 libclinalg_la_CPPFLAGS = -I$(top_srcdir)/include
 

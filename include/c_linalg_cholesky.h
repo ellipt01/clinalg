@@ -15,15 +15,15 @@ extern "C" {
 #include <c_matrix.h>
 
 int		c_linalg_lapack_dpotrf (char uplo, c_matrix *a);
-int		c_linalg_lapack_dpotrs (char uplo, c_matrix *a, c_matrix *b);
-int		c_linalg_lapack_dpotri (char uplo, c_matrix *a);
+int		c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b);
+int		c_linalg_lapack_dpotri (char uplo, c_matrix *l);
 
 int		c_linalg_cholesky_decomp (c_matrix *a);
-int		c_linalg_cholesky_svx (c_matrix *a, c_vector *b);
-int		c_linalg_cholesky_invert (c_matrix *a);
+int		c_linalg_cholesky_svx (c_matrix *l, c_vector *b);
+int		c_linalg_cholesky_invert (c_matrix *l);
 
-int		c_linalg_cholesky_insert (c_matrix *r, const int index, const c_vector *u);
-void	c_linalg_cholesky_delete (c_matrix *r, const int index);
+int		c_linalg_cholesky_insert (c_matrix *l, const int index, const c_vector *u);
+void	c_linalg_cholesky_delete (c_matrix *l, const int index);
 
 #ifdef __cplusplus
 }

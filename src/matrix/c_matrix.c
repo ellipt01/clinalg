@@ -112,6 +112,7 @@ c_matrix_get (const c_matrix *a, const int i, const int j)
 	return a->data[index];
 }
 
+/* copy row */
 void
 c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 {
@@ -129,6 +130,7 @@ c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 	return;
 }
 
+/* copy column */
 void
 c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
 {
@@ -180,17 +182,7 @@ c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *x)
 	return;
 }
 
-c_vector *
-c_matrix_column (c_matrix *a, int index)
-{
-	c_vector	*x;
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_column", "matrix is empty.");
-	if (index < 0 || a->size2 <= index) c_error ("c_matrix_column", "index is invalid.");
-
-	x = c_vector_view_array (a->size1, 1, a->data + index * a->lda);
-	return x;
-}
-
+/* create vector view of row */
 c_vector *
 c_matrix_row (c_matrix *a, int index)
 {
@@ -199,6 +191,18 @@ c_matrix_row (c_matrix *a, int index)
 	if (index < 0 || a->size1 <= index) c_error ("c_matrix_row", "index is invalid.");
 
 	x = c_vector_view_array (a->size2, a->lda, a->data + index);
+	return x;
+}
+
+/* create vector view of column */
+c_vector *
+c_matrix_column (c_matrix *a, int index)
+{
+	c_vector	*x;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_column", "matrix is empty.");
+	if (index < 0 || a->size2 <= index) c_error ("c_matrix_column", "index is invalid.");
+
+	x = c_vector_view_array (a->size1, 1, a->data + index * a->lda);
 	return x;
 }
 

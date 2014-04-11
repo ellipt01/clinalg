@@ -45,10 +45,10 @@ c_linalg_lapack_dgetrs (char trans, c_matrix *lu, c_matrix *b, long *p)
 	long	lda;
 	long	ldb;
 
-	if (c_matrix_is_empty (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix LU is empty");
-	if (!c_matrix_is_square (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix LU must be square");
-	if (!p) c_error ("c_linalg_lapack_dgetrs", "permutation is empty");
-	if (trans != 'N' && trans != 'T' && trans != 'C') c_error ("c_linalg_lapack_dgetrs", "trans must be 'N', 'T' or 'C'");
+	if (c_matrix_is_empty (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix is empty.");
+	if (!c_matrix_is_square (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix must be square.");
+	if (!p) c_error ("c_linalg_lapack_dgetrs", "permutation is empty.");
+	if (trans != 'N' && trans != 'T' && trans != 'C') c_error ("c_linalg_lapack_dgetrs", "trans must be 'N', 'T' or 'C'.");
 
 	n = (long) lu->size1;
 	nrhs = (long) b->size2;
@@ -60,7 +60,7 @@ c_linalg_lapack_dgetrs (char trans, c_matrix *lu, c_matrix *b, long *p)
 }
 
 int
-c_linalg_lapack_dgetri (c_matrix *a, long *p)
+c_linalg_lapack_dgetri (c_matrix *lu, long *p)
 {
 	long		info;
  	long		n;
@@ -69,22 +69,22 @@ c_linalg_lapack_dgetri (c_matrix *a, long *p)
 	double		wkopt;
 	long		lwork;
 
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgetri", "matrix *a is empty.");
-	if (!c_matrix_is_square (a)) c_error ("c_linalg_lapack_dgetri", "matrix *a must be square.");
-	if (!p) c_error ("c_linalg_lapack_dgetri", "permutation is empty");
+	if (c_matrix_is_empty (lu)) c_error ("c_linalg_lapack_dgetri", "matrix is empty.");
+	if (!c_matrix_is_square (lu)) c_error ("c_linalg_lapack_dgetri", "matrix must be square.");
+	if (!p) c_error ("c_linalg_lapack_dgetri", "permutation is empty.");
 
-	n = (long) a->size1;
-	lda  = (long) a->lda;
+	n = (long) lu->size1;
+	lda  = (long) lu->lda;
 
 	lwork = -1;
-	dgetri_(&n, a->data, &lda, p, &wkopt, &lwork, &info);
+	dgetri_(&n, lu->data, &lda, p, &wkopt, &lwork, &info);
 
 	lwork = (long) wkopt;
 	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgetri", "failed to query workspace.");
 	work = (double *) malloc (lwork * sizeof (double));
 	if (!work) c_error ("c_linalg_lapack_dgetri", "cannot allocate memory work.");
 
-	dgetri_(&n, a->data, &lda, p, work, &lwork, &info);
+	dgetri_(&n, lu->data, &lda, p, work, &lwork, &info);
 	free (work);
 
 	return (int) info;
@@ -105,33 +105,33 @@ c_linalg_LU_decomp (c_matrix *a, long **p)
 }
 
 int
-c_linalg_LU_solve (c_matrix *a, c_vector *b, long *p)
+c_linalg_LU_solve (c_matrix *lu, c_vector *b, long *p)
 {
 	int  		info;
 	c_matrix	*c;
 
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_solve", "matrix is empty.");
+	if (c_matrix_is_empty (lu)) c_error ("c_linalg_LU_solve", "matrix is empty.");
 	if (c_vector_is_empty (b)) c_error ("c_linalg_LU_solve", "vector is empty.");
 	if (!p) c_error ("c_linalg_LU_solve", "permutation is empty.");
-	if (b->size != a->size1) c_error ("c_linalg_LU_solve", "matrix and vector size dose not match.");
-	if (!c_matrix_is_square (a)) c_error ("c_linalg_LU_solve", "matrix must be square.");
+	if (b->size != lu->size1) c_error ("c_linalg_LU_solve", "matrix and vector size dose not match.");
+	if (!c_matrix_is_square (lu)) c_error ("c_linalg_LU_solve", "matrix must be square.");
 
 	c = c_matrix_view_array (b->size, 1, b->size, b->data);
-	info = c_linalg_lapack_dgetrs ('N', a, c, p);
+	info = c_linalg_lapack_dgetrs ('N', lu, c, p);
 	c_matrix_free (c);
 
 	return info;
 }
 
 int
-c_linalg_LU_invert (c_matrix *a, long *p)
+c_linalg_LU_invert (c_matrix *lu, long *p)
 {
 	int			info;
 
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_invert", "matrix is empty.");
-	if (!c_matrix_is_square (a)) c_error ("c_linalg_LU_invert", "matrix must be square.");
+	if (c_matrix_is_empty (lu)) c_error ("c_linalg_LU_invert", "matrix is empty.");
+	if (!c_matrix_is_square (lu)) c_error ("c_linalg_LU_invert", "matrix must be square.");
 
-	info = c_linalg_lapack_dgetri (a, p);
+	info = c_linalg_lapack_dgetri (lu, p);
 
 	return (int) info;
 }

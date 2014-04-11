@@ -47,6 +47,22 @@ c_vector_alloc (const size_t size)
 	return x;
 }
 
+void
+c_vector_realloc (c_vector *x, const size_t size)
+{
+	void	*data;
+	size_t	memsize;
+
+	if (c_vector_is_empty (x)) c_error ("c_vector_realloc", "vector is empty.");
+	if (!x->owner) c_error ("c_vector_realloc", "cannot reallocate vector your own.");
+	memsize = size * sizeof (double);
+	if ((data = (double *) realloc (x->data, memsize)) == NULL) c_error ("c_vector_realloc", "cannot reallocate vector.");
+	x->data = data;
+	x->size = size;
+
+	return;
+}
+
 c_vector *
 c_vector_view_array (const size_t size, const size_t stride, double *data)
 {
