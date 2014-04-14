@@ -13,7 +13,9 @@ extern "C" {
 #endif
 
 /* c_matrixops.c */
-c_matrix		*c_matrix_transpose (c_matrix *a);
+double			c_matrix_nrm (c_matrix *a, char norm);
+c_matrix		*c_matrix_copy_upper_triangular (c_matrix *a);
+c_matrix		*c_matrix_copy_lower_triangular (c_matrix *a);
 c_vector		*c_matrix_dot_vector (double alpha, const c_matrix *a, const c_vector *v, double beta);
 c_vector		*c_matrix_transpose_dot_vector (double alpha, const c_matrix *a, const c_vector *x, double beta);
 c_matrix		*c_matrix_dot_matrix (double alpha, const c_matrix *a, const c_matrix *b, double beta);

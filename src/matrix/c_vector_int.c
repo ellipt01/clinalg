@@ -85,7 +85,7 @@ c_vector_int_set (c_vector_int *v, const int i, int val)
 {
 	int		index;
 	if (c_vector_int_is_empty (v)) c_error ("c_vector_int_set", "vector is empty.");
-	index = GET_INDEX_OF_VECTOR (v, i);
+	index = INDEX_OF_VECTOR (v, i);
 	if (index < 0 || v->size * v->stride <= index) c_error ("c_vector_int_set", "index out of range.");
 	v->data[index] = val;
 	return;
@@ -96,7 +96,7 @@ c_vector_int_get (const c_vector_int *v, const int i)
 {
 	int		index;
 	if (c_vector_int_is_empty (v)) c_error ("c_vector_int_get", "vector is empty.");
-	index = GET_INDEX_OF_VECTOR (v, i);
+	index = INDEX_OF_VECTOR (v, i);
 	if (index < 0 || v->tsize <= index) c_error ("c_vector_int_get", "index out of range.");
 	return v->data[index];
 }
@@ -123,7 +123,7 @@ c_vector_int_set_zero (c_vector_int *v)
 {
 	int		i;
 	if (c_vector_int_is_empty (v)) c_error ("c_vector_int_set_zero", "vector is empty.");
-	for (i = 0; i < v->size; i++) v->data[GET_INDEX_OF_VECTOR (v, i)] = 0;
+	for (i = 0; i < v->size; i++) v->data[INDEX_OF_VECTOR (v, i)] = 0;
 	return;
 }
 
@@ -133,7 +133,7 @@ c_vector_int_fprintf (FILE *stream, const c_vector_int *v, const char *format)
 	int i;
 	if (c_vector_int_is_empty (v)) c_error ("c_vector_int_fprintf", "vector is empty.");
 	for (i = 0; i < v->size; i++) {
-		fprintf (stream, format, v->data[GET_INDEX_OF_VECTOR (v, i)]);
+		fprintf (stream, format, v->data[INDEX_OF_VECTOR (v, i)]);
 		fprintf (stream, "\n");
 	}
 	return;

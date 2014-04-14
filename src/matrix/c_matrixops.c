@@ -11,8 +11,119 @@ extern void	c_error (const char * function_name, const char *error_msg);
 
 /* blas */
 extern void	dcopy_ (long *n, double *x, long *incx, double *y, long *incy);
+extern void	daxpy_ (long *n, double *alpha, double *x, long *incx, double *y, long *incy);
 extern void	dgemv_ (char *trans, long *n, long *m, double *alpha, double *a, long *lda, double *x, long *incx, double *beta, double *y, long *incy);
 extern void	dgemm_ (char *transA, char *transB, long *m, long *n, long *k, double *alpha, double *a, long *lda, double *b, long *ldb, double *beta, double *c, long *ldc);
+
+/* lapack */
+extern double	dlange_ (char *norm, long *m, long *n, double *data, long *lda, double *w);
+
+/* x = x - y */
+void
+c_matrix_sub (c_matrix *x, const c_matrix *y)
+{
+	long	n;
+	long	incx = 1;
+	long	incy = 1;
+	double	alpha = -1.;
+	if (x->size1 != y->size1 || x->size2 != y->size2) c_error ("c_matrix_sub", "matrix size done not match.");
+
+	if (x->size1 == x->lda || y->size1 == y->lda) {
+		n = x->tsize;
+		daxpy_ (&n, &alpha, y->data, &incx, x->data, &incy);
+	} else {
+		int		j;
+		n = x->size1;
+		for (j = 0; j < x->size2; j++) {
+			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
+			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
+			daxpy_ (&n, &alpha, yj, &incx, xj, &incy);
+		}
+	}
+	return;
+}
+
+double
+c_matrix_nrm (c_matrix *a, char norm)
+{
+	long	m, n, lda;
+	double	val;
+	double	*w = NULL;
+
+	m = a->size1;
+	n = a->size2;
+	lda = a->lda;
+
+	switch (norm) {
+		/* norm2 (A) */
+		case '2':
+//		val = _matrix_nrm2 (a);
+//		return val;
+
+		/* max (abs (A(i, j)) ) */
+		case 'M':
+		case 'm':
+
+		/* norm1 (A) */
+		case '1':
+		case 'O':
+		case 'o':
+
+		/* normF (A) */
+		case 'F':
+		case 'f':
+		case 'E':
+		case 'e':
+		break;
+
+		/* normI (A) */
+		case 'I':
+		case 'i':
+		w = (double *) malloc (m * sizeof (double));
+		break;
+
+		default:
+		c_error ("c_matrix_nrm", "invalid norm.");
+		break;
+	}
+
+	val = dlange_ (&norm, &m, &n, a->data, &lda, w);
+	if (w) free (w);
+
+	return val;
+}
+
+c_matrix *
+c_matrix_copy_upper_triangular (c_matrix *a)
+{
+	int			j;
+	long		incx = 1;
+	long		incy = 1;
+	c_matrix	*c = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_set_zero (c);
+	for (j = 0; j < a->size2; j++) {
+		size_t	len = j + 1;
+		long	n = (len < a->size1) ? (long) len : (long) a->size1;
+		dcopy_ (&n, a->data + j * a->lda, &incx, c->data + j * c->lda, &incy);
+	}
+	return c;
+}
+
+c_matrix *
+c_matrix_copy_lower_triangular (c_matrix *a)
+{
+	int			j;
+	long		incx = 1;
+	long		incy = 1;
+	c_matrix	*c = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_set_zero (c);
+	for (j = 0; j < a->size2; j++) {
+		long	n = a->size1 - j;
+		if (n <= 0) break;
+		dcopy_ (&n, a->data + j * (a->lda + 1), &incx, c->data + j * (c->lda + 1), &incy);
+	}
+	return c;
+}
 
 c_matrix *
 c_matrix_transpose (c_matrix *a)

@@ -17,9 +17,9 @@ int			c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, long **p);
 int			c_linalg_lapack_dorgqr (c_matrix *qr, c_vector *tau);
 int			c_linalg_lapack_dgels (char trans, c_matrix *qr, c_matrix *b);
 int			c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, long **p, int *rank);
+
 int			c_linalg_QR_decomp (c_matrix *a, long **p, c_vector **tau);
-int			c_linalg_QR_unpack (c_matrix *qr, c_vector *tau, c_matrix **q, c_matrix **r);
-int			c_linalg_QR_decomp_unpack (c_matrix *a, c_matrix **q, c_matrix **r);
+int			c_linalg_QR_unpack (c_matrix *qr, c_vector *tau);
 int			c_linalg_QR_solve (c_matrix *qr, c_vector *b);
 int			c_linalg_lsQ_solve (double rcond, c_matrix *qr, c_vector *b, long **p, int *rank);
 void		c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty);

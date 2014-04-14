@@ -14,7 +14,7 @@ extern "C" {
 
 #include <c_vector.h>
 
-#define GET_INDEX_OF_MATRIX(a, i, j) (i + j * a->lda)
+#define INDEX_OF_MATRIX(a, i, j) ((i) + (j) * (a->lda))
 
 typedef struct s_c_matrix	c_matrix;
 
@@ -50,8 +50,12 @@ void			c_matrix_remove_row (c_matrix *a);
 
 void			c_matrix_memcpy (c_matrix *dest, const c_matrix *src);
 void			c_matrix_set_zero (c_matrix *a);
+
+c_matrix		*c_matrix_submatrix (const size_t size1, const size_t size2, const c_matrix *a);
+
 void			c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format);
 void			c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format);
+c_matrix		*c_matrix_fread (FILE *stream, const size_t size1, const size_t size2);
 
 #ifdef __cplusplus
 }

@@ -96,7 +96,7 @@ c_matrix_set (c_matrix *a, const int i, const int j, double val)
 {
 	int		index;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_set", "matrix is empty.");
-	index = GET_INDEX_OF_MATRIX (a, i, j);
+	index = INDEX_OF_MATRIX (a, i, j);
 	if (index < 0 || a->tsize <= index) c_error ("c_matrix_set", "index out of range.");
 	a->data[index] = val;
 	return;
@@ -107,7 +107,7 @@ c_matrix_get (const c_matrix *a, const int i, const int j)
 {
 	int		index;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_get", "matrix is empty.");
-	index = GET_INDEX_OF_MATRIX (a, i, j);
+	index = INDEX_OF_MATRIX (a, i, j);
 	if (index < 0 || a->tsize <= index) c_error ("c_matrix_get", "index out of range.");
 	return a->data[index];
 }
@@ -322,6 +322,15 @@ c_matrix_set_zero (c_matrix *a)
 	return;
 }
 
+
+c_matrix *
+c_matrix_submatrix (const size_t size1, const size_t size2, const c_matrix *a)
+{
+	if (size1 < 0 || a->size1 < size1) c_error ("c_matrix_submatrix", "size1 must be in [0, a->size1]");
+	if (size2 < 0 || a->size2 < size2) c_error ("c_matrix_submatrix", "size2 must be in [0, a->size2]");
+	return c_matrix_view_array (size1, size2, a->lda, a->data);
+}
+
 void
 c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format)
 {
@@ -333,7 +342,6 @@ c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format)
 			fprintf (stream, format, c_matrix_get (a, i, j));
 			fprintf (stream, "\n");
 		}
-		fprintf (stream, "\n");
 	}
 	return;
 }
@@ -351,4 +359,16 @@ c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format)
 		fprintf (stream, "\n");
 	}
 	return;
+}
+
+c_matrix *
+c_matrix_fread (FILE *stream, const size_t size1, const size_t size2)
+{
+	int			i;
+	c_matrix	*a;
+	a = c_matrix_alloc (size1, size2);
+	for (i = 0; i < a->tsize; i++) {
+		fscanf (stream, "%lf", &a->data[i]);
+	}
+	return a;
 }

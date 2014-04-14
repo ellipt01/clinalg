@@ -14,8 +14,13 @@
 extern "C" {
 #endif
 
+#include <c_vector.h>
+#include <c_vectorops.h>
 #include <c_matrix.h>
+#include <c_matrixops.h>
 #include <c_linalg_cholesky.h>
+#include <c_linalg_lu.h>
+#include <c_linalg_qr.h>
 
 #define C_MAX(a, b)		((a >= b) ? a : b)
 #define C_MIN(a, b)		((a <= b) ? a : b)

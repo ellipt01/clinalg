@@ -16,7 +16,7 @@ extern "C" {
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define GET_INDEX_OF_VECTOR(v, i) (i * v->stride)
+#define INDEX_OF_VECTOR(v, i) ((i) * (v->stride))
 
 typedef struct s_c_vector	c_vector;
 
@@ -45,8 +45,12 @@ bool			c_vector_is_empty (const c_vector *x);
 void			c_vector_free (c_vector *x);
 void			c_vector_set (c_vector *x, const int i, double val);
 double			c_vector_get (const c_vector *x, const int i);
+
 void			c_vector_memcpy (c_vector *dest, const c_vector *src);
 void			c_vector_set_zero (c_vector *x);
+
+c_vector		*c_vector_subvector (const size_t size, const c_vector *x);
+
 void			c_vector_fprintf (FILE *stream, const c_vector *x, const char *format);
 
 c_vector_int	*c_vector_int_alloc (const size_t size);
@@ -55,7 +59,9 @@ bool			c_vector_int_is_empty (const c_vector_int *v);
 void			c_vector_int_free (c_vector_int *v);
 void			c_vector_int_set (c_vector_int *v, const int i, int val);
 int				c_vector_int_get (const c_vector_int *v, const int i);
+
 void			c_vector_int_memcpy (c_vector_int *dest, const c_vector_int *src);
+
 void			c_vector_int_set_zero (c_vector_int *v);
 void			c_vector_int_fprintf (FILE *stream, const c_vector_int *v, const char *format);
 

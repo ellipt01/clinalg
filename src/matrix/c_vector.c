@@ -103,7 +103,7 @@ c_vector_set (c_vector *x, const int i, double val)
 {
 	int		index;
 	if (c_vector_is_empty (x)) c_error ("c_vector_set", "vector is empty.");
-	index = GET_INDEX_OF_VECTOR (x, i);
+	index = INDEX_OF_VECTOR (x, i);
 	if (index < 0 || x->size * x->stride <= index) c_error ("c_vector_set", "index out of range.");
 	x->data[index] = val;
 	return;
@@ -114,7 +114,7 @@ c_vector_get (const c_vector *x, const int i)
 {
 	int		index;
 	if (c_vector_is_empty (x)) c_error ("c_vector_get", "vector is empty.");
-	index = GET_INDEX_OF_VECTOR (x, i);
+	index = INDEX_OF_VECTOR (x, i);
 	if (index < 0 || x->tsize <= index) c_error ("c_vector_get", "index out of range.");
 	return x->data[index];
 }
@@ -140,8 +140,15 @@ c_vector_set_zero (c_vector *x)
 {
 	int		i;
 	if (c_vector_is_empty (x)) c_error ("c_vector_set_zero", "vector is empty.");
-	for (i = 0; i < x->size; i++) x->data[GET_INDEX_OF_VECTOR (x, i)] = 0.0;
+	for (i = 0; i < x->size; i++) x->data[INDEX_OF_VECTOR (x, i)] = 0.0;
 	return;
+}
+
+c_vector *
+c_vector_subvector (const size_t size, const c_vector *x)
+{
+	if (size < 0 || x->size < size) c_error ("c_vector_subvector", "size must be in [0, x->size]");
+	return c_vector_view_array (size, x->stride, x->data);
 }
 
 void
@@ -150,7 +157,7 @@ c_vector_fprintf (FILE *stream, const c_vector *x, const char *format)
 	int i;
 	if (c_vector_is_empty (x)) c_error ("c_vector_fprintf", "vector is empty.");
 	for (i = 0; i < x->size; i++) {
-		fprintf (stream, format, x->data[GET_INDEX_OF_VECTOR (x, i)]);
+		fprintf (stream, format, x->data[INDEX_OF_VECTOR (x, i)]);
 		fprintf (stream, "\n");
 	}
 	return;

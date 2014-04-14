@@ -48,7 +48,8 @@ AC_CHECK_FUNCS([floor pow sqrt log strrchr])
 AC_CHECK_FUNCS([dpotrf_ dpotrs_])
 
 AC_CONFIG_FILES([Makefile
-                 example/Makefile
                  include/Makefile
-                 src/Makefile])
+                 src/Makefile
+                 example/Makefile
+                 test/Makefile])
 AC_OUTPUT
