@@ -23,8 +23,8 @@ test_QR_decomp (void)
 	c_vector	*tau;
 	double		nrm;
 
-	size1 = 50;
-	size2 = 60;
+	size1 = 5;
+	size2 = 6;
 
 	a = random_matrix (size1, size2);
 
@@ -39,7 +39,9 @@ test_QR_decomp (void)
 	c_linalg_QR_unpack (q, tau);
 	c_vector_free (tau);
 
-	r = c_matrix_copy_upper_triangular (qr);
+	r = c_matrix_alloc (qr->size1, qr->size2);
+	c_matrix_set_zero (r);
+	c_matrix_upper_triangular_memcpy (r, qr);
 	c_matrix_free (qr);
 
 	/* b = q * r */
@@ -67,8 +69,8 @@ test_QR_solve (void)
 	c_vector	*z;
 	double		nrm;
 
-	size1 = 60;
-	size2 = 50;
+	size1 = 50;
+	size2 = 60;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -107,8 +109,8 @@ test_lsQ_solve (void)
 	c_vector	*z;
 	double		nrm;
 
-	size1 = 60;
-	size2 = 50;
+	size1 = 50;
+	size2 = 60;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -121,8 +123,7 @@ test_lsQ_solve (void)
 
 		x = c_vector_alloc (y->size);
 		c_vector_memcpy (x, y);
-
-		c_linalg_lsQ_solve (1.e-3, tmp, x, NULL, NULL);
+		c_linalg_lsQ_solve (1.e-8, tmp, x, NULL, NULL);
 		c_matrix_free (tmp);
 	}
 	z = c_matrix_dot_vector (1., a, x, 0.);

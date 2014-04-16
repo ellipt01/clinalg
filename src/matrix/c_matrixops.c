@@ -93,36 +93,71 @@ c_matrix_nrm (c_matrix *a, char norm)
 	return val;
 }
 
-c_matrix *
-c_matrix_copy_upper_triangular (c_matrix *a)
+void
+c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 {
 	int			j;
 	long		incx = 1;
 	long		incy = 1;
-	c_matrix	*c = c_matrix_alloc (a->size1, a->size2);
-	c_matrix_set_zero (c);
-	for (j = 0; j < a->size2; j++) {
-		size_t	len = j + 1;
-		long	n = (len < a->size1) ? (long) len : (long) a->size1;
-		dcopy_ (&n, a->data + j * a->lda, &incx, c->data + j * c->lda, &incy);
+
+	size_t		min_m = C_MIN (tr->size1, a->size1);
+	size_t		min_n = C_MIN (tr->size2, a->size2);
+	for (j = 0; j < min_n; j++) {
+		long	n = (j + 1 < min_m) ? (long) (j + 1) : (long) min_m;
+		dcopy_ (&n, a->data + j * a->lda, &incx, tr->data + j * tr->lda, &incy);
 	}
-	return c;
+	return;
 }
 
-c_matrix *
-c_matrix_copy_lower_triangular (c_matrix *a)
+void
+c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 {
 	int			j;
 	long		incx = 1;
 	long		incy = 1;
-	c_matrix	*c = c_matrix_alloc (a->size1, a->size2);
-	c_matrix_set_zero (c);
-	for (j = 0; j < a->size2; j++) {
-		long	n = a->size1 - j;
+
+	size_t		min_m = C_MIN (tr->size1, a->size1);
+	size_t		min_n = C_MIN (tr->size2, a->size2);
+	for (j = 0; j < min_n; j++) {
+		long	n;
+		n = min_m - j;
 		if (n <= 0) break;
-		dcopy_ (&n, a->data + j * (a->lda + 1), &incx, c->data + j * (c->lda + 1), &incy);
+		dcopy_ (&n, a->data + j * (a->lda + 1), &incx, tr->data + j * (tr->lda + 1), &incy);
 	}
-	return c;
+	return;
+}
+
+c_vector *
+c_matrix_get_diagonal (const c_matrix *a)
+{
+	long		n;
+	long		lda;
+	long		stride;
+	size_t		min_mn = C_MIN (a->size1, a->size2);
+	c_vector	*d = c_vector_alloc (min_mn);
+
+	n = (long) min_mn;
+	lda = (long) a->lda;
+	stride = (long) d->stride;
+	dcopy_ (&n, a->data, &lda, d->data, &stride);
+
+	return d;
+}
+
+void
+c_matrix_set_diagonal (const c_vector *d, c_matrix *a)
+{
+	long		n;
+	long		stride;
+	long		lda;
+	size_t		min_mn = C_MIN (a->size1, a->size2);
+
+	n = (long) C_MIN (d->size, min_mn);
+	stride = d->stride;
+	lda = a->lda + 1;
+	dcopy_ (&n, d->data, &stride, a->data, &lda);
+
+	return;
 }
 
 c_matrix *

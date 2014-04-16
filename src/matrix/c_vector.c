@@ -56,8 +56,8 @@ c_vector_realloc (c_vector *x, const size_t size)
 	if (c_vector_is_empty (x)) c_error ("c_vector_realloc", "vector is empty.");
 	if (!x->owner) c_error ("c_vector_realloc", "cannot reallocate vector your own.");
 	memsize = size * sizeof (double);
-	if ((data = (double *) realloc (x->data, memsize)) == NULL) c_error ("c_vector_realloc", "cannot reallocate vector.");
-	x->data = data;
+	if ((data = realloc (x->data, memsize)) == NULL) c_error ("c_vector_realloc", "cannot reallocate vector.");
+	x->data = (double *) data;
 	x->size = size;
 
 	return;
@@ -85,6 +85,7 @@ c_vector_is_empty (const c_vector *x)
 {
 	if (!x) return true;
 	if (!x->data) return true;
+	if (x->size <= 0) return true;
 	return false;
 }
 

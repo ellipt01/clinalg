@@ -22,4 +22,8 @@ example_SOURCES= example.c
 example_LDFLAGS = $(top_srcdir)/src/libclinalg.la
 
 # Compiler options for a.out
-example_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/include/matrix
+example_CPPFLAGS =\
+	-I$(top_srcdir)/include\
+	-I$(top_srcdir)/include/matrix\
+	-I$(top_srcdir)/include/linalg
+	

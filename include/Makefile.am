@@ -3,13 +3,11 @@
 libclinalg_includedir = $(pkgincludedir)
 
 libclinalg_include_DATA = \
-	c_linalg.h\
 	matrix/c_vector.h\
 	matrix/c_matrix.h\
 	matrix/c_matrixops.h\
 	matrix/c_vectorops.h\
-	c_linalg_lu.h\
-	c_linalg_cholesky.h\
-	c_linalg_qr.h
-
-
+	linalg/c_linalg_lu.h\
+	linalg/c_linalg_cholesky.h\
+	linalg/c_linalg_qr.h\
+	c_linalg.h

@@ -16,6 +16,9 @@ extern "C" {
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define C_MAX(a, b)	((a) >= (b)) ? (a) : (b)
+#define C_MIN(a, b)	((a) >= (b)) ? (b) : (a)
+
 #define INDEX_OF_VECTOR(v, i) ((i) * (v->stride))
 
 typedef struct s_c_vector	c_vector;

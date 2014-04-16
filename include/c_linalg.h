@@ -22,9 +22,6 @@ extern "C" {
 #include <c_linalg_lu.h>
 #include <c_linalg_qr.h>
 
-#define C_MAX(a, b)		((a >= b) ? a : b)
-#define C_MIN(a, b)		((a <= b) ? a : b)
-
 #define DBL_EPSILON		2.2204460492503131e-16
 
 #ifdef __cplusplus

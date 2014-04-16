@@ -10,9 +10,6 @@
 /* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
-/* blas */
-extern void	dcopy_ (long *n, double *x, long *incx, double *y, long *incy);
-
 /* lapack */
 extern void	dgeqrf_ (long *m, long *n, double *data, long *lda, double *tau, double *work, long *lwork, long *info);
 extern void	dgeqp3_ (long *m, long *n, double *a, long *lda, long *jpvt, double *tau, double *work, long *lwork, long *info);
@@ -122,7 +119,7 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, long **p)
 }
 
 int
-c_linalg_lapack_dorgqr (c_matrix *qr, c_vector *tau)
+c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau)
 {
 	long   	info;
  	long		m;
@@ -210,11 +207,6 @@ c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, long **p, int *
 
 	if (c_matrix_is_empty (qr)) c_error ("c_linalg_lapack_dgelsy", "input matrix *qr is empty");
 	if (c_matrix_is_empty (b)) c_error ("c_linalg_lapack_dgelsy", "input matrix *b is empty");
-	if (qr->size1 < qr->size2 && b->size1 < qr->size2) {
-		double	*data = (double *) realloc (b->data, qr->size2 * b->size2);
-		if (!data) c_error ("c_linalg_lapack_dgelsy", "cannot reallocate matrix.");
-		b->data = data;
-	}
 
 	m = (long) qr->size1;
 	n = (long) qr->size2;
@@ -261,7 +253,7 @@ c_linalg_QR_decomp (c_matrix *a, long **p, c_vector **tau)
 }
 
 int
-c_linalg_QR_unpack (c_matrix *qr, c_vector *tau)
+c_linalg_QR_unpack (c_matrix *qr, const c_vector *tau)
 {
 	int		info;
 
@@ -312,7 +304,6 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, long **p, int *rank)
 		c_vector_realloc (b, a->size2);
 		b->size = size;
 	}
-
 	x = c_matrix_view_array (b->size, 1, b->size, b->data);
 	info = c_linalg_lapack_dgelsy (rcond, a, x, &_p, &_rank);
 	c_matrix_free (x);
@@ -353,7 +344,7 @@ c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 
 /*** qr 1-rank update a + u * v' : u and v are vector ***/
 void
-c_linalg_QR_1up (c_matrix *q, c_matrix *r, c_vector *u, c_vector *v)
+c_linalg_QR_1up (c_matrix *q, c_matrix *r, const c_vector *u, const c_vector *v)
 {
 	int		m, n, k, ldq, ldr;
 	double	*w;
@@ -381,7 +372,7 @@ c_linalg_QR_1up (c_matrix *q, c_matrix *r, c_vector *u, c_vector *v)
 
 /*** insert ***/
 void
-c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, c_vector *u)
+c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u)
 {
 	int			j, m, n, k, ldq, ldr;
 	double		*w;
@@ -422,7 +413,7 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, c_vector *u
 }
 
 void
-c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, c_vector *u)
+c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u)
 {
 	int			j, m, n, k, ldq, ldr;
 	double		*w;

@@ -72,6 +72,7 @@ c_matrix_is_empty (const c_matrix *a)
 {
 	if (!a) return true;
 	if (!a->data) return true;
+	if (a->size1 <= 0 || a->size2 <= 0) return true;
 	return false;
 }
 

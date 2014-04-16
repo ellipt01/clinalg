@@ -33,7 +33,9 @@ test_cholesky_decomp (void)
 	c = c_matrix_alloc (size, size);
 	c_matrix_memcpy (c, a);
 	c_linalg_cholesky_decomp (c);
-	l = c_matrix_copy_upper_triangular (c);
+	l = c_matrix_alloc (c->size1, c->size2);
+	c_matrix_set_zero (l);
+	c_matrix_upper_triangular_memcpy (l, c);
 	c_matrix_free (c);
 
 	/* b = l' * l */
