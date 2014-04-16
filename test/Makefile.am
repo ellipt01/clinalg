@@ -18,6 +18,7 @@ noinst_PROGRAMS=test_clinalg
 # Sources for the a.out 
 test_clinalg_SOURCES=\
 	test_cholesky.c\
+	test_lu.c\
 	test_qr.c\
 	test_utils.c\
 	test_clinalg.c

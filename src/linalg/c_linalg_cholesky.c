@@ -11,9 +11,9 @@
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack: cholesky decomposition */
-extern void	dpotrf_ (char *uplo, long *n, double *a, long *lda, long *info);
-extern void	dpotrs_ (char *uplo, long *n, long *nrhs, double *a, long *lda, double *b, long *ldb, long *info);
-extern void	dpotri_ (char *uplo, long *n, double *a, long *lda, long *info);
+extern void	dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
+extern void	dpotrs_ (char *uplo, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
+extern void	dpotri_ (char *uplo, int *n, double *a, int *lda, int *info);
 /* qrupdate: cholinsert/delete */
 extern void	dchinx_ (int *n, double *L, int *ldr, int *j, double *u, double *w, int *info);
 extern void	dchdex_ (int *n, double *L, int *ldr, int *j, double *w);
@@ -22,16 +22,16 @@ extern void	dchdex_ (int *n, double *L, int *ldr, int *j, double *w);
 int
 c_linalg_lapack_dpotrf (char uplo, c_matrix *a)
 {
-	long	info;
-	long	n;
-	long	lda;
+	int	info;
+	int	n;
+	int	lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dpotrf", "matrix is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_lapack_dpotrf", "matrix must be square.");
 	if (uplo != 'L' && uplo != 'U') c_error ("c_linalg_lapack_dpotrf", "uplo must be 'L' or 'U'.");
 
-	n = (long) a->size1;
-	lda = (long) a->lda;
+	n = (int) a->size1;
+	lda = (int) a->lda;
 	dpotrf_ (&uplo, &n, a->data, &lda, &info);
 	return (int) info;
 }
@@ -40,11 +40,11 @@ c_linalg_lapack_dpotrf (char uplo, c_matrix *a)
 int
 c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b)
 {
-	long		info;
-	long		n;
-	long		nrhs;
-	long		lda;
-	long		ldb;
+	int		info;
+	int		n;
+	int		nrhs;
+	int		lda;
+	int		ldb;
 
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_lapack_dpotrs", "first matrix is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_linalg_lapack_dpotrs", "second matrix is empty.");
@@ -52,10 +52,10 @@ c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b)
 	if (l->size1 != b->size1) c_error ("c_linalg_lapack_dpotrs", "matrix size does not match.");
 	if (uplo != 'L' && uplo != 'U') c_error ("c_linalg_lapack_dpotrs", "uplo must be 'L' or 'U'.");
 
-	n = (long) l->size1;
-	nrhs = (long) b->size2;
-	lda = (long) l->lda;
-	ldb = (long) b->lda;
+	n = (int) l->size1;
+	nrhs = (int) b->size2;
+	lda = (int) l->lda;
+	ldb = (int) b->lda;
 	dpotrs_ (&uplo, &n, &nrhs, l->data, &lda, b->data, &ldb, &info);
 	return (int) info;
 }
@@ -64,15 +64,15 @@ c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b)
 int
 c_linalg_lapack_dpotri (char uplo, c_matrix *l)
 {
-	long	info;
-	long	n;
-	long	lda;
+	int	info;
+	int	n;
+	int	lda;
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_lapack_dpotri", "matrix is empty.");
 	if (!c_matrix_is_square (l)) c_error ("c_linalg_lapack_dpotri", "matrix must be square.");
 	if (uplo != 'L' && uplo != 'U') c_error ("c_linalg_lapack_dpotri", "uplo must be 'L' or 'U'.");
 
-	n = (long) l->size1;
-	lda = (long)l->lda;
+	n = (int) l->size1;
+	lda = (int)l->lda;
 	dpotri_ (&uplo, &n, l->data, &lda, &info);
 	return (int) info;
 }

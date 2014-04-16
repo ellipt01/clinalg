@@ -8,25 +8,29 @@
 #include <c_linalg.h>
 
 /* lapack */
-extern void	dlaruv_ (long seed[], long *n, double *x);
+//extern void	dlaruv_ (long seed[], long *n, double *x);
 
 c_vector *
 random_vector (size_t size)
 {
-	long		seed[4];
-	long		n = (long) size;
+	int			i;
 	c_vector	*v = c_vector_alloc (size);
-	dlaruv_ (seed, &n, v->data);
+	for (i = 0; i < size; i++) {
+		double	r = (double) rand () / RAND_MAX;
+		v->data[i] = 1. - 2. * r;
+	}
 	return v;
 }
 
 c_matrix *
 random_matrix (size_t size1, size_t size2)
 {
-	long		seed[4];
-	long		n = (long) size1 * size2;
+	int			i;
 	c_matrix	*a = c_matrix_alloc (size1, size2);
-	dlaruv_ (seed, &n, a->data);
+	for (i = 0; i < size1 * size2; i++) {
+		double	r = (double) rand () / RAND_MAX;
+		a->data[i] = 1. - 2. * r;
+	}
 	return a;
 }
 

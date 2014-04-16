@@ -24,6 +24,18 @@ bool	(*test_cholesky_func_ptr[]) (void) = {
 	test_cholesky_delete
 };
 
+const int	n_test_LU_func = 2;
+
+const char	*test_LU_func_name[] = {
+	"test_LU_decomp",
+	"test_LU_solve "
+};
+
+bool	(*test_LU_func_ptr[]) (void) = {
+	test_LU_decomp,
+	test_LU_solve
+};
+
 const int	n_test_QR_func = 5;
 
 const char	*test_QR_func_name[] = {
@@ -56,7 +68,15 @@ main (void)
 		if (success && !status) success = false;
 	}
 
-	fprintf (stderr, "*** test_QR ***\n");
+	fprintf (stderr, "\n*** test_LU ***\n");
+	for (i = 0; i < n_test_LU_func; i++) {
+		bool	status = test_LU_func_ptr[i] ();
+		fprintf (stderr, "\t %s ...", test_LU_func_name[i]);
+		fprintf (stderr, status ? "SUCCESS\n" : "FAILED\n");
+		if (success && !status) success = false;
+	}
+
+	fprintf (stderr, "\n*** test_QR ***\n");
 	for (i = 0; i < n_test_QR_func; i++) {
 		bool	status = test_QR_func_ptr[i] ();
 		fprintf (stderr, "\t %s ...", test_QR_func_name[i]);
@@ -64,6 +84,7 @@ main (void)
 		if (success && !status) success = false;
 	}
 
+	test_LU_decomp ();
 
 	return EXIT_SUCCESS;
 }

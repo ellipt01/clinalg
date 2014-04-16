@@ -16,6 +16,9 @@ bool	test_cholesky_svx (void);
 bool	test_cholesky_insert (void);
 bool	test_cholesky_delete (void);
 
+bool	test_LU_decomp (void);
+bool	test_LU_solve (void);
+
 bool	test_QR_decomp (void);
 bool	test_QR_solve (void);
 bool	test_lsQ_solve (void);

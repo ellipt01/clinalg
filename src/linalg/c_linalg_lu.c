@@ -11,90 +11,93 @@
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack */
-extern void	dgetrf_ (long *m, long *n, double *data, long *lda, long *ipiv, long *info);
-extern void	dgetri_ (long *n, double *data, long *lda, long *ipiv, double *work, long *lwork, long *info);
-extern void	dgetrs_ (char *trans, long *n, long *nrhs, double *a, long *lda, long *ipiv, double *b, long *ldb, long *info);
+extern void	dgetrf_ (int *m, int *n, double *data, int *lda, int *ipiv, int *info);
+extern void	dgetri_ (int *n, double *data, int *lda, int *ipiv, double *work, int *lwork, int *info);
+extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
 
 int
-c_linalg_lapack_dgetrf (c_matrix *a, long **p)
+c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
 {
-	long		info;
- 	long		m;
- 	long		n;
- 	long		lda;
- 	long		*_p;
+	int				info;
+ 	int				m;
+ 	int				n;
+ 	int				lda;
+ 	size_t			min_mn;
 
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgetrf", "matrix is empty.");
+ 	c_vector_int	*_p;
 
- 	m = (long) a->size1;
- 	n = (long) a->size2;
- 	lda  = (long) a->lda;
- 	_p = (long *) malloc (a->size1 * sizeof (long));
-	dgetrf_ (&m, &n, a->data, &lda, _p, &info);
+ 	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgetrf", "matrix is empty.");
+
+ 	m = (int) a->size1;
+ 	n = (int) a->size2;
+ 	lda  = (int) a->lda;
+ 	min_mn = C_MIN (a->size1, a->size2);
+ 	_p = c_vector_int_alloc (min_mn);
+	dgetrf_ (&m, &n, a->data, &lda, _p->data, &info);
 	if (p) *p = _p;
 
 	return (int) info;
 }
 
 int
-c_linalg_lapack_dgetrs (char trans, c_matrix *lu, c_matrix *b, long *p)
+c_linalg_lapack_dgetrs (char trans, c_matrix *lu, c_matrix *b, c_vector_int *p)
 {
-	long	info;
-	long	n;
-	long	nrhs;
-	long	lda;
-	long	ldb;
+	int		info;
+	int		n;
+	int		nrhs;
+	int		lda;
+	int		ldb;
 
 	if (c_matrix_is_empty (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix is empty.");
 	if (!c_matrix_is_square (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix must be square.");
 	if (!p) c_error ("c_linalg_lapack_dgetrs", "permutation is empty.");
 	if (trans != 'N' && trans != 'T' && trans != 'C') c_error ("c_linalg_lapack_dgetrs", "trans must be 'N', 'T' or 'C'.");
 
-	n = (long) lu->size1;
-	nrhs = (long) b->size2;
-	lda = (long) lu->lda;
-	ldb = (long) b->lda;
-	dgetrs_ (&trans, &n, &nrhs, lu->data, &lda, p, b->data, &ldb, &info);
+	n = (int) lu->size1;
+	nrhs = (int) b->size2;
+	lda = (int) lu->lda;
+	ldb = (int) b->lda;
+	dgetrs_ (&trans, &n, &nrhs, lu->data, &lda, p->data, b->data, &ldb, &info);
 
 	return (int) info;
 }
 
 int
-c_linalg_lapack_dgetri (c_matrix *lu, long *p)
+c_linalg_lapack_dgetri (c_matrix *lu, c_vector_int *p)
 {
-	long		info;
- 	long		n;
-	long		lda;
+	int			info;
+ 	int			n;
+	int			lda;
 	double		*work;
 	double		wkopt;
-	long		lwork;
+	int			lwork;
 
 	if (c_matrix_is_empty (lu)) c_error ("c_linalg_lapack_dgetri", "matrix is empty.");
 	if (!c_matrix_is_square (lu)) c_error ("c_linalg_lapack_dgetri", "matrix must be square.");
 	if (!p) c_error ("c_linalg_lapack_dgetri", "permutation is empty.");
 
-	n = (long) lu->size1;
-	lda  = (long) lu->lda;
+	n = (int) lu->size1;
+	lda  = (int) lu->lda;
 
 	lwork = -1;
-	dgetri_(&n, lu->data, &lda, p, &wkopt, &lwork, &info);
+	dgetri_(&n, lu->data, &lda, p->data, &wkopt, &lwork, &info);
 
-	lwork = (long) wkopt;
+	lwork = (int) wkopt;
 	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgetri", "failed to query workspace.");
 	work = (double *) malloc (lwork * sizeof (double));
 	if (!work) c_error ("c_linalg_lapack_dgetri", "cannot allocate memory work.");
 
-	dgetri_(&n, lu->data, &lda, p, work, &lwork, &info);
+	dgetri_(&n, lu->data, &lda, p->data, work, &lwork, &info);
 	free (work);
 
 	return (int) info;
 }
 
 int
-c_linalg_LU_decomp (c_matrix *a, long **p)
+c_linalg_LU_decomp (c_matrix *a, c_vector_int **p)
 {
-	long		info;
-	long		*_p;
+	int				info;
+	c_vector_int	*_p;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_decomp", "matrix is empty.");
 
@@ -105,7 +108,7 @@ c_linalg_LU_decomp (c_matrix *a, long **p)
 }
 
 int
-c_linalg_LU_solve (c_matrix *lu, c_vector *b, long *p)
+c_linalg_LU_solve (c_matrix *lu, c_vector *b, c_vector_int *p)
 {
 	int  		info;
 	c_matrix	*c;
@@ -124,7 +127,7 @@ c_linalg_LU_solve (c_matrix *lu, c_vector *b, long *p)
 }
 
 int
-c_linalg_LU_invert (c_matrix *lu, long *p)
+c_linalg_LU_invert (c_matrix *lu, c_vector_int *p)
 {
 	int			info;
 

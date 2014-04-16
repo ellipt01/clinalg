@@ -105,15 +105,15 @@ void
 c_vector_int_memcpy (c_vector_int *dest, const c_vector_int *src)
 {
 	int		i;
-	long	n;
-	long	incx;
-	long	incy;
+	int		n;
+	int		incx;
+	int		incy;
 	if (c_vector_int_is_empty (src)) c_error ("c_vector_int_memcpy", "first vector is empty.");
 	if (c_vector_int_is_empty (dest)) c_error ("c_vector_int_memcpy", "second vector is empty.");
 	if (dest->size != src->size) c_error ("c_vector_int_memcpy", "vector size does not match.");
-	n = (long) src->size;
-	incx = (long) src->stride;
-	incy = (long) dest->stride;
+	n = (int) src->size;
+	incx = (int) src->stride;
+	incy = (int) dest->stride;
 	for (i = 0; i < src->size; i++) dest[i * src->stride] = src[i * src->stride];
 	return;
 }
@@ -130,7 +130,7 @@ c_vector_int_set_zero (c_vector_int *v)
 void
 c_vector_int_fprintf (FILE *stream, const c_vector_int *v, const char *format)
 {
-	int i;
+	int 	i;
 	if (c_vector_int_is_empty (v)) c_error ("c_vector_int_fprintf", "vector is empty.");
 	for (i = 0; i < v->size; i++) {
 		fprintf (stream, format, v->data[INDEX_OF_VECTOR (v, i)]);

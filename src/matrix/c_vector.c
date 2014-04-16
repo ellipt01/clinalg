@@ -8,7 +8,7 @@
 #include <c_matrix.h>
 
 /* blas */
-extern void	dcopy_ (long *n, double *x, long *incx, double *y, long *incy);
+extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
 extern void	c_error (const char * function_name, const char *error_msg);
 
 static c_vector *
@@ -123,15 +123,15 @@ c_vector_get (const c_vector *x, const int i)
 void
 c_vector_memcpy (c_vector *dest, const c_vector *src)
 {
-	long	n;
-	long	incx;
-	long	incy;
+	int		n;
+	int		incx;
+	int		incy;
 	if (c_vector_is_empty (src)) c_error ("c_vector_memcpy", "first vector is empty.");
 	if (c_vector_is_empty (dest)) c_error ("c_vector_memcpy", "second vector is empty.");
 	if (dest->size != src->size) c_error ("c_vector_memcpy", "vector size does not match.");
-	n = (long) src->size;
-	incx = (long) src->stride;
-	incy = (long) dest->stride;
+	n = (int) src->size;
+	incx = (int) src->stride;
+	incy = (int) dest->stride;
 	dcopy_ (&n, src->data, &incx, dest->data, &incy);
 	return;
 }
@@ -155,7 +155,7 @@ c_vector_subvector (const size_t size, const c_vector *x)
 void
 c_vector_fprintf (FILE *stream, const c_vector *x, const char *format)
 {
-	int i;
+	int 	i;
 	if (c_vector_is_empty (x)) c_error ("c_vector_fprintf", "vector is empty.");
 	for (i = 0; i < x->size; i++) {
 		fprintf (stream, format, x->data[INDEX_OF_VECTOR (x, i)]);

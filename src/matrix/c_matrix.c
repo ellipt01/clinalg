@@ -8,7 +8,7 @@
 #include <c_matrix.h>
 
 /* blas */
-extern void	dcopy_ (long *n, double *x, long *incx, double *y, long *incy);
+extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
 extern void	c_error (const char * function_name, const char *error_msg);
 
 static c_matrix *
@@ -117,16 +117,16 @@ c_matrix_get (const c_matrix *a, const int i, const int j)
 void
 c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 {
-	long	n;
-	long	incx;
-	long	incy;
+	int	n;
+	int	incx;
+	int	incy;
 	if (c_vector_is_empty (y)) c_error ("c_matrix_get_row", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_row", "matrix is empty.");
 	if (y->size != a->size1) c_error ("c_matrix_get_row", "vector and matrix size does not match.");
 	if (index < 0 || index >= a->size1) c_error ("c_matrix_get_row", "index must be in [0, a->size1).");
-	n = (long) a->size1;
-	incx = (long) a->lda;
-	incy = (long) y->stride;
+	n = (int) a->size1;
+	incx = (int) a->lda;
+	incy = (int) y->stride;
 	dcopy_ (&n, a->data + index, &incx, y->data, &incy);
 	return;
 }
@@ -135,16 +135,16 @@ c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 void
 c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
 {
-	long	n;
-	long	incx;
-	long	incy;
+	int	n;
+	int	incx;
+	int	incy;
 	if (c_vector_is_empty (y)) c_error ("c_matrix_get_col", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_col", "matrix is empty.");
 	if (y->size != a->size1) c_error ("c_matrix_get_col", "vector and matrix size does not match.");
 	if (index < 0 || index >= a->size2) c_error ("c_matrix_get_col", "index must be in [0, a->size2).");
-	n = (long) a->size1;
+	n = (int) a->size1;
 	incx = 1;
-	incy = (long) y->stride;
+	incy = (int) y->stride;
 	dcopy_ (&n, a->data + a->lda * index, &incx, y->data, &incy);
 	return;
 }
@@ -152,16 +152,16 @@ c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
 void
 c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *x)
 {
-	long	n;
-	long	incx;
-	long	incy;
+	int	n;
+	int	incx;
+	int	incy;
 	if (c_vector_is_empty (x)) c_error ("c_matrix_set_row", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_row", "matrix is empty.");
 	if (x->size != a->size1) c_error ("c_matrix_set_row", "vector and matrix size does not match.");
 	if (index < 0 || index >= a->size1) c_error ("c_matrix_set_row", "index must be in [0, a->size1).");
-	n = (long) x->size;
-	incx = (long) x->stride;
-	incy = (long) a->lda;
+	n = (int) x->size;
+	incx = (int) x->stride;
+	incy = (int) a->lda;
 	dcopy_ (&n, x->data, &incx, a->data + index, &incy);
 	return;
 }
@@ -169,15 +169,15 @@ c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *x)
 void
 c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *x)
 {
-	long	n;
-	long	incx;
-	long	incy;
+	int	n;
+	int	incx;
+	int	incy;
 	if (c_vector_is_empty (x)) c_error ("c_matrix_set_col", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_col", "matrix is empty.");
 	if (x->size != a->size1) c_error ("c_matrix_set_col", "vector and matrix size does not match.");
 	if (index < 0 || index >= a->size2) c_error ("c_matrix_set_col", "index must be in [0, a->size2).");
-	n = (long) x->size;
-	incx = (long) x->stride;
+	n = (int) x->size;
+	incx = (int) x->stride;
 	incy = 1;
 	dcopy_ (&n, x->data, &incx, a->data + a->lda * index, &incy);
 	return;
@@ -210,9 +210,9 @@ c_matrix_column (c_matrix *a, int index)
 void
 c_matrix_add_row (c_matrix *a)
 {
-	long	n;
-	long	incx = 1;
-	long	incy = 1;
+	int	n;
+	int	incx = 1;
+	int	incy = 1;
 	size_t	lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row", "matrix is empty.");
@@ -227,7 +227,7 @@ c_matrix_add_row (c_matrix *a)
 		int			j;
 		c_vector	*col = c_vector_alloc (a->size1);
 
-		n = (long) a->size1;
+		n = (int) a->size1;
 		for (j = a->size2 - 1; 0 < j; j--) {
 			dcopy_ (&n, a->data + j * lda, &incx, col->data, &incy);
 			dcopy_ (&n, col->data, &incy, a->data + j * a->lda, &incx);
@@ -256,9 +256,9 @@ c_matrix_add_col (c_matrix *a)
 void
 c_matrix_remove_row (c_matrix *a)
 {
-	long	n;
-	long	incx = 1;
-	long	incy = 1;
+	int		n;
+	int		incx = 1;
+	int		incy = 1;
 	size_t	lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row", "matrix is empty.");
@@ -267,7 +267,7 @@ c_matrix_remove_row (c_matrix *a)
 	a->size1--;
 	a->lda--;
 	a->tsize = a->lda * a->size2;
-	n = (long) a->size2;
+	n = (int) a->size2;
 	if (a->size1 > 0) {
 		int			j;
 		c_vector	*col = c_vector_alloc (a->size1);
@@ -335,7 +335,7 @@ c_matrix_submatrix (const size_t size1, const size_t size2, const c_matrix *a)
 void
 c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format)
 {
-	int	i, j, k;
+	int		i, j, k;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_fprintf", "matrix is empty.");
 	k = 0;
 	for (j = 0; j < a->size2; j++) {
@@ -350,7 +350,7 @@ c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format)
 void
 c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format)
 {
-	int	i, j;
+	int		i, j;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_fprintf2", "matrix is empty.");
 	for (i = 0; i < a->size1; i++) {
 		for (j = 0; j < a->size2; j++) {
