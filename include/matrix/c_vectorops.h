@@ -12,7 +12,6 @@
 extern "C" {
 #endif
 
-void		c_vector_set_all (c_vector *x, const double val);
 void		c_vector_add_constant (c_vector *x, const double c);
 double		c_vector_sum (const c_vector *x);
 double		c_vector_mean (const c_vector *x);

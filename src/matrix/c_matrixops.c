@@ -22,7 +22,7 @@ void
 c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
 {
 	int			n;
-	int			incx;
+	int			inc;
 	c_vector	*rowi;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
@@ -33,8 +33,9 @@ c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
 	c_matrix_get_row (rowi, a, i);
 
 	n = (int) a->size2;
-	incx = (int) a->lda;
-	dcopy_ (&n, a->data + j, &incx, a->data + i, &incx);
+	inc = (int) a->lda;
+	dcopy_ (&n, a->data + j, &inc, a->data + i, &inc);
+
 	c_matrix_set_row (a, j, rowi);
 	c_vector_free (rowi);
 
@@ -45,7 +46,7 @@ void
 c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 {
 	int			n;
-	int			incx;
+	int			inc;
 	c_vector	*coli;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
@@ -56,8 +57,9 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 	c_matrix_get_col (coli, a, i);
 
 	n = (int) a->size1;
-	incx = 1;
-	dcopy_ (&n, a->data + j * a->lda, &incx, a->data + i * a->lda, &incx);
+	inc = 1;
+	dcopy_ (&n, a->data + j * a->lda, &inc, a->data + i * a->lda, &inc);
+
 	c_matrix_set_col (a, j, coli);
 	c_vector_free (coli);
 
@@ -182,39 +184,6 @@ c_matrix_identity (const size_t size1, const size_t size2)
 	c_matrix_set_zero (c);
 	for (i = 0; i < min_mn; i++) c->data[i * (c->lda + 1)] = 1.;
 	return c;
-}
-
-c_vector *
-c_matrix_get_diagonal (const c_matrix *a)
-{
-	int			n;
-	int			lda;
-	int			stride;
-	size_t		min_mn = C_MIN (a->size1, a->size2);
-	c_vector	*d = c_vector_alloc (min_mn);
-
-	n = (int) min_mn;
-	lda = (int) a->lda;
-	stride = (int) d->stride;
-	dcopy_ (&n, a->data, &lda, d->data, &stride);
-
-	return d;
-}
-
-void
-c_matrix_set_diagonal (const c_vector *d, c_matrix *a)
-{
-	int			n;
-	int			stride;
-	int			lda;
-	size_t		min_mn = C_MIN (a->size1, a->size2);
-
-	n = (int) C_MIN (d->size, min_mn);
-	stride = d->stride;
-	lda = a->lda + 1;
-	dcopy_ (&n, d->data, &stride, a->data, &lda);
-
-	return;
 }
 
 c_matrix *

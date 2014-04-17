@@ -242,6 +242,7 @@ c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
 	c_vector		*_tau;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_QR_decomp", "matrix is empty.");
+	if (a->size1 > a->size2) a->data = (double *) realloc (a->data, a->size1 * a->size1 * sizeof (double));
 
 	if (p == NULL) info = c_linalg_lapack_dgeqrf (a, &_tau);
 	else info = c_linalg_lapack_dgeqp3 (a, &_tau, &_p);

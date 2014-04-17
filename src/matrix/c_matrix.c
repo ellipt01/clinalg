@@ -117,14 +117,14 @@ c_matrix_get (const c_matrix *a, const int i, const int j)
 void
 c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 {
-	int	n;
-	int	incx;
-	int	incy;
+	int		n;
+	int		incx;
+	int		incy;
 	if (c_vector_is_empty (y)) c_error ("c_matrix_get_row", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_row", "matrix is empty.");
-	if (y->size != a->size1) c_error ("c_matrix_get_row", "vector and matrix size does not match.");
+	if (y->size != a->size2) c_error ("c_matrix_get_row", "vector and matrix size does not match.");
 	if (index < 0 || index >= a->size1) c_error ("c_matrix_get_row", "index must be in [0, a->size1).");
-	n = (int) a->size1;
+	n = (int) a->size2;
 	incx = (int) a->lda;
 	incy = (int) y->stride;
 	dcopy_ (&n, a->data + index, &incx, y->data, &incy);
@@ -135,9 +135,9 @@ c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 void
 c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
 {
-	int	n;
-	int	incx;
-	int	incy;
+	int		n;
+	int		incx;
+	int		incy;
 	if (c_vector_is_empty (y)) c_error ("c_matrix_get_col", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_col", "matrix is empty.");
 	if (y->size != a->size1) c_error ("c_matrix_get_col", "vector and matrix size does not match.");
@@ -152,12 +152,12 @@ c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
 void
 c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *x)
 {
-	int	n;
-	int	incx;
-	int	incy;
+	int		n;
+	int		incx;
+	int		incy;
 	if (c_vector_is_empty (x)) c_error ("c_matrix_set_row", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_row", "matrix is empty.");
-	if (x->size != a->size1) c_error ("c_matrix_set_row", "vector and matrix size does not match.");
+	if (x->size != a->size2) c_error ("c_matrix_set_row", "vector and matrix size does not match.");
 	if (index < 0 || index >= a->size1) c_error ("c_matrix_set_row", "index must be in [0, a->size1).");
 	n = (int) x->size;
 	incx = (int) x->stride;
@@ -169,9 +169,9 @@ c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *x)
 void
 c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *x)
 {
-	int	n;
-	int	incx;
-	int	incy;
+	int		n;
+	int		incx;
+	int		incy;
 	if (c_vector_is_empty (x)) c_error ("c_matrix_set_col", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_col", "matrix is empty.");
 	if (x->size != a->size1) c_error ("c_matrix_set_col", "vector and matrix size does not match.");
@@ -210,9 +210,9 @@ c_matrix_column (c_matrix *a, int index)
 void
 c_matrix_add_row (c_matrix *a)
 {
-	int	n;
-	int	incx = 1;
-	int	incy = 1;
+	int		n;
+	int		incx = 1;
+	int		incy = 1;
 	size_t	lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row", "matrix is empty.");
@@ -315,21 +315,82 @@ c_matrix_memcpy (c_matrix *dest, const c_matrix *src)
 }
 
 void
-c_matrix_set_zero (c_matrix *a)
+c_matrix_set_all (c_matrix *a, const double val)
 {
-	int		i;
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_zero", "matrix is empty.");
-	for (i = 0; i < a->tsize; i++) a->data[i] = 0.0;
+	int			i, j;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_all", "matrix is empty.");
+	for (i = 0; i < a->size1; i++) {
+		for (j = 0; j < a->size2; j++) c_matrix_set (a, i, j, val);
+	}
 	return;
 }
 
+void
+c_matrix_set_zero (c_matrix *a)
+{
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_zero", "matrix is empty.");
+	c_matrix_set_all (a, 0.);
+	return;
+}
+
+c_vector *
+c_matrix_get_diagonal (const c_matrix *a)
+{
+	int			n;
+	int			inc;
+	int			lda;
+	c_vector	*d;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_diagonal", "matrix is empty.");
+
+	n = (int) C_MIN (a->size1, a->size2);
+	lda = (int) a->lda + 1;
+	d = c_vector_alloc (n);
+	inc = 1;
+	dcopy_ (&n, a->data, &lda, d->data, &inc);
+
+	return d;
+}
+
+c_vector *
+c_matrix_get_diagonal_view_array (const c_matrix *a)
+{
+	size_t		min_mn;
+	c_vector	*d;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_diagonal_view_array", "matrix is empty.");
+
+	min_mn = C_MIN (a->size1, a->size2);
+	d = c_vector_view_array (min_mn, a->lda + 1, a->data);
+
+	return d;
+}
+
+void
+c_matrix_set_diagonal (const c_vector *d, c_matrix *a)
+{
+	int			n;
+	int			inc;
+	int			lda;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_set_diagonal", "matrix is empty.");
+
+	n = (int) C_MIN (a->size1, a->size2);
+	inc = (int) d->stride;
+	lda = (int) a->lda + 1;
+	dcopy_ (&n, d->data, &inc, a->data, &lda);
+
+	return;
+}
 
 c_matrix *
-c_matrix_submatrix (const size_t size1, const size_t size2, const c_matrix *a)
+c_matrix_submatrix (const size_t m, const size_t n, const size_t size1, const size_t size2, const c_matrix *a)
 {
-	if (size1 < 0 || a->size1 < size1) c_error ("c_matrix_submatrix", "size1 must be in [0, a->size1]");
-	if (size2 < 0 || a->size2 < size2) c_error ("c_matrix_submatrix", "size2 must be in [0, a->size2]");
-	return c_matrix_view_array (size1, size2, a->lda, a->data);
+	if (m < 0 || a->size1 - 1 < m) c_error ("c_matrix_submatrix", "m must be in [0, a->size1 - 1)");
+	if (n < 0 || a->size2 - 1 < n) c_error ("c_matrix_submatrix", "n must be in [0, a->size2 - 1)");
+	if (m + size1 < 0 || a->size1 < m + size1) c_error ("c_matrix_submatrix", "m + size1 must be in [0, a->size1]");
+	if (n + size2 < 0 || a->size2 < n + size2) c_error ("c_matrix_submatrix", "n + size2 must be in [0, a->size2]");
+	return c_matrix_view_array (size1, size2, a->lda, &a->data[INDEX_OF_MATRIX(a, m, n)]);
 }
 
 void

@@ -13,7 +13,7 @@ bool
 test_LU_decomp (void)
 {
 	int				i;
-	size_t			size = 50;
+	size_t			size = 5;
 	c_matrix		*a;
 	c_matrix		*lu;
 	c_matrix		*l;
@@ -33,18 +33,19 @@ test_LU_decomp (void)
 	l = c_matrix_alloc (size, size);
 	c_matrix_set_zero (l);
 	c_matrix_lower_triangular_memcpy (l, lu);
-	for (i = 0; i < size; i++) c_matrix_set (l, i, i, 1.);
+	{
+		c_vector	*d = c_matrix_get_diagonal_view_array (l);
+		c_vector_set_all (d, 1.);
+		c_vector_free (d);
+	}
+//	for (i = 0; i < size; i++) c_matrix_set (l, i, i, 1.);
 
 	u = c_matrix_alloc (size, size);
 	c_matrix_set_zero (u);
 	c_matrix_upper_triangular_memcpy (u, lu);
 	c_matrix_free (lu);
 
-	perm = c_matrix_identity (a->size1, a->size2);
-	for (i = 0; i < size; i++) {
-		int		pi = (size_t) c_vector_int_get (p, i) - 1;
-		if (pi != i) c_matrix_swap_rows (i, pi, perm);
-	}
+	perm = c_linalg_permutation_matrix_row (a->size1, a->size2, p);
 	c_vector_int_free (p);
 
 	b = c_matrix_dot_matrix (1., l, u, 0.);

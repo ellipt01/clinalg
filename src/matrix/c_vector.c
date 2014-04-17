@@ -100,7 +100,7 @@ c_vector_free (c_vector *x)
 }
 
 void
-c_vector_set (c_vector *x, const int i, double val)
+c_vector_set (c_vector *x, const int i, const double val)
 {
 	int		index;
 	if (c_vector_is_empty (x)) c_error ("c_vector_set", "vector is empty.");
@@ -137,11 +137,18 @@ c_vector_memcpy (c_vector *dest, const c_vector *src)
 }
 
 void
-c_vector_set_zero (c_vector *x)
+c_vector_set_all (c_vector *x, const double val)
 {
 	int		i;
+	if (c_vector_is_empty (x)) c_error ("c_vector_set_all", "first vector is empty.");
+	for (i = 0; i < x->size; i++) x->data[INDEX_OF_VECTOR (x, i)] = val;
+}
+
+void
+c_vector_set_zero (c_vector *x)
+{
 	if (c_vector_is_empty (x)) c_error ("c_vector_set_zero", "vector is empty.");
-	for (i = 0; i < x->size; i++) x->data[INDEX_OF_VECTOR (x, i)] = 0.0;
+	c_vector_set_all (x, 0.);
 	return;
 }
 

@@ -84,7 +84,5 @@ main (void)
 		if (success && !status) success = false;
 	}
 
-	test_LU_decomp ();
-
 	return EXIT_SUCCESS;
 }

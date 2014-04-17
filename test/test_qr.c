@@ -109,8 +109,8 @@ test_lsQ_solve (void)
 	c_vector	*z;
 	double		nrm;
 
-	size1 = 50;
-	size2 = 60;
+	size1 = 5;
+	size2 = 6;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -174,7 +174,7 @@ test_QR_Rsolve (void)
 		x = c_matrix_transpose_dot_vector (1., q, y, 0.);
 		c_matrix_free (q);
 
-		r = c_matrix_submatrix (size2, size2, tmp);
+		r = c_matrix_submatrix (0, 0, size2, size2, tmp);
 		c_linalg_QR_Rsolve (r, x);
 		c_matrix_free (tmp);
 		c_matrix_free (r);

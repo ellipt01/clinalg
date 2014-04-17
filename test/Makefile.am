@@ -30,5 +30,4 @@ test_clinalg_LDFLAGS = $(top_srcdir)/src/libclinalg.la
 test_clinalg_CPPFLAGS =\
 	-I$(top_srcdir)/include\
 	-I$(top_srcdir)/include/matrix\
-	-I$(top_srcdir)/include/linalg\
 	-I$(top_srcdir)/test 

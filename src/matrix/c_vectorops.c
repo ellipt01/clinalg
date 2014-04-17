@@ -19,15 +19,6 @@ extern void	dscal_ (int *n, double *alpha, double *x, int *incx);
 extern void	daxpy_ (int *n, double *alpha, double *x, int *incx, double *y, int *incy);
 
 void
-c_vector_set_all (c_vector *x, const double val)
-{
-	int		i;
-	if (c_vector_is_empty (x)) c_error ("c_vector_set_all", "vector is empty.");
-	for (i = 0; i < x->size; i++) c_vector_set (x, i, val);
-	return;
-}
-
-void
 c_vector_add_constant (c_vector *x, const double c)
 {
 	int		i;
