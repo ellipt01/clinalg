@@ -64,7 +64,7 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
 	free (work);
 
 	if (tau) *tau = _tau;
-	else c_vector_free (_tau);
+	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
 
 	return (int) info;
 }
@@ -110,10 +110,10 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	free (work);
 
 	if (p) *p = _p;
-	else free (_p);
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
 
 	if (tau) *tau = _tau;
-	else c_vector_free (_tau);
+	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
 
 	return (int) info;
 }
@@ -227,7 +227,7 @@ c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, c_vector_int **
 	free (work);
 
 	if (p) *p = _p;
-	else free (_p);
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
 
 	if (rank) *rank = (int) lrank;
 
@@ -238,8 +238,8 @@ int
 c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
 {
 	int				info;
- 	c_vector_int	*_p;
-	c_vector		*_tau;
+ 	c_vector_int	*_p = NULL;
+	c_vector		*_tau = NULL;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_QR_decomp", "matrix is empty.");
 	if (a->size1 > a->size2) a->data = (double *) realloc (a->data, a->size1 * a->size1 * sizeof (double));
@@ -248,8 +248,10 @@ c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
 	else info = c_linalg_lapack_dgeqp3 (a, &_tau, &_p);
 
 	if (p) *p = _p;
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
+
 	if (tau) *tau = _tau;
-	else c_vector_free (_tau);
+	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
 
 	return info;
 }
@@ -295,7 +297,7 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, in
 {
 	int				info;
 	int				_rank;
-	c_vector_int	*_p;
+	c_vector_int	*_p = NULL;
 	c_matrix		*x;
 
 	if (c_vector_is_empty (b)) c_error ("c_linalg_lsQ_solve", "vector is empty.");
@@ -313,6 +315,8 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, in
 	if (info == 0) b->size = a->size2;
 
 	if (p) *p = _p;
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
+
 	if (rank) *rank = _rank;
 
 	return info;

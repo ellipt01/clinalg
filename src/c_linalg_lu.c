@@ -34,7 +34,9 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
  	min_mn = C_MIN (a->size1, a->size2);
  	_p = c_vector_int_alloc (min_mn);
 	dgetrf_ (&m, &n, a->data, &lda, _p->data, &info);
+
 	if (p) *p = _p;
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
 
 	return (int) info;
 }
@@ -97,12 +99,14 @@ int
 c_linalg_LU_decomp (c_matrix *a, c_vector_int **p)
 {
 	int				info;
-	c_vector_int	*_p;
+	c_vector_int	*_p = NULL;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_decomp", "matrix is empty.");
 
 	info = c_linalg_lapack_dgetrf (a, &_p);
+
 	if (p) *p = _p;
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
 
 	return info;
 }
