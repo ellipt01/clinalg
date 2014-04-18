@@ -10,6 +10,9 @@
 /* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
+/* blas */
+extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
+
 /* lapack */
 extern void	dgeqrf_ (int *m, int *n, double *data, int *lda, double *tau, double *work, int *lwork, int *info);
 extern void	dgeqp3_ (int *m, int *n, double *a, int *lda, int *jpvt, double *tau, double *work, int *lwork, int *info);
@@ -121,11 +124,10 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 int
 c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau)
 {
-	int   		info;
- 	int			m;
- 	int			n;
- 	int			min_mn;
- 	int			k;
+	int 		info;
+	int			m;
+	int			n;
+	int			min_mn;
 	int			lda;
 	int			lwork;
 	double		wkopt;
@@ -137,23 +139,24 @@ c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau)
 	m = (int) qr->size1;
 	n = (int) qr->size2;
 	min_mn = (int) C_MIN (m, n);
-	k = (int) C_MAX (min_mn, 1);
 	lda = (int) qr->lda;
 
- 	if (tau->size != k) c_error ("c_linalg_lapack_dorgqr", "tau->size must be equal to MAX (MIN (m, n), 1).");
+ 	if (tau->size != min_mn) c_error ("c_linalg_lapack_dorgqr", "tau->size must be equal to MIN (m, n).");
 
+	if (qr->size1 > qr->size2) {
+		qr->tsize = qr->lda * qr->size1;
+		qr->data = (double *) realloc (qr->data, qr->tsize * sizeof (double));
+	}
  	lwork = -1;
-	dorgqr_ (&m, &min_mn, &k, qr->data, &lda, tau->data, &wkopt, &lwork, &info);
+	dorgqr_ (&m, &n, &min_mn, qr->data, &lda, tau->data, &wkopt, &lwork, &info);
 	lwork = (int) wkopt;
-	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dorgqr", "failed to query size of workspace.");
+	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dorgqr", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dorgqr", "cannot allocate memory for workspace.");
-	dorgqr_ (&m, &min_mn, &k, qr->data, &lda, tau->data, work, &lwork, &info);
+	dorgqr_ (&m, &n, &min_mn, qr->data, &lda, tau->data, work, &lwork, &info);
 	free (work);
 
-	if (qr->size1 < qr->size2) qr->size2 = qr->size1;
-
-	return (int) info;
+	return info;
 }
 
 int
@@ -242,7 +245,6 @@ c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
 	c_vector		*_tau = NULL;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_QR_decomp", "matrix is empty.");
-	if (a->size1 > a->size2) a->data = (double *) realloc (a->data, a->size1 * a->size1 * sizeof (double));
 
 	if (p == NULL) info = c_linalg_lapack_dgeqrf (a, &_tau);
 	else info = c_linalg_lapack_dgeqp3 (a, &_tau, &_p);
@@ -257,13 +259,36 @@ c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
 }
 
 int
-c_linalg_QR_unpack (c_matrix *qr, const c_vector *tau)
+c_linalg_QR_unpack (c_matrix *qr, const c_vector *tau, c_matrix **q, c_matrix **r)
 {
-	int		info;
+	int			info = 0;
+	c_matrix	*_q;
+	c_matrix	*_r;
 
 	if (c_matrix_is_empty (qr)) c_error ("c_linalg_QR_unpack", "matrix is empty.");
+	if (c_vector_is_empty (tau)) c_error ("c_linalg_QR_unpack", "vector is empty.");
 
-	info = c_linalg_lapack_dorgqr (qr, tau);
+	if (r) {
+		_r = c_matrix_alloc (qr->size1, qr->size2);
+		c_matrix_upper_triangular_memcpy (_r, qr);
+		*r = _r;
+	}
+
+	if (q) {
+		_q = c_matrix_alloc (qr->size1, qr->size1);
+
+		info = c_linalg_lapack_dorgqr (qr, tau);
+		if (qr->size2 == _q->size2) c_matrix_memcpy (_q, qr);
+		else {
+			int		i;
+			int		n = qr->size1;
+			int		inc = 1;
+			for (i = 0; i < _q->size2; i++) {
+				dcopy_ (&n, qr->data + i * qr->size1, &inc, _q->data + i * _q->size1, &inc);
+			}
+		}
+		*q = _q;
+	}
 
 	return info;
 }
@@ -334,7 +359,6 @@ c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
 	if (c_vector_is_empty (qty)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
-	if (!c_matrix_is_square (r)) c_error ("c_linalg_QR_Rsolve", "matrix must be square.");
 	if (qty->size != r->size1) c_error ("c_linalg_QR_Rsolve", "vector and matrix size dose not match.");
 
 	uplo = 'U';
