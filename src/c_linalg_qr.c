@@ -57,7 +57,7 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
  	dgeqrf_ (&m, &n, a->data, &lda, _tau->data, &wkopt, &lwork, &info);
 
  	lwork = (int) wkopt;
-	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqrf", "failed to query size of workspace.");
+	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqrf", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgeqrf", "cannot allocate memory for workspace.");
 	dgeqrf_ (&m, &n, a->data, &lda, _tau->data, work, &lwork, &info);
@@ -66,7 +66,7 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
 	if (tau) *tau = _tau;
 	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
 
-	return (int) info;
+	return info;
 }
 
 int
@@ -103,7 +103,7 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
-	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqp3", "failed to query size of workspace.");
+	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqp3", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgeqp3", "cannot allocate memory for workspace.");
 	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, work, &lwork, &info);
@@ -115,7 +115,7 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	if (tau) *tau = _tau;
 	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
 
-	return (int) info;
+	return info;
 }
 
 int
@@ -177,13 +177,13 @@ c_linalg_lapack_dgels (char trans, c_matrix *qr, c_matrix *b)
 	lwork = -1;
 	dgels_ (&trans, &m, &n, &nrhs, qr->data, &lda, b->data, &ldb, &wkopt, &lwork, &info);
 	lwork = (int) wkopt;
-	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgels", "failed to query size of workspace.");
+	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgels", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgels", "cannot allocate memory for workspace.");
 	dgels_ (&trans, &m, &n, &nrhs, qr->data, &lda, b->data, &ldb, work, &lwork, &info);
 	free (work);
 
-	return (int) info;
+	return info;
 }
 
 int
@@ -195,7 +195,7 @@ c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, c_vector_int **
 	int			nrhs;
 	int			lda;
 	int			ldb;
-	int			lrank;
+	int			_rank;
 	double		wkopt;
 	double		*work;
 	int			lwork;
@@ -213,21 +213,21 @@ c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, c_vector_int **
 	_p = c_vector_int_alloc (qr->size2);
 
 	lwork = -1;
-	dgelsy_ (&m, &n, &nrhs, qr->data, &lda, b->data, &ldb, _p->data, &rcond, &lrank, &wkopt, &lwork, &info);
+	dgelsy_ (&m, &n, &nrhs, qr->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
-	if ((int) info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelsy", "failed to query workspace");
+	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelsy", "failed to query workspace");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgelsy", "cannot allocate memory work");
-	dgelsy_ (&m, &n, &nrhs, qr->data, &lda, b->data, &ldb, _p->data, &rcond, &lrank, work, &lwork, &info);
+	dgelsy_ (&m, &n, &nrhs, qr->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, work, &lwork, &info);
 	free (work);
 
 	if (p) *p = _p;
 	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
 
-	if (rank) *rank = (int) lrank;
+	if (rank) *rank = _rank;
 
-	return (int) info;
+	return info;
 }
 
 int
@@ -342,7 +342,7 @@ c_linalg_QR_solve (c_matrix *a, c_vector *b)
 
 	if (info == 0) b->size = a->size2;
 
-	return (int) info;
+	return info;
 }
 
 int

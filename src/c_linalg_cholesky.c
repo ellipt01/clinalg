@@ -22,9 +22,9 @@ extern void	dchdex_ (int *n, double *L, int *ldr, int *j, double *w);
 int
 c_linalg_lapack_dpotrf (char uplo, c_matrix *a)
 {
-	int	info;
-	int	n;
-	int	lda;
+	int		info;
+	int		n;
+	int		lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dpotrf", "matrix is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_lapack_dpotrf", "matrix must be square.");
@@ -33,7 +33,7 @@ c_linalg_lapack_dpotrf (char uplo, c_matrix *a)
 	n = (int) a->size1;
 	lda = (int) a->lda;
 	dpotrf_ (&uplo, &n, a->data, &lda, &info);
-	return (int) info;
+	return info;
 }
 
 /* interface of lapack dpotrs_ */
@@ -57,16 +57,16 @@ c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b)
 	lda = (int) l->lda;
 	ldb = (int) b->lda;
 	dpotrs_ (&uplo, &n, &nrhs, l->data, &lda, b->data, &ldb, &info);
-	return (int) info;
+	return info;
 }
 
 /* interface of lapack dpotri_ */
 int
 c_linalg_lapack_dpotri (char uplo, c_matrix *l)
 {
-	int	info;
-	int	n;
-	int	lda;
+	int		info;
+	int		n;
+	int		lda;
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_lapack_dpotri", "matrix is empty.");
 	if (!c_matrix_is_square (l)) c_error ("c_linalg_lapack_dpotri", "matrix must be square.");
 	if (uplo != 'L' && uplo != 'U') c_error ("c_linalg_lapack_dpotri", "uplo must be 'L' or 'U'.");
@@ -74,14 +74,14 @@ c_linalg_lapack_dpotri (char uplo, c_matrix *l)
 	n = (int) l->size1;
 	lda = (int)l->lda;
 	dpotri_ (&uplo, &n, l->data, &lda, &info);
-	return (int) info;
+	return info;
 }
 
 /* cholesky decomposition */
 int
 c_linalg_cholesky_decomp (c_matrix *a)
 {
-	int			info;
+	int		info;
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_cholesky_decomp", "matrix is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_cholesky_decomp", "matrix must be square.");
 
@@ -110,7 +110,7 @@ c_linalg_cholesky_svx (c_matrix *l, c_vector *b)
 int
 c_linalg_cholesky_invert (c_matrix *l)
 {
-	int			info;
+	int		info;
 
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_cholesky_invert", "matrix is empty.");
 	if (!c_matrix_is_square (l)) c_error ("c_linalg_cholesky_invert", "matrix must be square.");
@@ -125,11 +125,11 @@ c_linalg_cholesky_invert (c_matrix *l)
 int
 c_linalg_cholesky_insert (c_matrix *l, const int index, const c_vector *u)
 {
-	int		n;
-	int		ldr;
-	int		j;
-	double	*w;
-	int		info;
+	int			n;
+	int			ldr;
+	int			j;
+	double		*w;
+	int			info;
 
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_cholesky_insert", "matrix is empty.");
 	if (c_vector_is_empty (u)) c_error ("c_linalg_cholesky_insert", "vector is empty.");
@@ -156,10 +156,10 @@ c_linalg_cholesky_insert (c_matrix *l, const int index, const c_vector *u)
 void
 c_linalg_cholesky_delete (c_matrix *l, const int index)
 {
-	int		n;
-	int		ldr;
-	int		j;
-	double	*w;
+	int			n;
+	int			ldr;
+	int			j;
+	double		*w;
 
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_cholesky_delete", "matrix is empty.");
 	if (!c_matrix_is_square (l)) c_error ("c_linalg_cholesky_delete", "matrix must be square.");
