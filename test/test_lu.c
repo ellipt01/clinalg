@@ -14,8 +14,8 @@ bool
 test_LU_decomp (void)
 {
 	int				i;
-	size_t			size1 = 60;
-	size_t			size2 = 50;
+	size_t			size1 = 5;
+	size_t			size2 = 6;
 	c_matrix		*a;
 	c_matrix		*lu;
 	c_matrix		*l;
@@ -23,7 +23,6 @@ test_LU_decomp (void)
 	c_matrix		*b;
 	c_matrix		*ap;
 	c_vector_int	*p;
-	int				size;
 	c_matrix		*perm;
 	double			nrm;
 
@@ -36,8 +35,7 @@ test_LU_decomp (void)
 	c_linalg_LU_unpack (lu, &l, &u);
 	c_matrix_free (lu);
 
-	size = C_MAX (a->size1, a->size2);
-	perm = c_linalg_permutation_matrix_row (size, size, p);
+	perm = c_linalg_permutation_matrix_row (a->size1, p);
 	c_vector_int_free (p);
 
 	b = c_matrix_dot_matrix (1., l, u, 0.);
