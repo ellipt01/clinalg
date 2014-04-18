@@ -56,7 +56,7 @@ void			c_matrix_set_zero (c_matrix *a);
 
 void			c_matrix_set_diagonal (const c_vector *d, c_matrix *a);
 c_vector		*c_matrix_get_diagonal (const c_matrix *a);
-c_vector		*c_matrix_get_diagonal_view_array (const c_matrix *a);
+c_vector		*c_matrix_diagonal_view_array (const c_matrix *a);
 
 c_matrix		*c_matrix_submatrix (const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *a);
 

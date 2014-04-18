@@ -5,6 +5,7 @@
  *      Author: utsugi
  */
 
+#include <math.h>
 #include <c_linalg.h>
 
 #include "test_clinalg.h"
@@ -13,7 +14,8 @@ bool
 test_LU_decomp (void)
 {
 	int				i;
-	size_t			size = 5;
+	size_t			size1 = 60;
+	size_t			size2 = 50;
 	c_matrix		*a;
 	c_matrix		*lu;
 	c_matrix		*l;
@@ -21,31 +23,21 @@ test_LU_decomp (void)
 	c_matrix		*b;
 	c_matrix		*ap;
 	c_vector_int	*p;
+	int				size;
 	c_matrix		*perm;
 	double			nrm;
 
-	a = random_matrix (size, size);
+	a = random_matrix (size1, size2);
 
 	lu = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (lu, a);
 	c_linalg_LU_decomp (lu, &p);
 
-	l = c_matrix_alloc (size, size);
-	c_matrix_set_zero (l);
-	c_matrix_lower_triangular_memcpy (l, lu);
-	{
-		c_vector	*d = c_matrix_get_diagonal_view_array (l);
-		c_vector_set_all (d, 1.);
-		c_vector_free (d);
-	}
-//	for (i = 0; i < size; i++) c_matrix_set (l, i, i, 1.);
-
-	u = c_matrix_alloc (size, size);
-	c_matrix_set_zero (u);
-	c_matrix_upper_triangular_memcpy (u, lu);
+	c_linalg_LU_unpack (lu, &l, &u);
 	c_matrix_free (lu);
 
-	perm = c_linalg_permutation_matrix_row (a->size1, a->size2, p);
+	size = C_MAX (a->size1, a->size2);
+	perm = c_linalg_permutation_matrix_row (size, size, p);
 	c_vector_int_free (p);
 
 	b = c_matrix_dot_matrix (1., l, u, 0.);
@@ -104,4 +96,32 @@ test_LU_solve (void)
 	c_vector_free (b);
 
 	return (nrm < 1.e-8);
+}
+
+bool
+test_LU_invert (void)
+{
+	size_t			size = 50;
+	c_matrix		*a;
+	c_matrix		*lu;
+	c_matrix		*c;
+	c_vector_int	*p;
+	double			nrm;
+
+	a = random_matrix (size, size);
+
+	lu = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_memcpy (lu, a);
+	c_linalg_LU_decomp (lu, &p);
+	c_linalg_LU_invert (lu, p);
+	c_vector_int_free (p);
+
+	c = c_matrix_dot_matrix (1., lu, a, 0.);
+	c_matrix_free (a);
+	c_matrix_free (lu);
+
+	nrm = c_matrix_nrm (c, '1');
+	c_matrix_free (c);
+
+	return (fabs (nrm - 1.) < 1.e-8);
 }

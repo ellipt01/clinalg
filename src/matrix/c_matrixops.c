@@ -17,27 +17,27 @@ extern void	dgemm_ (char *transA, char *transB, int *m, int *n, int *k, double *
 
 /* lapack */
 extern double	dlange_ (char *norm, int *m, int *n, double *data, int *lda, double *w);
+extern void	dswap_ (int *n, double *x, int *incx, double *y, int *incy);
 
 void
 c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
 {
 	int			n;
 	int			inc;
-	c_vector	*rowi;
+	double		*rowi;
+	double		*rowj;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
 	if (i < 0 || a->size1 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
 	if (j < 0 || a->size1 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
-
-	rowi = c_vector_alloc (a->size2);
-	c_matrix_get_row (rowi, a, i);
+	if (i == j) return;
 
 	n = (int) a->size2;
 	inc = (int) a->lda;
-	dcopy_ (&n, a->data + j, &inc, a->data + i, &inc);
+	rowi = a->data + INDEX_OF_MATRIX (a, i, 0);
+	rowj = a->data + INDEX_OF_MATRIX (a, j, 0);
 
-	c_matrix_set_row (a, j, rowi);
-	c_vector_free (rowi);
+	dswap_ (&n, rowi, &inc, rowj, &inc);
 
 	return;
 }
@@ -47,21 +47,19 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 {
 	int			n;
 	int			inc;
-	c_vector	*coli;
+	double		*coli;
+	double		*colj;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
 	if (i < 0 || a->size2 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
 	if (j < 0 || a->size2 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
 
-	coli = c_vector_alloc (a->size1);
-	c_matrix_get_col (coli, a, i);
-
 	n = (int) a->size1;
 	inc = 1;
-	dcopy_ (&n, a->data + j * a->lda, &inc, a->data + i * a->lda, &inc);
+	coli = a->data + INDEX_OF_MATRIX (a, 0, i);
+	colj = a->data + INDEX_OF_MATRIX (a, 0, j);
 
-	c_matrix_set_col (a, j, coli);
-	c_vector_free (coli);
+	dswap_ (&n, coli, &inc, colj, &inc);
 
 	return;
 }

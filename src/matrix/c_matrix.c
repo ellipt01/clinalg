@@ -320,8 +320,8 @@ c_matrix_mncopy (const size_t m0, const size_t n0, const size_t m, const size_t 
 	int		j;
 	int		len;
 	int		inc = 1;
-	if (m0 < 0 || src->size1 - 1 < m0) c_error ("c_matrix_mncopy", "m0 must be in [0, src->size1 - 1)");
-	if (n0 < 0 || src->size2 - 1 < n0) c_error ("c_matrix_mncopy", "n0 must be in [0, src->size2 - 1)");
+	if (m0 < 0 || src->size1 - 1 <= m0) c_error ("c_matrix_mncopy", "m0 must be in [0, src->size1 - 1)");
+	if (n0 < 0 || src->size2 - 1 <= n0) c_error ("c_matrix_mncopy", "n0 must be in [0, src->size2 - 1)");
 	if (m0 + m < 0 || src->size1 < m0 + m) c_error ("c_matrix_mncopy", "m0 + m must be in [0, src->size1]");
 	if (n0 + n < 0 || src->size2 < n0 + n) c_error ("c_matrix_mncopy", "n0 + n must be in [0, src->size2]");
 	if (dest->size1 < m || dest->size2 < n) c_error ("c_matrix_mncopy", "index out of range.");
@@ -372,7 +372,7 @@ c_matrix_get_diagonal (const c_matrix *a)
 }
 
 c_vector *
-c_matrix_get_diagonal_view_array (const c_matrix *a)
+c_matrix_diagonal_view_array (const c_matrix *a)
 {
 	size_t		min_mn;
 	c_vector	*d;

@@ -24,16 +24,18 @@ bool	(*test_cholesky_func_ptr[]) (void) = {
 	test_cholesky_delete
 };
 
-const int	n_test_LU_func = 2;
+const int	n_test_LU_func = 3;
 
 const char	*test_LU_func_name[] = {
 	"test_LU_decomp",
-	"test_LU_solve "
+	"test_LU_solve ",
+	"test_LU_invert"
 };
 
 bool	(*test_LU_func_ptr[]) (void) = {
 	test_LU_decomp,
-	test_LU_solve
+	test_LU_solve,
+	test_LU_invert
 };
 
 const int	n_test_QR_func = 6;
@@ -56,11 +58,15 @@ bool	(*test_QR_func_ptr[]) (void) = {
 	test_cholesky_delete
 };
 
+#include <time.h>
+
 int
 main (void)
 {
 	int		i;
 	bool	success = true;
+
+	srand (time (NULL));
 
 	fprintf (stderr, "*** test_cholesky ***\n");
 	for (i = 0; i < n_test_cholesky_func; i++) {

@@ -5,15 +5,15 @@
  *      Author: utsugi
  */
 
-#include <c_matrix.h>
+#include <c_linalg.h>
 
 /* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack */
 extern void	dgetrf_ (int *m, int *n, double *data, int *lda, int *ipiv, int *info);
-extern void	dgetri_ (int *n, double *data, int *lda, int *ipiv, double *work, int *lwork, int *info);
 extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
+extern void	dgetri_ (int *n, double *data, int *lda, int *ipiv, double *work, int *lwork, int *info);
 
 int
 c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
@@ -23,7 +23,6 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
  	int				n;
  	int				lda;
  	size_t			min_mn;
-
  	c_vector_int	*_p;
 
  	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgetrf", "matrix is empty.");
@@ -44,11 +43,11 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
 int
 c_linalg_lapack_dgetrs (char trans, c_matrix *lu, c_matrix *b, c_vector_int *p)
 {
-	int		info;
-	int		n;
-	int		nrhs;
-	int		lda;
-	int		ldb;
+	int			info;
+	int			n;
+	int			nrhs;
+	int			lda;
+	int			ldb;
 
 	if (c_matrix_is_empty (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix is empty.");
 	if (!c_matrix_is_square (lu)) c_error ("c_linalg_lapack_dgetrs", "matrix must be square.");
@@ -111,6 +110,33 @@ c_linalg_LU_decomp (c_matrix *a, c_vector_int **p)
 	return info;
 }
 
+void
+c_linalg_LU_unpack (const c_matrix *lu, c_matrix **l, c_matrix **u)
+{
+	int		min_mn;
+
+	if (c_matrix_is_empty (lu)) c_error ("c_linalg_LU_unpack", "matrix is empty.");
+
+	min_mn = (int) C_MIN (lu->size1, lu->size2);
+
+	if (l) {
+		int			i;
+		c_matrix	*_l = c_matrix_alloc (lu->size1, min_mn);
+		c_matrix_set_zero (_l);
+		c_matrix_lower_triangular_memcpy (_l, lu);
+		for (i = 0; i < min_mn; i++) c_matrix_set (_l, i, i, 1.);
+		*l = _l;
+	}
+
+	if (u) {
+		c_matrix	*_u = c_matrix_alloc (min_mn, lu->size2);
+		c_matrix_set_zero (_u);
+		c_matrix_upper_triangular_memcpy (_u, lu);
+		*u = _u;
+	}
+	return;
+}
+
 int
 c_linalg_LU_solve (c_matrix *lu, c_vector *b, c_vector_int *p)
 {
@@ -133,7 +159,7 @@ c_linalg_LU_solve (c_matrix *lu, c_vector *b, c_vector_int *p)
 int
 c_linalg_LU_invert (c_matrix *lu, c_vector_int *p)
 {
-	int			info;
+	int		info;
 
 	if (c_matrix_is_empty (lu)) c_error ("c_linalg_LU_invert", "matrix is empty.");
 	if (!c_matrix_is_square (lu)) c_error ("c_linalg_LU_invert", "matrix must be square.");

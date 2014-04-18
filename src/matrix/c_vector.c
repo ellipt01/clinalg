@@ -137,6 +137,26 @@ c_vector_memcpy (c_vector *dest, const c_vector *src)
 }
 
 void
+c_vector_ncopy (const size_t n0, const size_t n, c_vector *dest, const c_vector *src)
+{
+	int		len;
+	int		incx;
+	int		incy;
+	if (c_vector_is_empty (src)) c_error ("c_vector_ncopy", "first vector is empty.");
+	if (c_vector_is_empty (dest)) c_error ("c_vector_ncopy", "second vector is empty.");
+	if (n0 < 0 || src->size - 1 <= n0) c_error ("c_vector_ncopy", "n0 must be in [0, size - 1).");
+	if (n0 < 0 || src->size - 1 <= n0) c_error ("c_vector_ncopy", "n0 must be in [0, size - 1).");
+	if (n0 + n < 0 || src->size < n0 + n) c_error ("c_vector_ncopy", "n0 + n must be in [0, src->size]");
+	if (dest->size < n) c_error ("c_vector_ncopy", "index out of range.");
+
+	len = (int) n;
+	incx = (int) src->stride;
+	incy = (int) dest->stride;
+	dcopy_ (&len, src->data + n0, &incx, dest->data, &incy);
+	return;
+}
+
+void
 c_vector_set_all (c_vector *x, const double val)
 {
 	int		i;
