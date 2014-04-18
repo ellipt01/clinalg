@@ -1,4 +1,4 @@
 libclinalg
 ==========
 
-C linalg
+C interface of LAPACK and BLAS
