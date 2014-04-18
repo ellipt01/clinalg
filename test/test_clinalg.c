@@ -36,10 +36,11 @@ bool	(*test_LU_func_ptr[]) (void) = {
 	test_LU_solve
 };
 
-const int	n_test_QR_func = 5;
+const int	n_test_QR_func = 6;
 
 const char	*test_QR_func_name[] = {
 	"test_QR_decomp",
+	"test_QR_decomp_econ",
 	"test_QR_solve ",
 	"test_lsQ_solve ",
 	"test_QR_Rsolve",
@@ -48,6 +49,7 @@ const char	*test_QR_func_name[] = {
 
 bool	(*test_QR_func_ptr[]) (void) = {
 	test_QR_decomp,
+	test_QR_decomp_econ,
 	test_QR_solve,
 	test_lsQ_solve,
 	test_QR_Rsolve,

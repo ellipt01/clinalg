@@ -315,6 +315,25 @@ c_matrix_memcpy (c_matrix *dest, const c_matrix *src)
 }
 
 void
+c_matrix_mncopy (const size_t m0, const size_t n0, const size_t m, const size_t n, c_matrix *dest, const c_matrix *src)
+{
+	int		j;
+	int		len;
+	int		inc = 1;
+	if (m0 < 0 || src->size1 - 1 < m0) c_error ("c_matrix_mncopy", "m0 must be in [0, src->size1 - 1)");
+	if (n0 < 0 || src->size2 - 1 < n0) c_error ("c_matrix_mncopy", "n0 must be in [0, src->size2 - 1)");
+	if (m0 + m < 0 || src->size1 < m0 + m) c_error ("c_matrix_mncopy", "m0 + m must be in [0, src->size1]");
+	if (n0 + n < 0 || src->size2 < n0 + n) c_error ("c_matrix_mncopy", "n0 + n must be in [0, src->size2]");
+	if (dest->size1 < m || dest->size2 < n) c_error ("c_matrix_mncopy", "index out of range.");
+
+	len = (int) m;
+	for (j = 0; j < n; j++) {
+		dcopy_ (&len, src->data + INDEX_OF_MATRIX (src, m0, n0 + j), &inc, dest->data + INDEX_OF_MATRIX (src, 0, j), &inc);
+	}
+	return;
+}
+
+void
 c_matrix_set_all (c_matrix *a, const double val)
 {
 	int			i, j;
@@ -384,13 +403,13 @@ c_matrix_set_diagonal (const c_vector *d, c_matrix *a)
 }
 
 c_matrix *
-c_matrix_submatrix (const size_t m, const size_t n, const size_t size1, const size_t size2, const c_matrix *a)
+c_matrix_submatrix (const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *a)
 {
-	if (m < 0 || a->size1 - 1 < m) c_error ("c_matrix_submatrix", "m must be in [0, a->size1 - 1)");
-	if (n < 0 || a->size2 - 1 < n) c_error ("c_matrix_submatrix", "n must be in [0, a->size2 - 1)");
-	if (m + size1 < 0 || a->size1 < m + size1) c_error ("c_matrix_submatrix", "m + size1 must be in [0, a->size1]");
-	if (n + size2 < 0 || a->size2 < n + size2) c_error ("c_matrix_submatrix", "n + size2 must be in [0, a->size2]");
-	return c_matrix_view_array (size1, size2, a->lda, &a->data[INDEX_OF_MATRIX(a, m, n)]);
+	if (m0 < 0 || a->size1 - 1 < m0) c_error ("c_matrix_submatrix", "m0 must be in [0, a->size1 - 1)");
+	if (n0 < 0 || a->size2 - 1 < n0) c_error ("c_matrix_submatrix", "n0 must be in [0, a->size2 - 1)");
+	if (m0 + m < 0 || a->size1 < m0 + m) c_error ("c_matrix_submatrix", "m0 + m must be in [0, a->size1]");
+	if (n0 + n < 0 || a->size2 < n0 + n) c_error ("c_matrix_submatrix", "n0 + n must be in [0, a->size2]");
+	return c_matrix_view_array (m, n, a->lda, &a->data[INDEX_OF_MATRIX(a, m0, n0)]);
 }
 
 void

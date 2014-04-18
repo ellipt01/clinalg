@@ -14,6 +14,8 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+
 #include <c_vector.h>
 #include <c_vectorops.h>
 #include <c_matrix.h>

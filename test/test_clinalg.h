@@ -20,6 +20,7 @@ bool	test_LU_decomp (void);
 bool	test_LU_solve (void);
 
 bool	test_QR_decomp (void);
+bool	test_QR_decomp_econ (void);
 bool	test_QR_solve (void);
 bool	test_lsQ_solve (void);
 bool	test_QR_Rsolve (void);

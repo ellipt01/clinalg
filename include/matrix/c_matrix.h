@@ -49,6 +49,8 @@ void			c_matrix_remove_col (c_matrix *a);
 void			c_matrix_remove_row (c_matrix *a);
 
 void			c_matrix_memcpy (c_matrix *dest, const c_matrix *src);
+void			c_matrix_mncopy (const size_t m0, const size_t n0, const size_t m, const size_t n, c_matrix *dest, const c_matrix *src);
+
 void			c_matrix_set_all (c_matrix *a, const double val);
 void			c_matrix_set_zero (c_matrix *a);
 
@@ -56,7 +58,7 @@ void			c_matrix_set_diagonal (const c_vector *d, c_matrix *a);
 c_vector		*c_matrix_get_diagonal (const c_matrix *a);
 c_vector		*c_matrix_get_diagonal_view_array (const c_matrix *a);
 
-c_matrix		*c_matrix_submatrix (const size_t m, const size_t n, const size_t size1, const size_t size2, const c_matrix *a);
+c_matrix		*c_matrix_submatrix (const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *a);
 
 void			c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format);
 void			c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format);

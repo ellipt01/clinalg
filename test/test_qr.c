@@ -23,8 +23,8 @@ test_QR_decomp (void)
 	c_vector	*tau;
 	double		nrm;
 
-	size1 = 6;
-	size2 = 5;
+	size1 = 60;
+	size2 = 50;
 
 	a = random_matrix (size1, size2);
 
@@ -32,10 +32,10 @@ test_QR_decomp (void)
 	qr = c_matrix_alloc (size1, size2);
 	c_matrix_memcpy (qr, a);
 	c_linalg_QR_decomp (qr, NULL, &tau);
-	c_linalg_QR_unpack (qr, tau, &q, &r);
+	c_linalg_QR_unpack (qr, tau, &q, &r, false);
 	c_vector_free (tau);
 	c_matrix_free (qr);
-
+/*
 	fprintf (stdout, "a = [\n");
 	c_matrix_fprintf2 (stdout, a, "%f");
 	fprintf (stdout, "]\n");
@@ -45,6 +45,46 @@ test_QR_decomp (void)
 	fprintf (stdout, "q = [\n");
 	c_matrix_fprintf2 (stdout, q, "%f");
 	fprintf (stdout, "]\n");
+*/
+	/* b = q * r */
+	b = c_matrix_dot_matrix (1., q, r, 0.);
+	c_matrix_free (q);
+	c_matrix_free (r);
+
+	c_matrix_sub (a, b);
+	c_matrix_free (b);
+
+	nrm = c_matrix_nrm (a, '1');
+	c_matrix_free (a);
+
+	return (nrm < 1.e-8);
+}
+
+bool
+test_QR_decomp_econ (void)
+{
+	size_t		size1;
+	size_t		size2;
+	c_matrix	*a;
+	c_matrix	*qr;
+	c_matrix	*q;
+	c_matrix	*r;
+	c_matrix	*b;
+	c_vector	*tau;
+	double		nrm;
+
+	size1 = 60;
+	size2 = 50;
+
+	a = random_matrix (size1, size2);
+
+	/* qr = qr(a) */
+	qr = c_matrix_alloc (size1, size2);
+	c_matrix_memcpy (qr, a);
+	c_linalg_QR_decomp (qr, NULL, &tau);
+	c_linalg_QR_unpack (qr, tau, &q, &r, true);
+	c_vector_free (tau);
+	c_matrix_free (qr);
 
 	/* b = q * r */
 	b = c_matrix_dot_matrix (1., q, r, 0.);
@@ -165,7 +205,7 @@ test_QR_Rsolve (void)
 		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
 		c_matrix_memcpy (qr, a);
 		c_linalg_QR_decomp (qr, NULL, &tau);
-		c_linalg_QR_unpack (qr, tau, &q, &r);
+		c_linalg_QR_unpack (qr, tau, &q, &r, false);
 		c_vector_free (tau);
 		c_matrix_free (qr);
 

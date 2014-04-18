@@ -148,8 +148,8 @@ c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 	int		incx = 1;
 	int		incy = 1;
 
-	size_t		min_m = C_MIN (tr->size1, a->size1);
-	size_t		min_n = C_MIN (tr->size2, a->size2);
+	size_t	min_m = C_MIN (tr->size1, a->size1);
+	size_t	min_n = C_MIN (tr->size2, a->size2);
 	for (j = 0; j < min_n; j++) {
 		int	n = (j + 1 < min_m) ? (int) (j + 1) : (int) min_m;
 		dcopy_ (&n, a->data + j * a->lda, &incx, tr->data + j * tr->lda, &incy);
@@ -164,8 +164,8 @@ c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 	int		incx = 1;
 	int		incy = 1;
 
-	size_t		min_m = C_MIN (tr->size1, a->size1);
-	size_t		min_n = C_MIN (tr->size2, a->size2);
+	size_t	min_m = C_MIN (tr->size1, a->size1);
+	size_t	min_n = C_MIN (tr->size2, a->size2);
 	for (j = 0; j < min_n; j++) {
 		int	n;
 		n = min_m - j;
@@ -193,9 +193,9 @@ c_matrix_transpose (c_matrix *a)
 	c_vector	*col;
 	c_matrix	*at = c_matrix_alloc (a->size2, a->size1);
 
-	int		n;
-	int		incx;
-	int		incy = (int) at->lda;
+	int			n;
+	int			incx;
+	int			incy = (int) at->lda;
 	for (j = 0; j < a->size2; j++) {
 		col = c_matrix_column (a, j);
 		n = (int) a->size1;
@@ -216,9 +216,11 @@ c_matrix_dot_vector (double alpha, const c_matrix *a, const c_vector *x, double 
 	int			incx;
 	int			incy;
 	c_vector	*y;
+
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_vector", "matrix is empty.");
 	if (c_vector_is_empty (x)) c_error ("c_matrix_dot_vector", "vector is empty.");
 	if (a->size2 != x->size) c_error ("c_matrix_dot_vector", "vector and matrix size does not match.");
+
 	y = c_vector_alloc (a->size1);
 	n = (int) a->size1;
 	m = (int) a->size2;
@@ -240,9 +242,11 @@ c_matrix_transpose_dot_vector (double alpha, const c_matrix *a, const c_vector *
 	int			incx;
 	int			incy;
 	c_vector	*y;
+
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_vector", "matrix is empty.");
 	if (c_vector_is_empty (x)) c_error ("c_matrix_transpose_dot_vector", "vector is empty.");
 	if (a->size1 != x->size) c_error ("c_matrix_transpose_dot_vector", "vector and matrix size does not match.");
+
 	y = c_vector_alloc (a->size2);
 	n = (int) a->size1;
 	m = (int) a->size2;
@@ -266,9 +270,11 @@ c_matrix_dot_matrix (double alpha, const c_matrix *a, const c_matrix *b, double 
 	int			ldb;
 	int			ldc;
 	c_matrix	*c;
+
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix", "matrix *b is empty.");
-	if (a->size1 != b->size1) c_error ("c_matrix_dot_matrix", "matrix size does not match.");
+	if (a->size2 != b->size1) c_error ("c_matrix_dot_matrix", "matrix size does not match.");
+
 	c = c_matrix_alloc (a->size1, b->size2);
 	m = (int) a->size1;
 	n = (int) b->size2;
@@ -293,9 +299,11 @@ c_matrix_dot_matrix_transpose (double alpha, const c_matrix *a, const c_matrix *
 	int			ldb;
 	int			ldc;
 	c_matrix	*c;
+
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_transpose", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_transpose", "matrix *b is empty.");
-	if (a->size1 != b->size1) c_error ("c_matrix_dot_matrix_transpose", "matrix size does not match.");
+	if (a->size2 != b->size2) c_error ("c_matrix_dot_matrix_transpose", "matrix size does not match.");
+
 	c = c_matrix_alloc (a->size2, b->size1);
 	m = (int) a->size1;
 	n = (int) b->size1;
@@ -320,9 +328,11 @@ c_matrix_transpose_dot_matrix (double alpha, const c_matrix *a, const c_matrix *
 	int			ldb;
 	int			ldc;
 	c_matrix	*c;
+
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_transpose_dot_matrix", "matrix *b is empty.");
 	if (a->size1 != b->size1) c_error ("c_matrix_transpose_dot_matrix", "matrix size does not match.");
+
 	c = c_matrix_alloc (a->size2, b->size2);
 	m = (int) a->size2;
 	n = (int) b->size2;
