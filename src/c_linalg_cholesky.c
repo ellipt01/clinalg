@@ -11,12 +11,16 @@
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* blas */
+#ifndef HAVE_BLAS_H
 extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
+#endif
 
 /* lapack: cholesky decomposition */
+#ifndef HAVE_LAPACK_H
 extern void	dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
 extern void	dpotrs_ (char *uplo, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
 extern void	dpotri_ (char *uplo, int *n, double *a, int *lda, int *info);
+#endif
 /* qrupdate: cholinsert/delete */
 extern void	dch1up_ (int *n, double *L, int *ldr, double *u, double *w);
 extern void	dch1dn_ (int *n, double *L, int *ldr, double *u, double *w, int *info);

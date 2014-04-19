@@ -7,9 +7,13 @@
 
 #include <c_matrix.h>
 
-/* blas */
-extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
+/* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
+
+/* blas */
+#ifndef HAVE_BLAS_H
+extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
+#endif
 
 static c_vector *
 _allocate_c_vector (void)

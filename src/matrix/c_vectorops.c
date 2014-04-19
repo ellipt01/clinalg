@@ -7,16 +7,18 @@
 
 #include <c_matrix.h>
 
-/* c_matrix.c */
+/* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* blas */
+#ifndef HAVE_BLAS_H
 extern int		idamax_ (int *n, double *x, int *incx);
 extern double	dasum_ (int *n, double *x, int *incx);
 extern double	dnrm2_ (int *n, double *x, int *incx);
 extern double	ddot_ (int *n, double *x, int *incx, double *y, int *incy);
 extern void	dscal_ (int *n, double *alpha, double *x, int *incx);
 extern void	daxpy_ (int *n, double *alpha, double *x, int *incx, double *y, int *incy);
+#endif
 
 void
 c_vector_add_constant (c_vector *x, const double c)

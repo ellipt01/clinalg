@@ -10,4 +10,5 @@ libclinalg_include_DATA = \
 	c_linalg_lu.h\
 	c_linalg_cholesky.h\
 	c_linalg_qr.h\
+	c_linalg_sv.h\
 	c_linalg.h

@@ -11,9 +11,11 @@
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack */
+#ifndef HAVE_LAPACK_H
 extern void	dgetrf_ (int *m, int *n, double *data, int *lda, int *ipiv, int *info);
 extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
 extern void	dgetri_ (int *n, double *data, int *lda, int *ipiv, double *work, int *lwork, int *info);
+#endif
 
 int
 c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)

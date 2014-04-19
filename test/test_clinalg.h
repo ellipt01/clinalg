@@ -34,4 +34,8 @@ bool	test_QR_coldelete (void);
 bool	test_QR_rowinsert (void);
 bool	test_QR_rowdelete (void);
 
+bool	test_SV_decomp (void);
+bool	test_SV_solve (void);
+bool	test_SV_lsd_solve (void);
+
 #endif /* TEST_CLINALG_H_ */

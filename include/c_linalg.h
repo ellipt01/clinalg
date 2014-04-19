@@ -24,6 +24,7 @@ extern "C" {
 #include <c_linalg_cholesky.h>
 #include <c_linalg_lu.h>
 #include <c_linalg_qr.h>
+#include <c_linalg_sv.h>
 
 #define DBL_EPSILON		2.2204460492503131e-16
 

@@ -70,6 +70,20 @@ bool	(*test_QR_func_ptr[]) (void) = {
 	test_QR_rowdelete
 };
 
+const int	n_test_SV_func = 3;
+
+const char	*test_SV_func_name[] = {
+	"test_SV_decomp   ",
+	"test_SV_solve    ",
+	"test_SV_lsd_solve"
+};
+
+bool	(*test_SV_func_ptr[]) (void) = {
+	test_SV_decomp,
+	test_SV_solve,
+	test_SV_lsd_solve
+};
+
 #include <time.h>
 
 int
@@ -100,6 +114,14 @@ main (void)
 	for (i = 0; i < n_test_QR_func; i++) {
 		bool	status = test_QR_func_ptr[i] ();
 		fprintf (stderr, "\t %s ...", test_QR_func_name[i]);
+		fprintf (stderr, status ? "SUCCESS\n" : "FAILED\n");
+		if (success && !status) success = false;
+	}
+
+	fprintf (stderr, "\n*** test_SV ***\n");
+	for (i = 0; i < n_test_SV_func; i++) {
+		bool	status = test_SV_func_ptr[i] ();
+		fprintf (stderr, "\t %s ...", test_SV_func_name[i]);
 		fprintf (stderr, status ? "SUCCESS\n" : "FAILED\n");
 		if (success && !status) success = false;
 	}

@@ -26,6 +26,24 @@ test_QR_decomp (void)
 	size1 = 50;
 	size2 = 60;
 
+/*
+	{
+		c_matrix	*c1 = random_matrix (3, 5);
+		c_matrix	*c2 = random_matrix (5, 3);
+		c_matrix	*c3 = c_matrix_transpose_dot_matrix_transpose (1., c1, c2, 0.);
+
+		fprintf (stdout, "c1 = [\n");
+		c_matrix_fprintf2 (stdout, c1, "%f");
+		fprintf (stdout, "]\n");
+		fprintf (stdout, "c2 = [\n");
+		c_matrix_fprintf2 (stdout, c2, "%f");
+		fprintf (stdout, "]\n");
+		fprintf (stdout, "c3 = [\n");
+		c_matrix_fprintf2 (stdout, c3, "%f");
+		fprintf (stdout, "]\n");
+	}
+*/
+
 	a = random_matrix (size1, size2);
 
 	/* qr = qr(a) */

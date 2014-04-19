@@ -7,17 +7,22 @@
 
 #include <c_matrix.h>
 
+/* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* blas */
+#ifndef HAVE_BLAS_H
 extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
 extern void	daxpy_ (int *n, double *alpha, double *x, int *incx, double *y, int *incy);
 extern void	dgemv_ (char *trans, int *n, int *m, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy);
 extern void	dgemm_ (char *transA, char *transB, int *m, int *n, int *k, double *alpha, double *a, int *lda, double *b, int *ldb, double *beta, double *c, int *ldc);
+#endif
 
 /* lapack */
+#ifndef HAVE_LAPACK_H
 extern double	dlange_ (char *norm, int *m, int *n, double *data, int *lda, double *w);
 extern void	dswap_ (int *n, double *x, int *incx, double *y, int *incy);
+#endif
 
 /* y = x + y */
 void
@@ -537,6 +542,35 @@ c_matrix_transpose_dot_matrix (double alpha, const c_matrix *a, const c_matrix *
 	c = c_matrix_alloc (a->size2, b->size2);
 	m = (int) a->size2;
 	n = (int) b->size2;
+	k = (int) a->size1;
+	lda = (int) a->lda;
+	ldb = (int) b->lda;
+	ldc = (int) c->lda;
+	dgemm_ (&transA, &transB, &m, &n, &k, &alpha, a->data, &lda, b->data, &ldb, &beta, c->data, &ldc);
+	return c;
+}
+
+/* c = alpha * a' * b' + beta */
+c_matrix *
+c_matrix_transpose_dot_matrix_transpose (double alpha, const c_matrix *a, const c_matrix *b, double beta)
+{
+	char		transA = 'T';
+	char		transB = 'T';
+	int			m;
+	int			n;
+	int			k;
+	int			lda;
+	int			ldb;
+	int			ldc;
+	c_matrix	*c;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix *a is empty.");
+	if (c_matrix_is_empty (b)) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix *b is empty.");
+	if (a->size1 != b->size2) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix size does not match.");
+
+	c = c_matrix_alloc (a->size2, b->size1);
+	m = (int) a->size2;
+	n = (int) b->size1;
 	k = (int) a->size1;
 	lda = (int) a->lda;
 	ldb = (int) b->lda;

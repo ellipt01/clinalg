@@ -36,6 +36,8 @@ AC_CHECK_FUNCS([dchinx_ dchdex_])
 # Checks for header files.
 AC_CHECK_HEADER([stdlib.h])
 AC_CHECK_HEADER([string.h])
+AC_CHECK_HEADER([blas.h])
+AC_CHECK_HEADER([lapack.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
