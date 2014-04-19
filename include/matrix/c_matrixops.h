@@ -15,6 +15,9 @@ extern "C" {
 /* c_matrixops.c */
 void			c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a);
 void			c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a);
+void			c_matrix_add (c_matrix *y, const c_matrix *x);
+void			c_matrix_sub (c_matrix *y, const c_matrix *x);
+void			c_matrix_axpy (double alpha, const c_matrix *x, c_matrix *y);
 double			c_matrix_nrm (c_matrix *a, char norm);
 void			c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a);
 void			c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a);

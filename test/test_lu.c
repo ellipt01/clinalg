@@ -14,8 +14,8 @@ bool
 test_LU_decomp (void)
 {
 	int				i;
-	size_t			size1 = 5;
-	size_t			size2 = 6;
+	size_t			size1 = 50;
+	size_t			size2 = 60;
 	c_matrix		*a;
 	c_matrix		*lu;
 	c_matrix		*l;

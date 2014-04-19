@@ -269,9 +269,10 @@ _c_linalg_QR_unpack (const c_matrix *qr, const c_vector *tau, c_matrix **q, c_ma
 	}
 
 	if (q) {
+		size_t	min_mn = (size_t) C_MIN (qr->size1, qr->size2);
 		_q = c_matrix_alloc (qr->size1, qr->size1);
 		if (qr->size1 == qr->size2) c_matrix_memcpy (_q, qr);
-		else c_matrix_mncopy (0, 0, qr->size1, qr->size2, _q, qr);
+		else c_matrix_mncopy (0, 0, qr->size1, min_mn, _q, qr);
 		info = c_linalg_lapack_dorgqr (_q, tau);
 		*q = _q;
 	}

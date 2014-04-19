@@ -13,6 +13,8 @@ c_matrix	*random_matrix (size_t size1, size_t size2);
 
 bool	test_cholesky_decomp (void);
 bool	test_cholesky_svx (void);
+bool	test_cholesky_1up (void);
+bool	test_cholesky_1down (void);
 bool	test_cholesky_insert (void);
 bool	test_cholesky_delete (void);
 
@@ -25,5 +27,7 @@ bool	test_QR_decomp_econ (void);
 bool	test_QR_solve (void);
 bool	test_lsQ_solve (void);
 bool	test_QR_Rsolve (void);
+bool	test_QR_1up (void);
+bool	test_QR_1down (void);
 
 #endif /* TEST_CLINALG_H_ */

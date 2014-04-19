@@ -64,9 +64,34 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 	return;
 }
 
-/* x = x - y */
+/* y = x + y */
 void
-c_matrix_sub (c_matrix *x, const c_matrix *y)
+c_matrix_add (c_matrix *y, const c_matrix *x)
+{
+	int		n;
+	int		incx = 1;
+	int		incy = 1;
+	double	alpha = 1.;
+	if (x->size1 != y->size1 || x->size2 != y->size2) c_error ("c_matrix_add", "matrix size done not match.");
+
+	if (x->size1 == x->lda || y->size1 == y->lda) {
+		n = x->tsize;
+		daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
+	} else {
+		int		j;
+		n = x->size1;
+		for (j = 0; j < x->size2; j++) {
+			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
+			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
+			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
+		}
+	}
+	return;
+}
+
+/* y = y - x */
+void
+c_matrix_sub (c_matrix *y, const c_matrix *x)
 {
 	int		n;
 	int		incx = 1;
@@ -76,14 +101,38 @@ c_matrix_sub (c_matrix *x, const c_matrix *y)
 
 	if (x->size1 == x->lda || y->size1 == y->lda) {
 		n = x->tsize;
-		daxpy_ (&n, &alpha, y->data, &incx, x->data, &incy);
+		daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
 	} else {
 		int		j;
 		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
 			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
 			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
-			daxpy_ (&n, &alpha, yj, &incx, xj, &incy);
+			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
+		}
+	}
+	return;
+}
+
+/* x = x - y */
+void
+c_matrix_axpy (double alpha, const c_matrix *x, c_matrix *y)
+{
+	int		n;
+	int		incx = 1;
+	int		incy = 1;
+	if (x->size1 != y->size1 || x->size2 != y->size2) c_error ("c_matrix_axpy", "matrix size done not match.");
+
+	if (x->size1 == x->lda || y->size1 == y->lda) {
+		n = x->tsize;
+		daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
+	} else {
+		int		j;
+		n = x->size1;
+		for (j = 0; j < x->size2; j++) {
+			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
+			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
+			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
 		}
 	}
 	return;
@@ -302,7 +351,7 @@ c_matrix_dot_matrix_transpose (double alpha, const c_matrix *a, const c_matrix *
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_transpose", "matrix *b is empty.");
 	if (a->size2 != b->size2) c_error ("c_matrix_dot_matrix_transpose", "matrix size does not match.");
 
-	c = c_matrix_alloc (a->size2, b->size1);
+	c = c_matrix_alloc (a->size1, b->size1);
 	m = (int) a->size1;
 	n = (int) b->size1;
 	k = (int) a->size2;

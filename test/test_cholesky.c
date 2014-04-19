@@ -93,6 +93,95 @@ test_cholesky_svx (void)
 }
 
 bool
+test_cholesky_1up (void)
+{
+	size_t		size;
+	c_matrix	*a;
+	c_matrix	*c;
+	c_matrix	*l;
+	c_vector	*u;
+	double		nrm;
+
+	size = 50;
+	/* posdef symmetry matrix *a */
+	{
+		int			i;
+		c_matrix	*a0 = random_matrix (size, size);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		c_matrix_free (a0);
+		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
+	}
+
+	l = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_memcpy (l, a);
+
+	u = random_vector (size);
+	{
+		c_matrix	*ut = c_matrix_view_array (u->size, 1, u->size, u->data);
+		c = c_matrix_dot_matrix_transpose (1., ut, ut, 0.);
+		c_matrix_free (ut);
+		c_matrix_add (a, c);
+		c_matrix_free (c);
+		c_linalg_cholesky_decomp (a);
+	}
+
+	c_linalg_cholesky_decomp (l);
+	c_linalg_cholesky_1up (l, u);
+	c_matrix_sub (a, l);
+	c_matrix_free (l);
+
+	nrm = c_matrix_nrm (a, '1');
+	c_matrix_free (a);
+
+	return (nrm < 1.e-8);
+}
+
+bool
+test_cholesky_1down (void)
+{
+	int			info;
+	size_t		size;
+	c_matrix	*a;
+	c_matrix	*c;
+	c_matrix	*l;
+	c_vector	*u;
+	double		nrm;
+
+	size = 50;
+	/* posdef symmetry matrix *a */
+	{
+		int			i;
+		c_matrix	*a0 = random_matrix (size, size);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		c_matrix_free (a0);
+		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
+	}
+
+	l = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_memcpy (l, a);
+	u = random_vector (size);
+	c_vector_scale (u, 0.1);
+	{
+		c_matrix	*ut = c_matrix_view_array (u->size, 1, u->size, u->data);
+		c = c_matrix_dot_matrix_transpose (1., ut, ut, 0.);
+		c_matrix_free (ut);
+		c_matrix_sub (a, c);
+		c_matrix_free (c);
+		c_linalg_cholesky_decomp (a);
+	}
+
+	c_linalg_cholesky_decomp (l);
+	info = c_linalg_cholesky_1down (l, u);
+	c_matrix_sub (a, l);
+	c_matrix_free (l);
+
+	nrm = c_matrix_nrm (a, '1');
+	c_matrix_free (a);
+
+	return (info == 0 && nrm < 1.e-8);
+}
+
+bool
 test_cholesky_insert (void)
 {
 	int			index;

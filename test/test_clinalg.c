@@ -8,11 +8,13 @@
 #include <c_linalg.h>
 #include "test_clinalg.h"
 
-const int	n_test_cholesky_func = 4;
+const int	n_test_cholesky_func = 6;
 
 const char	*test_cholesky_func_name[] = {
 	"test_cholesky_decomp",
 	"test_cholesky_svx   ",
+	"test_cholesky_1up",
+	"test_cholesky_1down",
 	"test_cholesky_insert",
 	"test_cholesky_delete"
 };
@@ -20,6 +22,8 @@ const char	*test_cholesky_func_name[] = {
 bool	(*test_cholesky_func_ptr[]) (void) = {
 	test_cholesky_decomp,
 	test_cholesky_svx,
+	test_cholesky_1up,
+	test_cholesky_1down,
 	test_cholesky_insert,
 	test_cholesky_delete
 };
@@ -46,7 +50,7 @@ const char	*test_QR_func_name[] = {
 	"test_QR_solve ",
 	"test_lsQ_solve ",
 	"test_QR_Rsolve",
-	"test_QR_delete"
+	"test_QR_1up"
 };
 
 bool	(*test_QR_func_ptr[]) (void) = {
@@ -55,7 +59,7 @@ bool	(*test_QR_func_ptr[]) (void) = {
 	test_QR_solve,
 	test_lsQ_solve,
 	test_QR_Rsolve,
-	test_cholesky_delete
+	test_QR_1up
 };
 
 #include <time.h>

@@ -10,11 +10,16 @@
 /* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
+/* blas */
+extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
+
 /* lapack: cholesky decomposition */
 extern void	dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
 extern void	dpotrs_ (char *uplo, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
 extern void	dpotri_ (char *uplo, int *n, double *a, int *lda, int *info);
 /* qrupdate: cholinsert/delete */
+extern void	dch1up_ (int *n, double *L, int *ldr, double *u, double *w);
+extern void	dch1dn_ (int *n, double *L, int *ldr, double *u, double *w, int *info);
 extern void	dchinx_ (int *n, double *L, int *ldr, int *j, double *u, double *w, int *info);
 extern void	dchdex_ (int *n, double *L, int *ldr, int *j, double *w);
 
@@ -86,6 +91,18 @@ c_linalg_cholesky_decomp (c_matrix *a)
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_cholesky_decomp", "matrix must be square.");
 
 	info = c_linalg_lapack_dpotrf ('U', a);
+	{
+		int			j;
+		int			inc = 1;
+		c_vector	*z = c_vector_alloc (a->size1);
+		c_vector_set_zero (z);
+		for (j = 0; j < a->size2; j++) {
+			int		n = (int) z->size - (j + 1);
+			dcopy_ (&n, z->data, &inc, a->data + INDEX_OF_MATRIX (a, j + 1, j), &inc);
+		}
+		c_vector_free (z);
+	}
+
 	return info;
 }
 
@@ -121,9 +138,77 @@ c_linalg_cholesky_invert (c_matrix *l)
 	return c_linalg_lapack_dpotri ('U', l);
 }
 
+/* chol1up */
+void
+c_linalg_cholesky_1up (c_matrix *l, c_vector *u)
+{
+	int		n;
+	int		ldr;
+	double	*w;
+
+	if (c_matrix_is_empty (l)) c_error ("cl_linalg_cholesky_1up", "matrix *r is empty");
+	if (c_vector_is_empty (u)) c_error ("cl_linalg_cholesky_1up", "vector *u is empty");
+	if (!c_matrix_is_square (l)) c_error ("cl_linalg_cholesky_1up", "matrix *r must be square");
+	if (u->size != l->size1) c_error ("cl_linalg_cholesky_1up", "size of matrix *r and vector *u invalid");
+
+	n = l->size1;
+	ldr = l->lda;
+	w = (double *) malloc (u->size * sizeof (double));
+	dch1up_ (&n, l->data, &ldr, u->data, w);
+	free (w);
+
+	return;
+}
+
+/* chol1down */
+int
+c_linalg_cholesky_1down (c_matrix *l, c_vector *u)
+{
+	int		info;
+	int		n;
+	int		ldr;
+	double	*w;
+
+	if (c_matrix_is_empty (l)) c_error ("cl_linalg_cholesky_1down", "matrix *r is empty");
+	if (c_vector_is_empty (u)) c_error ("cl_linalg_cholesky_1down", "vector *u is empty");
+	if (!c_matrix_is_square (l)) c_error ("cl_linalg_cholesky_1down", "matrix *r must be square");
+	if (u->size != l->size1) c_error ("cl_linalg_cholesky_1down", "size of matrix *r and vector *u invalid");
+
+	n = l->size1;
+	ldr = l->lda;
+	w = (double *) malloc (u->size * sizeof (double));
+	dch1dn_ (&n, l->data, &ldr, u->data, w, &info);
+	free (w);
+
+	return info;
+}
+/*
+void
+c_linalg_cholesky_1up (c_matrix *l, c_vector *u)
+{
+	int			n;
+	int			ldr;
+	double		*w;
+
+	if (c_matrix_is_empty (l)) c_error ("c_linalg_cholesky_1up", "matrix is empty.");
+	if (c_vector_is_empty (u)) c_error ("c_linalg_cholesky_1up", "vector is empty.");
+	if (!c_matrix_is_square (l)) c_error ("c_linalg_cholesky_1up", "matrix must be square.");
+	if (u->size != l->size1) c_error ("c_linalg_cholesky_1up", "matrix and vector size does not match.");
+
+	n = l->size1;
+
+	ldr = l->lda;
+	w = (double *) malloc (u->size * sizeof (double));
+	dch1up_ (&n, l->data, &ldr, u->data, w);
+	free (w);
+
+	return;
+}
+*/
+
 /* cholinsert */
 int
-c_linalg_cholesky_insert (c_matrix *l, const int index, const c_vector *u)
+c_linalg_cholesky_insert (c_matrix *l, const int index, c_vector *u)
 {
 	int			n;
 	int			ldr;

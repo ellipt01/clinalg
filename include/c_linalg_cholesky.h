@@ -22,7 +22,9 @@ int		c_linalg_cholesky_decomp (c_matrix *a);
 int		c_linalg_cholesky_svx (c_matrix *l, c_vector *b);
 int		c_linalg_cholesky_invert (c_matrix *l);
 
-int		c_linalg_cholesky_insert (c_matrix *l, const int index, const c_vector *u);
+void	c_linalg_cholesky_1up (c_matrix *l, c_vector *u);
+int		c_linalg_cholesky_1down (c_matrix *l, c_vector *u);
+int		c_linalg_cholesky_insert (c_matrix *l, const int index, c_vector *u);
 void	c_linalg_cholesky_delete (c_matrix *l, const int index);
 
 #ifdef __cplusplus
