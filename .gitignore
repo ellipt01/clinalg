@@ -23,4 +23,5 @@
 *.hex
 
 .autotools
+.cproject
 .settings
