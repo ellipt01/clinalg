@@ -29,5 +29,9 @@ bool	test_lsQ_solve (void);
 bool	test_QR_Rsolve (void);
 bool	test_QR_1up (void);
 bool	test_QR_1down (void);
+bool	test_QR_colinsert (void);
+bool	test_QR_coldelete (void);
+bool	test_QR_rowinsert (void);
+bool	test_QR_rowdelete (void);
 
 #endif /* TEST_CLINALG_H_ */

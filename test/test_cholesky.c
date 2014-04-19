@@ -192,7 +192,7 @@ test_cholesky_insert (void)
 	c_vector	*c;
 	double		nrm;
 
-	size = 5;
+	size = 50;
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
@@ -202,7 +202,7 @@ test_cholesky_insert (void)
 		c_matrix_free (a0);
 	}
 
-	index = 3;
+	index = 30;
 	l = c_matrix_alloc (size - 1, size - 1);
 	c = c_vector_alloc (size);
 	{
@@ -250,7 +250,7 @@ test_cholesky_delete (void)
 	c_matrix	*b;
 	double		nrm;
 
-	size = 5;
+	size = 50;
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
@@ -260,7 +260,7 @@ test_cholesky_delete (void)
 		c_matrix_free (a0);
 	}
 
-	index = 3;
+	index = 30;
 	a = c_matrix_alloc (size - 1, size - 1);
 	{
 		int			i, j, m, n;

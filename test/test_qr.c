@@ -151,8 +151,8 @@ test_lsQ_solve (void)
 	c_vector	*z;
 	double		nrm;
 
-	size1 = 5;
-	size2 = 6;
+	size1 = 50;
+	size2 = 60;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -231,11 +231,11 @@ test_QR_Rsolve (void)
 }
 
 bool
-test_QR_1up ()
+test_QR_1up (void)
 {
 	double		nrm;
-	size_t		size1 = 5;
-	size_t		size2 = 6;
+	size_t		size1 = 60;
+	size_t		size2 = 50;
 	c_matrix	*a;
 	c_vector	*u;
 	c_vector	*v;
@@ -280,6 +280,246 @@ test_QR_1up ()
 	}
 	nrm = c_matrix_nrm (a, '1');
 	c_matrix_free (a);
+
+	return nrm;
+}
+
+bool
+test_QR_colinsert (void)
+{
+	double		nrm;
+	size_t		size1 = 60;
+	size_t		size2 = 50;
+	size_t		index = 30;
+	c_matrix	*a;
+	c_vector	*u;
+
+	c_matrix	*q;
+	c_matrix	*r;
+
+	c_matrix	*a1;
+	c_matrix	*a2;
+
+	a = random_matrix (size1, size2);
+	u = random_vector (size1);
+
+	/* QR decomposition */
+	{
+		c_vector	*tau;
+		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
+		c_matrix_memcpy (qr, a);
+		c_linalg_QR_decomp (qr, NULL, &tau);
+		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_vector_free (tau);
+		c_matrix_free (qr);
+	}
+	c_linalg_QR_colinsert (q, r, index, u);
+	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	c_matrix_free (q);
+	c_matrix_free (r);
+
+	a1 = c_matrix_alloc (a->size1, a->size2 + 1);
+	{
+		int			j;
+		c_vector	*col = c_vector_alloc (a->size1);
+
+		for (j = 0; j < index; j++) {
+			c_matrix_get_col (col, a, j);
+			c_matrix_set_col (a1, j, col);
+		}
+		c_matrix_set_col (a1, index, u);
+		c_vector_free (u);
+		for (j = index; j < a->size2; j++) {
+			c_matrix_get_col (col, a, j);
+			c_matrix_set_col (a1, j + 1, col);
+		}
+		c_vector_free (col);
+		c_matrix_free (a);
+	}
+
+	c_matrix_sub (a1, a2);
+	c_matrix_free (a2);
+
+	nrm = c_matrix_nrm (a1, '1');
+	c_matrix_free (a1);
+
+	return nrm;
+}
+
+bool
+test_QR_rowinsert (void)
+{
+	double		nrm;
+	size_t		size1 = 60;
+	size_t		size2 = 50;
+	size_t		index = 30;
+	c_matrix	*a;
+	c_vector	*u;
+
+	c_matrix	*q;
+	c_matrix	*r;
+
+	c_matrix	*a1;
+	c_matrix	*a2;
+
+	a = random_matrix (size1, size2);
+	u = random_vector (size2);
+
+	/* QR decomposition */
+	{
+		c_vector	*tau;
+		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
+		c_matrix_memcpy (qr, a);
+		c_linalg_QR_decomp (qr, NULL, &tau);
+		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_vector_free (tau);
+		c_matrix_free (qr);
+	}
+	c_linalg_QR_rowinsert (q, r, index, u);
+	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	c_matrix_free (q);
+	c_matrix_free (r);
+
+	a1 = c_matrix_alloc (a->size1 + 1, a->size2);
+	{
+		int			i;
+		c_vector	*row = c_vector_alloc (a->size2);
+
+		for (i = 0; i < index; i++) {
+			c_matrix_get_row (row, a, i);
+			c_matrix_set_row (a1, i, row);
+		}
+		c_matrix_set_row (a1, index, u);
+		c_vector_free (u);
+		for (i = index; i < a->size1; i++) {
+			c_matrix_get_row (row, a, i);
+			c_matrix_set_row (a1, i + 1, row);
+		}
+		c_vector_free (row);
+		c_matrix_free (a);
+	}
+
+	c_matrix_sub (a1, a2);
+	c_matrix_free (a2);
+
+	nrm = c_matrix_nrm (a1, '1');
+	c_matrix_free (a1);
+
+	return nrm;
+}
+
+bool
+test_QR_coldelete (void)
+{
+	double		nrm;
+	size_t		size1 = 60;
+	size_t		size2 = 50;
+	size_t		index = 30;
+	c_matrix	*a;
+
+	c_matrix	*q;
+	c_matrix	*r;
+
+	c_matrix	*a1;
+	c_matrix	*a2;
+
+	a = random_matrix (size1, size2);
+
+	/* QR decomposition */
+	{
+		c_vector	*tau;
+		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
+		c_matrix_memcpy (qr, a);
+		c_linalg_QR_decomp (qr, NULL, &tau);
+		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_vector_free (tau);
+		c_matrix_free (qr);
+	}
+	c_linalg_QR_coldelete (q, r, index);
+	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	c_matrix_free (q);
+	c_matrix_free (r);
+
+	a1 = c_matrix_alloc (a->size1, a->size2 - 1);
+	{
+		int			j;
+		c_vector	*col = c_vector_alloc (a->size1);
+
+		for (j = 0; j < index; j++) {
+			c_matrix_get_col (col, a, j);
+			c_matrix_set_col (a1, j, col);
+		}
+		for (j = index + 1; j < a->size2; j++) {
+			c_matrix_get_col (col, a, j);
+			c_matrix_set_col (a1, j - 1, col);
+		}
+		c_vector_free (col);
+		c_matrix_free (a);
+	}
+
+	c_matrix_sub (a1, a2);
+	c_matrix_free (a2);
+
+	nrm = c_matrix_nrm (a1, '1');
+	c_matrix_free (a1);
+
+	return nrm;
+}
+
+bool
+test_QR_rowdelete (void)
+{
+	double		nrm;
+	size_t		size1 = 60;
+	size_t		size2 = 50;
+	size_t		index = 30;
+	c_matrix	*a;
+
+	c_matrix	*q;
+	c_matrix	*r;
+
+	c_matrix	*a1;
+	c_matrix	*a2;
+
+	a = random_matrix (size1, size2);
+
+	/* QR decomposition */
+	{
+		c_vector	*tau;
+		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
+		c_matrix_memcpy (qr, a);
+		c_linalg_QR_decomp (qr, NULL, &tau);
+		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_vector_free (tau);
+		c_matrix_free (qr);
+	}
+	c_linalg_QR_rowdelete (q, r, index);
+	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	c_matrix_free (q);
+	c_matrix_free (r);
+
+	a1 = c_matrix_alloc (a->size1 - 1, a->size2);
+	{
+		int			i;
+		c_vector	*row = c_vector_alloc (a->size2);
+
+		for (i = 0; i < index; i++) {
+			c_matrix_get_row (row, a, i);
+			c_matrix_set_row (a1, i, row);
+		}
+		for (i = index + 1; i < a->size1; i++) {
+			c_matrix_get_row (row, a, i);
+			c_matrix_set_row (a1, i - 1, row);
+		}
+		c_vector_free (row);
+		c_matrix_free (a);
+	}
+
+	c_matrix_sub (a1, a2);
+	c_matrix_free (a2);
+
+	nrm = c_matrix_nrm (a1, '1');
+	c_matrix_free (a1);
 
 	return nrm;
 }

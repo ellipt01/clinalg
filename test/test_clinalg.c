@@ -13,8 +13,8 @@ const int	n_test_cholesky_func = 6;
 const char	*test_cholesky_func_name[] = {
 	"test_cholesky_decomp",
 	"test_cholesky_svx   ",
-	"test_cholesky_1up",
-	"test_cholesky_1down",
+	"test_cholesky_1up   ",
+	"test_cholesky_1down ",
 	"test_cholesky_insert",
 	"test_cholesky_delete"
 };
@@ -42,15 +42,19 @@ bool	(*test_LU_func_ptr[]) (void) = {
 	test_LU_invert
 };
 
-const int	n_test_QR_func = 6;
+const int	n_test_QR_func = 10;
 
 const char	*test_QR_func_name[] = {
-	"test_QR_decomp",
+	"test_QR_decomp     ",
 	"test_QR_decomp_econ",
-	"test_QR_solve ",
-	"test_lsQ_solve ",
-	"test_QR_Rsolve",
-	"test_QR_1up"
+	"test_QR_solve      ",
+	"test_lsQ_solve     ",
+	"test_QR_Rsolve     ",
+	"test_QR_1up        ",
+	"test_QR_colinsert  ",
+	"test_QR_rowinsert  ",
+	"test_QR_coldelete  ",
+	"test_QR_rowdelete  "
 };
 
 bool	(*test_QR_func_ptr[]) (void) = {
@@ -59,7 +63,11 @@ bool	(*test_QR_func_ptr[]) (void) = {
 	test_QR_solve,
 	test_lsQ_solve,
 	test_QR_Rsolve,
-	test_QR_1up
+	test_QR_1up,
+	test_QR_colinsert,
+	test_QR_rowinsert,
+	test_QR_coldelete,
+	test_QR_rowdelete
 };
 
 #include <time.h>

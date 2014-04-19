@@ -439,6 +439,7 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	if (c_matrix_is_empty (q)) c_error ("c_linalg_QR_colinsert", "matrix *q is empty.");
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_colinsert", "matrix *r is empty.");
 	if (c_vector_is_empty (u)) c_error ("c_linalg_QR_colinsert", "vector *u is empty.");
+	if (u->size != q->size1) c_error ("c_linalg_QR_colinsert", "vector and matrix size dose not match..");
 	if (q->size2 != r->size1) c_error ("c_linalg_QR_colinsert", "matrix size dose not match..");
 	if (index < 0 || r->size2 < index) c_error ("c_linalg_QR_colinsert", "index out of range.");
 
@@ -480,6 +481,7 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	if (c_matrix_is_empty (q)) c_error ("c_linalg_QR_rowinsert", "matrix *q is empty.");
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_rowinsert", "matrix *r is empty.");
 	if (c_vector_is_empty (u)) c_error ("c_linalg_QR_rowinsert", "vector *u is empty.");
+	if (u->size != r->size2) c_error ("c_linalg_QR_rowinsert", "matrix size dose not match..");
 	if (q->size2 != r->size1) c_error ("c_linalg_QR_rowinsert", "matrix size dose not match..");
 	if (index < 0 || r->size1 < index) c_error ("c_linalg_QR_rowinsert", "index out of range.");
 	if (!c_matrix_is_square (q) && c_matrix_is_square (r))

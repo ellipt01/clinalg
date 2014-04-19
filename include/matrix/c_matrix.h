@@ -43,11 +43,6 @@ void			c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *v);
 c_vector		*c_matrix_column (c_matrix *a, int index);
 c_vector		*c_matrix_row (c_matrix *a, int index);
 
-void			c_matrix_add_col (c_matrix *a);
-void			c_matrix_add_row (c_matrix *a);
-void			c_matrix_remove_col (c_matrix *a);
-void			c_matrix_remove_row (c_matrix *a);
-
 void			c_matrix_memcpy (c_matrix *dest, const c_matrix *src);
 void			c_matrix_mncopy (const size_t m0, const size_t n0, const size_t m, const size_t n, c_matrix *dest, const c_matrix *src);
 

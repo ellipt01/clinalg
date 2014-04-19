@@ -19,51 +19,6 @@ extern void	dgemm_ (char *transA, char *transB, int *m, int *n, int *k, double *
 extern double	dlange_ (char *norm, int *m, int *n, double *data, int *lda, double *w);
 extern void	dswap_ (int *n, double *x, int *incx, double *y, int *incy);
 
-void
-c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
-{
-	int			n;
-	int			inc;
-	double		*rowi;
-	double		*rowj;
-
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
-	if (i < 0 || a->size1 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
-	if (j < 0 || a->size1 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
-	if (i == j) return;
-
-	n = (int) a->size2;
-	inc = (int) a->lda;
-	rowi = a->data + INDEX_OF_MATRIX (a, i, 0);
-	rowj = a->data + INDEX_OF_MATRIX (a, j, 0);
-
-	dswap_ (&n, rowi, &inc, rowj, &inc);
-
-	return;
-}
-
-void
-c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
-{
-	int			n;
-	int			inc;
-	double		*coli;
-	double		*colj;
-
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
-	if (i < 0 || a->size2 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
-	if (j < 0 || a->size2 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
-
-	n = (int) a->size1;
-	inc = 1;
-	coli = a->data + INDEX_OF_MATRIX (a, 0, i);
-	colj = a->data + INDEX_OF_MATRIX (a, 0, j);
-
-	dswap_ (&n, coli, &inc, colj, &inc);
-
-	return;
-}
-
 /* y = x + y */
 void
 c_matrix_add (c_matrix *y, const c_matrix *x)
@@ -219,6 +174,205 @@ c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 		if (n <= 0) break;
 		dcopy_ (&n, a->data + j * (a->lda + 1), &incx, tr->data + j * (tr->lda + 1), &incy);
 	}
+	return;
+}
+
+void
+c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
+{
+	int			n;
+	int			inc;
+	double		*rowi;
+	double		*rowj;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
+	if (i < 0 || a->size1 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
+	if (j < 0 || a->size1 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
+	if (i == j) return;
+
+	n = (int) a->size2;
+	inc = (int) a->lda;
+	rowi = a->data + INDEX_OF_MATRIX (a, i, 0);
+	rowj = a->data + INDEX_OF_MATRIX (a, j, 0);
+
+	dswap_ (&n, rowi, &inc, rowj, &inc);
+
+	return;
+}
+
+void
+c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
+{
+	int			n;
+	int			inc;
+	double		*coli;
+	double		*colj;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
+	if (i < 0 || a->size2 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
+	if (j < 0 || a->size2 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
+
+	n = (int) a->size1;
+	inc = 1;
+	coli = a->data + INDEX_OF_MATRIX (a, 0, i);
+	colj = a->data + INDEX_OF_MATRIX (a, 0, j);
+
+	dswap_ (&n, coli, &inc, colj, &inc);
+
+	return;
+}
+
+void
+c_matrix_add_row (c_matrix *a)
+{
+	int			j;
+	int			n;
+	int			incx = 1;
+	int			incy = 1;
+	size_t		lda;
+	c_vector	*col;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row", "matrix is empty.");
+
+	n = (int) a->size1;
+	lda = (int) a->lda;
+	a->size1++;
+	a->lda++;
+	a->tsize = a->lda * a->size2;
+	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+
+	col = c_vector_alloc (n);
+	for (j = a->size2 - 1; 0 < j; j--) {
+		dcopy_ (&n, a->data + j * lda, &incx, col->data, &incy);
+		dcopy_ (&n, col->data, &incy, a->data + INDEX_OF_MATRIX (a, 0, j), &incx);
+	}
+	c_vector_free (col);
+	for (j = 0; j < a->size2; j++) c_matrix_set (a, a->size1 - 1, j, 0.);
+
+	return;
+}
+
+void
+c_matrix_add_col (c_matrix *a)
+{
+	int		i;
+	size_t	lda;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_col", "matrix is empty.");
+
+	lda = (int) a->lda;
+	a->size2++;
+	a->tsize = a->lda * a->size2;
+	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+	for (i = 0; i < a->size1; i++) c_matrix_set (a, i, a->size2 - 1, 0.);
+
+	return;
+}
+
+void
+c_matrix_add_row_col (c_matrix *a)
+{
+	int			i, j;
+	int			n;
+	int			inc = 1;
+	size_t		lda;
+	c_vector	*col;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row_col", "matrix is empty.");
+
+	n = (int) a->size1;
+	lda = (int) a->lda;
+	a->size1++;
+	a->lda++;
+	a->size2++;
+	a->tsize = a->lda * a->size2;
+	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+
+	col = c_vector_alloc (n);
+	for (j = (a->size2 - 1) - 1; 0 < j; j--) {
+		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
+		dcopy_ (&n, col->data, &inc, a->data + INDEX_OF_MATRIX (a, 0, j), &inc);
+	}
+	c_vector_free (col);
+	for (i = 0; i < a->size1 - 1; i++) c_matrix_set (a, i, a->size2 - 1, 0.);
+	for (j = 0; j < a->size2; j++) c_matrix_set (a, a->size1 - 1, j, 0.);
+
+	return;
+}
+
+void
+c_matrix_remove_row (c_matrix *a)
+{
+	int			j;
+	int			n;
+	int			inc = 1;
+	size_t		lda;
+	c_vector	*col;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row", "matrix is empty.");
+	if (a->size1 <= 1) c_error ("c_matrix_remove_row", "a->size1 must be > 1.");
+
+	lda = (int) a->lda;
+	a->size1--;
+	a->lda--;
+	a->tsize = a->lda * a->size2;
+	n = (int) a->size1;
+
+	col = c_vector_alloc (a->size1);
+	for (j = 1; j < a->size2; j++) {
+		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
+		dcopy_ (&n, col->data, &inc, a->data + INDEX_OF_MATRIX (a, 0, j), &inc);
+	}
+	c_vector_free (col);
+
+	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+
+	return;
+}
+
+void
+c_matrix_remove_col (c_matrix *a)
+{
+	size_t	lda;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_col", "matrix is empty.");
+
+	lda = (int) a->lda;
+	a->size2--;
+	a->tsize = a->lda * a->size2;
+	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+
+	return;
+}
+
+void
+c_matrix_remove_row_col (c_matrix *a)
+{
+	int			j;
+	int			n;
+	int			inc = 1;
+	size_t		lda;
+	c_vector	*col;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row", "matrix is empty.");
+	if (a->size1 <= 1) c_error ("c_matrix_remove_row", "a->size1 must be > 1.");
+
+	lda = (int) a->lda;
+	a->size1--;
+	a->lda--;
+	a->size2--;
+	a->tsize = a->lda * a->size2;
+	n = (int) a->size1;
+
+	col = c_vector_alloc (a->size1);
+	for (j = 1; j < a->size2; j++) {
+		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
+		dcopy_ (&n, col->data, &inc, a->data + INDEX_OF_MATRIX (a, 0, j), &inc);
+	}
+	c_vector_free (col);
+
+	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+
 	return;
 }
 
