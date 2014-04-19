@@ -243,7 +243,7 @@ c_matrix_mncopy (const size_t m0, const size_t n0, const size_t m, const size_t 
 
 	len = (int) m;
 	for (j = 0; j < n; j++) {
-		dcopy_ (&len, src->data + INDEX_OF_MATRIX (src, m0, n0 + j), &inc, dest->data + INDEX_OF_MATRIX (src, 0, j), &inc);
+		dcopy_ (&len, POINTER_OF_MATRIX (src, m0, n0 + j), &inc, POINTER_OF_MATRIX (dest, 0, j), &inc);
 	}
 	return;
 }

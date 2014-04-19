@@ -90,22 +90,22 @@ c_linalg_lapack_dpotri (char uplo, c_matrix *l)
 int
 c_linalg_cholesky_decomp (c_matrix *a)
 {
-	int		info;
+	int			info;
+	int			j;
+	int			inc = 1;
+	c_vector	*z;
+
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_cholesky_decomp", "matrix is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_cholesky_decomp", "matrix must be square.");
 
 	info = c_linalg_lapack_dpotrf ('U', a);
-	{
-		int			j;
-		int			inc = 1;
-		c_vector	*z = c_vector_alloc (a->size1);
-		c_vector_set_zero (z);
-		for (j = 0; j < a->size2; j++) {
-			int		n = (int) z->size - (j + 1);
-			dcopy_ (&n, z->data, &inc, a->data + INDEX_OF_MATRIX (a, j + 1, j), &inc);
-		}
-		c_vector_free (z);
+	z = c_vector_alloc (a->size1);
+	c_vector_set_zero (z);
+	for (j = 0; j < a->size2 - 1; j++) {
+		int		n = (int) z->size - (j + 1);
+		dcopy_ (&n, z->data, &inc, POINTER_OF_MATRIX (a, j + 1, j), &inc);
 	}
+	c_vector_free (z);
 
 	return info;
 }
@@ -186,29 +186,6 @@ c_linalg_cholesky_1down (c_matrix *l, c_vector *u)
 
 	return info;
 }
-/*
-void
-c_linalg_cholesky_1up (c_matrix *l, c_vector *u)
-{
-	int			n;
-	int			ldr;
-	double		*w;
-
-	if (c_matrix_is_empty (l)) c_error ("c_linalg_cholesky_1up", "matrix is empty.");
-	if (c_vector_is_empty (u)) c_error ("c_linalg_cholesky_1up", "vector is empty.");
-	if (!c_matrix_is_square (l)) c_error ("c_linalg_cholesky_1up", "matrix must be square.");
-	if (u->size != l->size1) c_error ("c_linalg_cholesky_1up", "matrix and vector size does not match.");
-
-	n = l->size1;
-
-	ldr = l->lda;
-	w = (double *) malloc (u->size * sizeof (double));
-	dch1up_ (&n, l->data, &ldr, u->data, w);
-	free (w);
-
-	return;
-}
-*/
 
 /* cholinsert */
 int

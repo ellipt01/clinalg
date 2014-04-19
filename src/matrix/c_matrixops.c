@@ -44,8 +44,8 @@ c_matrix_add (c_matrix *y, const c_matrix *x)
 		int		j;
 		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
-			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
-			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
+			double	*xj = POINTER_OF_MATRIX (x, 0, j);
+			double	*yj = POINTER_OF_MATRIX (y, 0, j);
 			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
 		}
 	}
@@ -69,8 +69,8 @@ c_matrix_sub (c_matrix *y, const c_matrix *x)
 		int		j;
 		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
-			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
-			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
+			double	*xj = POINTER_OF_MATRIX (x, 0, j);
+			double	*yj = POINTER_OF_MATRIX (y, 0, j);
 			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
 		}
 	}
@@ -93,8 +93,8 @@ c_matrix_axpy (double alpha, const c_matrix *x, c_matrix *y)
 		int		j;
 		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
-			double	*xj = x->data + INDEX_OF_MATRIX (x, 0, j);
-			double	*yj = y->data + INDEX_OF_MATRIX (y, 0, j);
+			double	*xj = POINTER_OF_MATRIX (x, 0, j);
+			double	*yj = POINTER_OF_MATRIX (y, 0, j);
 			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
 		}
 	}
@@ -220,8 +220,8 @@ c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
 
 	n = (int) a->size2;
 	inc = (int) a->lda;
-	rowi = a->data + INDEX_OF_MATRIX (a, i, 0);
-	rowj = a->data + INDEX_OF_MATRIX (a, j, 0);
+	rowi = POINTER_OF_MATRIX (a, i, 0);
+	rowj = POINTER_OF_MATRIX (a, j, 0);
 
 	dswap_ (&n, rowi, &inc, rowj, &inc);
 
@@ -242,8 +242,8 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 
 	n = (int) a->size1;
 	inc = 1;
-	coli = a->data + INDEX_OF_MATRIX (a, 0, i);
-	colj = a->data + INDEX_OF_MATRIX (a, 0, j);
+	coli = POINTER_OF_MATRIX (a, 0, i);
+	colj = POINTER_OF_MATRIX (a, 0, j);
 
 	dswap_ (&n, coli, &inc, colj, &inc);
 
@@ -272,7 +272,7 @@ c_matrix_add_row (c_matrix *a)
 	col = c_vector_alloc (n);
 	for (j = a->size2 - 1; 0 < j; j--) {
 		dcopy_ (&n, a->data + j * lda, &incx, col->data, &incy);
-		dcopy_ (&n, col->data, &incy, a->data + INDEX_OF_MATRIX (a, 0, j), &incx);
+		dcopy_ (&n, col->data, &incy, POINTER_OF_MATRIX (a, 0, j), &incx);
 	}
 	c_vector_free (col);
 	for (j = 0; j < a->size2; j++) c_matrix_set (a, a->size1 - 1, j, 0.);
@@ -319,7 +319,7 @@ c_matrix_add_row_col (c_matrix *a)
 	col = c_vector_alloc (n);
 	for (j = (a->size2 - 1) - 1; 0 < j; j--) {
 		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-		dcopy_ (&n, col->data, &inc, a->data + INDEX_OF_MATRIX (a, 0, j), &inc);
+		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
 	}
 	c_vector_free (col);
 	for (i = 0; i < a->size1 - 1; i++) c_matrix_set (a, i, a->size2 - 1, 0.);
@@ -349,7 +349,7 @@ c_matrix_remove_row (c_matrix *a)
 	col = c_vector_alloc (a->size1);
 	for (j = 1; j < a->size2; j++) {
 		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-		dcopy_ (&n, col->data, &inc, a->data + INDEX_OF_MATRIX (a, 0, j), &inc);
+		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
 	}
 	c_vector_free (col);
 
@@ -395,7 +395,7 @@ c_matrix_remove_row_col (c_matrix *a)
 	col = c_vector_alloc (a->size1);
 	for (j = 1; j < a->size2; j++) {
 		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-		dcopy_ (&n, col->data, &inc, a->data + INDEX_OF_MATRIX (a, 0, j), &inc);
+		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
 	}
 	c_vector_free (col);
 
