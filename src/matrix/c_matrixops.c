@@ -10,6 +10,9 @@
 /* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
+/* c_linalg_sv.c */
+extern int		c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matrix **vt, c_vector **s);
+
 /* blas */
 #ifndef HAVE_BLAS_H
 extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
@@ -98,12 +101,32 @@ c_matrix_axpy (double alpha, const c_matrix *x, c_matrix *y)
 	return;
 }
 
+static double
+_nrm2 (const c_matrix *a)
+{
+	int			info;
+	double		nrm = 0.;
+	c_vector	*s;
+	c_matrix	*tmp = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_memcpy (tmp, a);
+
+	info = c_linalg_lapack_dgesvd ('N', 'N', tmp, NULL, NULL, &s);
+	c_matrix_free (tmp);
+
+	if (info == 0) nrm = c_vector_get (s, 0);
+	c_vector_free (s);
+
+	return nrm;
+}
+
 double
 c_matrix_nrm (c_matrix *a, char norm)
 {
 	int		m, n, lda;
 	double	val;
 	double	*w = NULL;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_nrm", "matrix is empty.");
 
 	m = a->size1;
 	n = a->size2;
@@ -112,8 +135,8 @@ c_matrix_nrm (c_matrix *a, char norm)
 	switch (norm) {
 		/* norm2 (A) */
 		case '2':
-//		val = _matrix_nrm2 (a);
-//		return val;
+			val = _nrm2 (a);
+			return val;
 
 		/* max (abs (A(i, j)) ) */
 		case 'M':
@@ -129,17 +152,17 @@ c_matrix_nrm (c_matrix *a, char norm)
 		case 'f':
 		case 'E':
 		case 'e':
-		break;
+			break;
 
 		/* normI (A) */
 		case 'I':
 		case 'i':
-		w = (double *) malloc (m * sizeof (double));
-		break;
+			w = (double *) malloc (m * sizeof (double));
+			break;
 
 		default:
-		c_error ("c_matrix_nrm", "invalid norm.");
-		break;
+			c_error ("c_matrix_nrm", "invalid norm.");
+			break;
 	}
 
 	val = dlange_ (&norm, &m, &n, a->data, &lda, w);

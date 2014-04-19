@@ -28,6 +28,7 @@ test_SV_decomp (void)
 	size2 = 50;
 
 	a = random_matrix (size1, size2);
+
 	/* svd */
 	{
 		c_matrix	*tmp = c_matrix_alloc (a->size1, a->size2);
