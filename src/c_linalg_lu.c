@@ -16,6 +16,8 @@ extern void	dgetrf_ (int *m, int *n, double *data, int *lda, int *ipiv, int *inf
 extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
 extern void	dgetri_ (int *n, double *data, int *lda, int *ipiv, double *work, int *lwork, int *info);
 #endif
+/* qrupdate */
+extern void	dlup1up_ (int *m, int *n, double *L, int *ldl, double *R, int *ldr, int *p, double *u, double *v, double *w);
 
 int
 c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
@@ -169,4 +171,32 @@ c_linalg_LU_invert (c_matrix *lu, c_vector_int *p)
 	info = c_linalg_lapack_dgetri (lu, p);
 
 	return info;
+}
+
+void
+c_linalg_LU_1up (c_matrix *l, c_matrix *u, c_vector_int *p, c_vector *s, c_vector *t)
+{
+	int			m;
+	int			n;
+	int			ldl;
+	int			ldu;
+	double		*w;
+
+	if (c_matrix_is_empty (l)) c_error ("c_linalg_LU_1up", "matrix is empty.");
+	if (c_matrix_is_empty (u)) c_error ("c_linalg_LU_1up", "matrix is empty.");
+	if (c_vector_is_empty (s)) c_error ("c_linalg_LU_1up", "vector *s is empty.");
+	if (c_vector_is_empty (t)) c_error ("c_linalg_LU_1up", "vector *t is empty.");
+	if (c_vector_int_is_empty (p)) c_error ("c_linalg_LU_1up", "permulation is empty.");
+	if (s->size != l->size1) c_error ("c_linalg_LU_1up", "vector and matrix size dose not match.");
+	if (t->size != u->size2) c_error ("c_linalg_LU_1up", "vector and matrix size dose not match.");
+
+	m = (int) l->size1;
+	n = (int) u->size2;
+	ldl = (int) l->lda;
+	ldu = (int) u->lda;
+	w = (double *) malloc (l->size1 * sizeof (double));
+	dlup1up_ (&m, &n, l->data, &ldl, u->data, &ldu, p->data, s->data, t->data, w);
+	free (w);
+
+	return;
 }
