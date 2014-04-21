@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([libclinalg], [0.1])
+AC_INIT([clinalg], [0.1])
 AC_CONFIG_SRCDIR([example/example.c])
 AC_CONFIG_HEADERS([config.h])
 
@@ -48,6 +48,11 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS([floor pow sqrt log strrchr])
 AC_CHECK_FUNCS([dpotrf_ dpotrs_])
+
+# pkgconfig
+CLINALG_DESCRIPTION='C interface of lapack, blas and qrupdate'
+AC_SUBST([CLINALG_DESCRIPTION])
+AC_CONFIG_FILES([clinalg.pc:clinalg.pc.in])
 
 AC_CONFIG_FILES([Makefile
                  include/Makefile

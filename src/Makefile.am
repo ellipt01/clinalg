@@ -27,5 +27,5 @@ libclinalg_la_CPPFLAGS =\
 
 libclinalg_la_LDFLAGS = 
 
-libclinalg_la_LIBADD = 
+libclinalg_la_LIBADD = -lm
 
