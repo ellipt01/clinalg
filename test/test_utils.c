@@ -5,7 +5,7 @@
  *      Author: utsugi
  */
 
-#include <c_linalg.h>
+#include <clinalg.h>
 
 /* lapack */
 //extern void	dlaruv_ (long seed[], long *n, double *x);

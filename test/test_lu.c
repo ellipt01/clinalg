@@ -6,7 +6,7 @@
  */
 
 #include <math.h>
-#include <c_linalg.h>
+#include <clinalg.h>
 
 #include "test_clinalg.h"
 

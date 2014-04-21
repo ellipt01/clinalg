@@ -6,7 +6,7 @@
  */
 
 #include <math.h>
-#include <c_linalg.h>
+#include <clinalg.h>
 
 /* c_linalg_util.c */
 extern void	c_error (const char * function_name, const char *error_msg);

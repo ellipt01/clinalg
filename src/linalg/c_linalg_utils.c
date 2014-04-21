@@ -5,7 +5,7 @@
  *      Author: utsugi
  */
 
-#include <c_linalg.h>
+#include <clinalg.h>
 
 void
 c_error (const char * function_name, const char *error_msg)

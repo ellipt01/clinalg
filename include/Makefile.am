@@ -7,9 +7,9 @@ libclinalg_include_DATA = \
 	matrix/c_matrix.h\
 	matrix/c_matrixops.h\
 	matrix/c_vectorops.h\
-	c_linalg_lu.h\
-	c_linalg_cholesky.h\
-	c_linalg_qr.h\
-	c_linalg_sv.h\
-	c_linalg_utils.h\
-	c_linalg.h
+	linalg/c_linalg_lu.h\
+	linalg/c_linalg_cholesky.h\
+	linalg/c_linalg_qr.h\
+	linalg/c_linalg_sv.h\
+	linalg/c_linalg_utils.h\
+	clinalg.h

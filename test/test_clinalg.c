@@ -5,7 +5,7 @@
  *      Author: utsugi
  */
 
-#include <c_linalg.h>
+#include <clinalg.h>
 #include "test_clinalg.h"
 
 const int	n_test_cholesky_func = 6;
