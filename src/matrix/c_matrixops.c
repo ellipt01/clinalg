@@ -275,7 +275,7 @@ c_matrix_add_row (c_matrix *a)
 		dcopy_ (&n, col->data, &incy, POINTER_OF_MATRIX (a, 0, j), &incx);
 	}
 	c_vector_free (col);
-	for (j = 0; j < a->size2; j++) c_matrix_set (a, a->size1 - 1, j, 0.);
+	for (j = 0; j < a->size2; j++) a->data[a->size1 - 1 + j * a->lda] = 0.;
 
 	return;
 }
@@ -292,7 +292,7 @@ c_matrix_add_col (c_matrix *a)
 	a->size2++;
 	a->tsize = a->lda * a->size2;
 	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
-	for (i = 0; i < a->size1; i++) c_matrix_set (a, i, a->size2 - 1, 0.);
+	for (i = 0; i < a->size1; i++) a->data[i + (a->size2 - 1) * a->lda] = 0.;
 
 	return;
 }
@@ -322,8 +322,8 @@ c_matrix_add_row_col (c_matrix *a)
 		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
 	}
 	c_vector_free (col);
-	for (i = 0; i < a->size1 - 1; i++) c_matrix_set (a, i, a->size2 - 1, 0.);
-	for (j = 0; j < a->size2; j++) c_matrix_set (a, a->size1 - 1, j, 0.);
+	for (i = 0; i < a->size1 - 1; i++) a->data[i + (a->size2 - 1) * a->lda] = 0.;
+	for (j = 0; j < a->size2; j++) a->data[a->size1 - 1 + j * a->lda] = 0.;
 
 	return;
 }
