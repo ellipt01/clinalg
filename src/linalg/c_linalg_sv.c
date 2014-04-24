@@ -295,7 +295,7 @@ c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	if ((iwork = (int *) malloc (liwork * sizeof (int))) == NULL)
 		c_error ("c_linalg_lapack_dgelsd", "failed to allocate iwork.");
 
-	_s = c_vector_alloc ((size_t) m);
+	_s = c_vector_alloc (min_mn);
 
 	lwork = -1;
 	dgelsd_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, &wkopt, &lwork, iwork, &info);
