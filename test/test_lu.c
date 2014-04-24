@@ -10,12 +10,12 @@
 
 #include "test_clinalg.h"
 
+extern size_t		size1;
+extern size_t		size2;
+
 bool
 test_LU_decomp (void)
 {
-	int				i;
-	size_t			size1 = 60;
-	size_t			size2 = 50;
 	c_matrix		*a;
 	c_matrix		*lu;
 	c_matrix		*l;
@@ -29,7 +29,6 @@ test_LU_decomp (void)
 	lu = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (lu, a);
 	c_linalg_LU_decomp (lu, &p);
-
 	c_linalg_LU_unpack (lu, &l, &u);
 	c_matrix_free (lu);
 
@@ -52,7 +51,6 @@ test_LU_decomp (void)
 bool
 test_LU_solve (void)
 {
-	size_t			size = 50;
 	c_matrix		*a;
 	c_vector		*x;
 	c_vector		*b;
@@ -62,8 +60,8 @@ test_LU_solve (void)
 	c_vector_int	*p;
 	double			nrm;
 
-	a = random_matrix (size, size);
-	x = random_vector (size);
+	a = random_matrix (size1, size1);
+	x = random_vector (size1);
 	b = c_matrix_dot_vector (1., a, x, 0.);
 	c_vector_free (x);
 
@@ -93,14 +91,13 @@ test_LU_solve (void)
 bool
 test_LU_invert (void)
 {
-	size_t			size = 50;
 	c_matrix		*a;
 	c_matrix		*lu;
 	c_matrix		*c;
 	c_vector_int	*p;
 	double			nrm;
 
-	a = random_matrix (size, size);
+	a = random_matrix (size1, size1);
 
 	lu = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (lu, a);
@@ -121,9 +118,6 @@ test_LU_invert (void)
 bool
 test_LU_1up (void)
 {
-	double			nrm;
-	size_t			size1 = 50;
-	size_t			size2 = 50;
 	c_matrix		*a;
 	c_vector		*t;
 	c_vector		*s;
@@ -131,6 +125,7 @@ test_LU_1up (void)
 	c_matrix		*l;
 	c_matrix		*u;
 	c_vector_int	*p;
+	double			nrm;
 
 	a = random_matrix (size1, size2);
 	{
@@ -141,8 +136,8 @@ test_LU_1up (void)
 		c_matrix_free (lu);
 	}
 
-	s = random_vector (size1);
-	t = random_vector (size2);
+	s = random_vector (a->size1);
+	t = random_vector (a->size2);
 	{
 		c_matrix	*s0 = c_matrix_view_array (s->size, 1, s->size, s->data);
 		c_matrix	*t0 = c_matrix_view_array (t->size, 1, t->size, t->data);

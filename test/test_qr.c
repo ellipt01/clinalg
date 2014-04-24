@@ -9,22 +9,21 @@
 
 #include "test_clinalg.h"
 
+extern size_t		size1;
+extern size_t		size2;
+
 /* check |a - l' * l| < 1.e-8 */
 bool
 test_QR_decomp (void)
 {
-	size_t		size1;
-	size_t		size2;
-	c_matrix	*a;
-	c_matrix	*qr;
-	c_matrix	*q;
-	c_matrix	*r;
-	c_matrix	*b;
-	c_vector	*tau;
-	double		nrm;
+	c_matrix		*a;
+	c_matrix		*qr;
+	c_matrix		*q;
+	c_matrix		*r;
+	c_matrix		*b;
+	c_vector		*tau;
+	double			nrm;
 	c_vector_int	*p;
-	size1 = 50;
-	size2 = 60;
 
 	a = random_matrix (size1, size2);
 
@@ -55,8 +54,6 @@ test_QR_decomp (void)
 bool
 test_QR_decomp_econ (void)
 {
-	size_t		size1;
-	size_t		size2;
 	c_matrix	*a;
 	c_matrix	*qr;
 	c_matrix	*q;
@@ -64,9 +61,6 @@ test_QR_decomp_econ (void)
 	c_matrix	*b;
 	c_vector	*tau;
 	double		nrm;
-
-	size1 = 60;
-	size2 = 50;
 
 	a = random_matrix (size1, size2);
 
@@ -95,16 +89,11 @@ test_QR_decomp_econ (void)
 bool
 test_QR_solve (void)
 {
-	size_t		size1;
-	size_t		size2;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
 	c_vector	*z;
 	double		nrm;
-
-	size1 = 50;
-	size2 = 60;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -135,16 +124,11 @@ test_QR_solve (void)
 bool
 test_lsQ_solve (void)
 {
-	size_t		size1;
-	size_t		size2;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
 	c_vector	*z;
 	double		nrm;
-
-	size1 = 50;
-	size2 = 60;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -174,19 +158,15 @@ test_lsQ_solve (void)
 bool
 test_QR_Rsolve (void)
 {
-	size_t		size1;
-	size_t		size2;
+	size_t 	size1 = size2 + 10;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
 	c_vector	*z;
 	double		nrm;
 
-	size1 = 60;
-	size2 = 50;
-
 	a = random_matrix (size1, size2);
-	x = random_vector (size2);
+	x = random_vector (a->size2);
 	y = c_matrix_dot_vector (1., a, x, 0.);
 	c_vector_free (x);
 
@@ -197,7 +177,7 @@ test_QR_Rsolve (void)
 		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
 		c_matrix_memcpy (qr, a);
 		c_linalg_QR_decomp (qr, NULL, &tau);
-		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_linalg_QR_unpack (qr, tau, &q, &r, true);
 		c_vector_free (tau);
 		c_matrix_free (qr);
 
@@ -225,15 +205,13 @@ test_QR_Rsolve (void)
 bool
 test_QR_1up (void)
 {
-	double		nrm;
-	size_t		size1 = 60;
-	size_t		size2 = 50;
 	c_matrix	*a;
 	c_vector	*u;
 	c_vector	*v;
 
 	c_matrix	*q;
 	c_matrix	*r;
+	double		nrm;
 
 	a = random_matrix (size1, size2);
 	{
@@ -280,9 +258,7 @@ bool
 test_QR_colinsert (void)
 {
 	double		nrm;
-	size_t		size1 = 60;
-	size_t		size2 = 50;
-	size_t		index = 30;
+	size_t		index = size2 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_vector	*u;
 
@@ -342,9 +318,7 @@ bool
 test_QR_rowinsert (void)
 {
 	double		nrm;
-	size_t		size1 = 60;
-	size_t		size2 = 50;
-	size_t		index = 30;
+	size_t		index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_vector	*u;
 
@@ -404,11 +378,8 @@ bool
 test_QR_coldelete (void)
 {
 	double		nrm;
-	size_t		size1 = 60;
-	size_t		size2 = 50;
-	size_t		index = 30;
+	size_t		index = size2 * rand () / RAND_MAX;
 	c_matrix	*a;
-
 	c_matrix	*q;
 	c_matrix	*r;
 
@@ -462,9 +433,7 @@ bool
 test_QR_rowdelete (void)
 {
 	double		nrm;
-	size_t		size1 = 60;
-	size_t		size2 = 50;
-	size_t		index = 30;
+	size_t		index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 
 	c_matrix	*q;

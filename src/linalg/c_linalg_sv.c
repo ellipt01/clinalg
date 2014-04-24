@@ -295,7 +295,7 @@ c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	if ((iwork = (int *) malloc (liwork * sizeof (int))) == NULL)
 		c_error ("c_linalg_lapack_dgelsd", "failed to allocate iwork.");
 
-	_s = c_vector_alloc ((size_t) min_mn);
+	_s = c_vector_alloc ((size_t) m);
 
 	lwork = -1;
 	dgelsd_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, &wkopt, &lwork, iwork, &info);
@@ -387,7 +387,7 @@ c_linalg_SV_lsd_solve (double rcond, c_matrix *a, c_vector *b, c_vector **s, int
 	if (c_vector_is_empty (b)) c_error ("c_linalg_SV_lsd_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_SV_lsd_solve", "matrix is empty.");
 	if (a->size1 != b->size) c_error ("c_linalg_SV_lsd_solve", "vector and matrix size dose not match.");
-	if (b->size != a->size2) b->data = (double *) realloc (b->data, a->size2 * sizeof (double));
+	if (b->size < a->size2) b->data = (double *) realloc (b->data, a->size2 * sizeof (double));
 
 	{
 		c_matrix	*x = c_matrix_view_array (a->size1, 1, a->lda, b->data);

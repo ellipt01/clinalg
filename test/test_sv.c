@@ -9,13 +9,14 @@
 
 #include "test_clinalg.h"
 
+extern size_t		size1;
+extern size_t		size2;
+
 /* check |a - u * diag(s) * vt| < 1.e-8 */
 bool
 test_SV_decomp (void)
 {
 	int			i;
-	size_t		size1;
-	size_t		size2;
 	c_matrix	*a;
 	c_vector	*s;
 	c_matrix	*u;
@@ -23,9 +24,6 @@ test_SV_decomp (void)
 	c_matrix	*c;
 
 	double		nrm;
-
-	size1 = 60;
-	size2 = 50;
 
 	a = random_matrix (size1, size2);
 
@@ -68,16 +66,11 @@ test_SV_decomp (void)
 bool
 test_SV_solve (void)
 {
-	size_t		size1;
-	size_t		size2;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
 	c_vector	*b;
 	double		nrm;
-
-	size1 = 50;
-	size2 = 60;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
@@ -109,16 +102,11 @@ test_SV_solve (void)
 bool
 test_SV_lsd_solve (void)
 {
-	size_t		size1;
-	size_t		size2;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
 	c_vector	*b;
 	double		nrm;
-
-	size1 = 50;
-	size2 = 50;
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);

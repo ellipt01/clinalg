@@ -22,11 +22,11 @@ extern void	dlup1up_ (int *m, int *n, double *L, int *ldl, double *R, int *ldr, 
 int
 c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
 {
+	int				i;
 	int				info;
  	int				m;
  	int				n;
  	int				lda;
- 	size_t			min_mn;
  	c_vector_int	*_p;
 
  	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgetrf", "matrix is empty.");
@@ -34,8 +34,9 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
  	m = (int) a->size1;
  	n = (int) a->size2;
  	lda  = (int) a->lda;
- 	min_mn = (size_t) C_MIN (a->size1, a->size2);
- 	_p = c_vector_int_alloc (min_mn);
+ 	_p = c_vector_int_alloc (a->size1);
+	for (i = 0; i < _p->size; i++) _p->data[i] = i + 1;
+
 	dgetrf_ (&m, &n, a->data, &lda, _p->data, &info);
 
 	if (p) *p = _p;

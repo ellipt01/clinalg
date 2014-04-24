@@ -7,9 +7,6 @@
 
 #include <clinalg.h>
 
-/* lapack */
-//extern void	dlaruv_ (long seed[], long *n, double *x);
-
 c_vector *
 random_vector (size_t size)
 {

@@ -5,8 +5,12 @@
  *      Author: utsugi
  */
 
+#include <stdlib.h>
 #include <clinalg.h>
 #include "test_clinalg.h"
+
+size_t		size1;
+size_t		size2;
 
 const int	n_test_cholesky_func = 6;
 
@@ -95,6 +99,10 @@ main (void)
 	bool	success = true;
 
 	srand (time (NULL));
+
+	size1 = (size_t) 100 * rand () / RAND_MAX + 10;
+	size2 = (size_t) 100 * rand () / RAND_MAX + 10;
+	fprintf (stderr, "size1 = %zd, size2 = %zd\n\n", size1, size2);
 
 	fprintf (stderr, "*** test_cholesky ***\n");
 	for (i = 0; i < n_test_cholesky_func; i++) {

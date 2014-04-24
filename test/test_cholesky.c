@@ -9,28 +9,28 @@
 
 #include "test_clinalg.h"
 
+extern size_t		size1;
+
 /* check |a - l' * l| < 1.e-8 */
 bool
 test_cholesky_decomp (void)
 {
-	size_t		size;
 	c_matrix	*a;
 	c_matrix	*c;
 	c_matrix	*l;
 	c_matrix	*b;
 	double		nrm;
 
-	size = 50;
 	{
 		int			i;
-		c_matrix	*a0 = random_matrix (size, size);
+		c_matrix	*a0 = random_matrix (size1, size1);
 		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
-		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
+		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
 
 	/* c = chol(a) */
-	c = c_matrix_alloc (size, size);
+	c = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (c, a);
 	c_linalg_cholesky_decomp (c);
 	l = c_matrix_alloc (c->size1, c->size2);
@@ -54,7 +54,6 @@ test_cholesky_decomp (void)
 bool
 test_cholesky_svx (void)
 {
-	size_t		size;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
@@ -62,18 +61,16 @@ test_cholesky_svx (void)
 	c_matrix	*l;
 	double		nrm;
 
-	size = 50;
-
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
-		c_matrix	*a0 = random_matrix (size, size);
+		c_matrix	*a0 = random_matrix (size1, size1);
 		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
-		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
+		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
 	/* vector *x */
-	x = random_vector (size);
+	x = random_vector (size1);
 
 	/* vector *y */
 	y = c_matrix_dot_vector (1., a, x, 0.);
@@ -95,27 +92,25 @@ test_cholesky_svx (void)
 bool
 test_cholesky_1up (void)
 {
-	size_t		size;
 	c_matrix	*a;
 	c_matrix	*c;
 	c_matrix	*l;
 	c_vector	*u;
 	double		nrm;
 
-	size = 50;
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
-		c_matrix	*a0 = random_matrix (size, size);
+		c_matrix	*a0 = random_matrix (size1, size1);
 		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
 		c_matrix_free (a0);
-		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
+		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
 	}
 
 	l = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (l, a);
 
-	u = random_vector (size);
+	u = random_vector (size1);
 	{
 		c_matrix	*ut = c_matrix_view_array (u->size, 1, u->size, u->data);
 		c = c_matrix_dot_matrix_transpose (1., ut, ut, 0.);
@@ -140,26 +135,24 @@ bool
 test_cholesky_1down (void)
 {
 	int			info;
-	size_t		size;
 	c_matrix	*a;
 	c_matrix	*c;
 	c_matrix	*l;
 	c_vector	*u;
 	double		nrm;
 
-	size = 50;
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
-		c_matrix	*a0 = random_matrix (size, size);
+		c_matrix	*a0 = random_matrix (size1, size1);
 		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
 		c_matrix_free (a0);
-		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
+		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
 	}
 
 	l = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (l, a);
-	u = random_vector (size);
+	u = random_vector (size1);
 	c_vector_scale (u, 0.1);
 	{
 		c_matrix	*ut = c_matrix_view_array (u->size, 1, u->size, u->data);
@@ -184,33 +177,30 @@ test_cholesky_1down (void)
 bool
 test_cholesky_insert (void)
 {
-	int			index;
-	size_t		size;
+	size_t		index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_matrix	*b;
 	c_matrix	*l;
 	c_vector	*c;
 	double		nrm;
 
-	size = 50;
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
-		c_matrix	*a0 = random_matrix (size, size);
+		c_matrix	*a0 = random_matrix (size1, size1);
 		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
-		for (i = 0; i < size; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
+		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
 
-	index = 30;
-	l = c_matrix_alloc (size - 1, size - 1);
-	c = c_vector_alloc (size);
+	l = c_matrix_alloc (size1 - 1, size1 - 1);
+	c = c_vector_alloc (size1);
 	{
 		int			i, j, m, n;
-		for (i = 0, m = 0; i < size; i++) {
+		for (i = 0, m = 0; i < size1; i++) {
 			c_vector_set (c, i, c_matrix_get (a, i, index));
 			if (i == index) continue;
-			for (j = 0, n = 0; j < size; j++) {
+			for (j = 0, n = 0; j < size1; j++) {
 				if (j == index) continue;
 				c_matrix_set (l, m, n, c_matrix_get (a, i, j));
 				n++;
@@ -224,7 +214,7 @@ test_cholesky_insert (void)
 	c_vector_free (c);
 	{
 		int		i, j;
-		for (i = 0; i < size; i++) {
+		for (i = 0; i < size1; i++) {
 			for (j = 0; j < i; j++) c_matrix_set (l, i, j, 0.);
 		}
 	}
@@ -243,30 +233,27 @@ test_cholesky_insert (void)
 bool
 test_cholesky_delete (void)
 {
-	int			index;
-	size_t		size;
+	size_t		index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_matrix	*l;
 	c_matrix	*b;
 	double		nrm;
 
-	size = 50;
 	/* posdef symmetry matrix *a */
 	{
 		int			i;
-		c_matrix	*a0 = random_matrix (size, size);
+		c_matrix	*a0 = random_matrix (size1, size1);
 		l = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
-		for (i = 0; i < size; i++) c_matrix_set (l, i, i, c_matrix_get(l, i, i) + 0.1);
+		for (i = 0; i < size1; i++) c_matrix_set (l, i, i, c_matrix_get(l, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
 
-	index = 30;
-	a = c_matrix_alloc (size - 1, size - 1);
+	a = c_matrix_alloc (size1 - 1, size1 - 1);
 	{
 		int			i, j, m, n;
-		for (i = 0, m = 0; i < size; i++) {
+		for (i = 0, m = 0; i < size1; i++) {
 			if (i == index) continue;
-			for (j = 0, n = 0; j < size; j++) {
+			for (j = 0, n = 0; j < size1; j++) {
 				if (j == index) continue;
 				c_matrix_set (a, m, n, c_matrix_get (l, i, j));
 				n++;
@@ -279,7 +266,7 @@ test_cholesky_delete (void)
 	c_linalg_cholesky_delete (l, index);
 	{
 		int		i, j;
-		for (i = 0; i < size - 1; i++) {
+		for (i = 0; i < size1 - 1; i++) {
 			for (j = 0; j < i; j++) c_matrix_set (l, i, j, 0.);
 		}
 	}

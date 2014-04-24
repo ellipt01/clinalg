@@ -239,6 +239,7 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
 	if (i < 0 || a->size2 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
 	if (j < 0 || a->size2 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
+	if (i == j) return;
 
 	n = (int) a->size1;
 	inc = 1;
