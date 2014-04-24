@@ -34,7 +34,7 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
  	m = (int) a->size1;
  	n = (int) a->size2;
  	lda  = (int) a->lda;
- 	min_mn = C_MIN (a->size1, a->size2);
+ 	min_mn = (size_t) C_MIN (a->size1, a->size2);
  	_p = c_vector_int_alloc (min_mn);
 	dgetrf_ (&m, &n, a->data, &lda, _p->data, &info);
 

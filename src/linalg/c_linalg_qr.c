@@ -78,9 +78,7 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	int			m;
 	int			n;
 	int			lda;
-
 	size_t		min_mn;
-	size_t		ltau;
 
 	double		wkopt;
 	int			lwork;
@@ -94,12 +92,11 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	m = (int) a->size1;
 	n = (int) a->size2;
 	lda = (int) a->lda;
-
 	min_mn = (size_t) C_MIN (a->size1, a->size2);
-	ltau = (size_t) C_MAX (min_mn, 1);
 
-	_tau = c_vector_alloc (ltau);
-	_p = c_vector_int_alloc (min_mn);
+	_tau = c_vector_alloc (min_mn);
+	_p = c_vector_int_alloc (n);
+	c_vector_int_set_zero (_p);
 
 	lwork = -1;
 	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, &wkopt, &lwork, &info);
