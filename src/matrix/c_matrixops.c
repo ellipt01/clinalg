@@ -251,6 +251,42 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 }
 
 void
+c_matrix_permute_rows (c_matrix *a, const c_vector_int *p)
+{
+	int			i;
+	size_t		size;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_permute_rows", "matrix is empty.");
+	if (c_vector_int_is_empty (p)) c_error ("c_matrix_permute_rows", "permutation is empty.");
+
+	size = (size_t) C_MIN (a->size1, p->size);
+	for (i = 0; i < size; i++) {
+		int		pi = c_vector_int_get (p, i) - 1;
+		if (pi < 0 || pi == i || a->size1 <= pi) continue;
+		c_matrix_swap_rows (i, pi, a);
+	}
+	return;
+}
+
+void
+c_matrix_permute_cols (c_matrix *a, const c_vector_int *p)
+{
+	int			i;
+	size_t		size;
+
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_permute_cols", "matrix is empty.");
+	if (c_vector_int_is_empty (p)) c_error ("c_matrix_permute_cols", "permutation is empty.");
+
+	size = (size_t) C_MIN (a->size2, p->size);
+	for (i = 0; i < size; i++) {
+		int		pi = c_vector_int_get (p, i) - 1;
+		if (pi < 0 || pi == i || a->size2 <= pi) continue;
+		c_matrix_swap_cols (i, pi, a);
+	}
+	return;
+}
+
+void
 c_matrix_add_row (c_matrix *a)
 {
 	int			j;

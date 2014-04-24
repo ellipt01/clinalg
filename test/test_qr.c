@@ -36,10 +36,12 @@ test_QR_decomp (void)
 	c_vector_free (tau);
 	c_matrix_free (qr);
 
-	/* b = q * r */
+	/* b = q * r * p */
 	b = c_matrix_dot_matrix (1., q, r, 0.);
 	c_matrix_free (q);
 	c_matrix_free (r);
+	c_matrix_permute_cols (b, p);
+	c_vector_int_free (p);
 
 	c_matrix_sub (a, b);
 	c_matrix_free (b);

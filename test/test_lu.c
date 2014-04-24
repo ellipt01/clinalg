@@ -21,9 +21,7 @@ test_LU_decomp (void)
 	c_matrix		*l;
 	c_matrix		*u;
 	c_matrix		*b;
-	c_matrix		*ap;
 	c_vector_int	*p;
-	c_matrix		*perm;
 	double			nrm;
 
 	a = random_matrix (size1, size2);
@@ -35,22 +33,18 @@ test_LU_decomp (void)
 	c_linalg_LU_unpack (lu, &l, &u);
 	c_matrix_free (lu);
 
-	perm = c_linalg_permutation_matrix_row (a->size1, p);
-	c_vector_int_free (p);
-
 	b = c_matrix_dot_matrix (1., l, u, 0.);
 	c_matrix_free (l);
 	c_matrix_free (u);
 
-	ap = c_matrix_dot_matrix (1., perm, a, 0.);
-	c_matrix_free (a);
-	c_matrix_free (perm);
+	c_matrix_permute_rows (a, p);
+	c_vector_int_free (p);
 
-	c_matrix_sub (b, ap);
-	c_matrix_free (ap);
-
-	nrm = c_matrix_nrm (b, '1');
+	c_matrix_sub (a, b);
 	c_matrix_free (b);
+
+	nrm = c_matrix_nrm (a, '1');
+	c_matrix_free (a);
 
 	return (nrm < 1.e-8);
 }
@@ -165,14 +159,13 @@ test_LU_1up (void)
 
 	{
 		c_matrix	*a1 = c_matrix_dot_matrix (1., l, u, 0.);
-		c_matrix	*perm = c_linalg_permutation_matrix_row (a1->size1, p);
-		c_matrix	*a2 = c_matrix_dot_matrix (1., perm, a1, 0.);
-		c_matrix_free (a1);
 		c_matrix_free (l);
 		c_matrix_free (u);
 
-		c_matrix_sub (a, a2);
-		c_matrix_free (a2);
+		c_matrix_permute_rows (a, p);
+		c_vector_int_free (p);
+		c_matrix_sub (a, a1);
+		c_matrix_free (a1);
 	}
 	nrm = c_matrix_nrm (a, '1');
 	c_matrix_free (a);

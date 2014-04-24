@@ -8,8 +8,6 @@
 #ifndef C_LINALG_UTILS_H_
 #define C_LINALG_UTILS_H_
 
-c_matrix	*c_linalg_permutation_matrix_row (const size_t size, const c_vector_int *p);
-c_matrix	*c_linalg_permutation_matrix_col (const size_t size, const c_vector_int *p);
-
+void	c_error (const char * function_name, const char *error_msg);
 
 #endif /* C_LINALG_UTILS_H_ */

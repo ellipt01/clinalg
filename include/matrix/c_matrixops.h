@@ -23,9 +23,14 @@ void			c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a);
 
 void			c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a);
 void			c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a);
+
+void			c_matrix_permute_rows (c_matrix *a, const c_vector_int *p);
+void			c_matrix_permute_cols (c_matrix *a, const c_vector_int *p);
+
 void			c_matrix_add_col (c_matrix *a);
 void			c_matrix_add_row (c_matrix *a);
 void			c_matrix_add_row_col (c_matrix *a);
+
 void			c_matrix_remove_col (c_matrix *a);
 void			c_matrix_remove_row (c_matrix *a);
 void			c_matrix_remove_row_col (c_matrix *a);
