@@ -49,7 +49,7 @@ struct s_c_vector_int {
 };
 
 c_vector		*c_vector_alloc (const size_t size);
-void			c_vector_realloc (c_vector *x, const size_t size);
+void			c_vector_realloc (const size_t tsize, c_vector *x, const size_t size);
 c_vector		*c_vector_view_array (const size_t size, const size_t stride, double *data);
 bool			c_vector_is_empty (const c_vector *x);
 void			c_vector_free (c_vector *x);

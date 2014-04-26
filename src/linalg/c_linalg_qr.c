@@ -331,11 +331,7 @@ c_linalg_QR_solve (c_matrix *a, c_vector *b)
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_QR_solve", "matrix is empty.");
 	if (c_vector_is_empty (b)) c_error ("c_linalg_QR_solve", "vector is empty.");
 	if (a->size1 != b->size) c_error ("c_linalg_QR_solve", "vector and matrix size dose not match.");
-	if (a->size1 < a->size2 && b->size < a->size2) {
-		size_t	size = b->size;
-		c_vector_realloc (b, a->size2);
-		b->size = size;
-	}
+	if (a->size1 < a->size2 && b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
 
 	x = c_matrix_view_array (b->size, 1, b->size, b->data);
 	info = c_linalg_lapack_dgels ('N', a, x);
@@ -357,11 +353,8 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, in
 	if (c_vector_is_empty (b)) c_error ("c_linalg_lsQ_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_lsQ_solve", "matrix is empty.");
 	if (a->size1 != b->size) c_error ("c_linalg_lsQ_solve", "vector and matrix size dose not match.");
-	if (a->size1 < a->size2 && b->size < a->size2) {
-		size_t	size = b->size;
-		c_vector_realloc (b, a->size2);
-		b->size = size;
-	}
+	if (a->size1 < a->size2 && b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
+
 	x = c_matrix_view_array (b->size, 1, b->size, b->data);
 	info = c_linalg_lapack_dgelsy (rcond, a, x, &_p, &_rank);
 	c_matrix_free (x);

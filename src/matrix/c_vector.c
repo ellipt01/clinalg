@@ -52,17 +52,16 @@ c_vector_alloc (const size_t size)
 }
 
 void
-c_vector_realloc (c_vector *x, const size_t size)
+c_vector_realloc (const size_t tsize, c_vector *x, const size_t size)
 {
-	void	*data;
-	size_t	memsize;
-
 	if (c_vector_is_empty (x)) c_error ("c_vector_realloc", "vector is empty.");
 	if (!x->owner) c_error ("c_vector_realloc", "cannot reallocate vector your own.");
-	memsize = size * sizeof (double);
-	if ((data = realloc (x->data, memsize)) == NULL) c_error ("c_vector_realloc", "cannot reallocate vector.");
-	x->data = (double *) data;
-	x->size = size;
+	if (x->tsize == tsize) return;
+
+	x->data = (double *) realloc (x->data, tsize * sizeof (double));
+	if (x->data == NULL) c_error ("c_vector_realloc", "cannot reallocate vector.");
+	x->tsize = tsize;
+	if (x->size != size) x->size = size;
 
 	return;
 }

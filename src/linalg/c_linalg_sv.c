@@ -359,7 +359,7 @@ c_linalg_SV_solve (double rcond, c_matrix *a, c_vector *b, c_vector **s, int *ra
 	if (c_vector_is_empty (b)) c_error ("c_linalg_SV_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_SV_solve", "matrix is empty.");
 	if (a->size1 != b->size) c_error ("c_linalg_SV_solve", "vector and matrix size dose not match.");
-	if (b->size < a->size2) b->data = (double *) realloc (b->data, a->size2 * sizeof (double));
+	if (b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
 
 	{
 		c_matrix	*x = c_matrix_view_array (a->size1, 1, a->lda, b->data);
@@ -387,7 +387,7 @@ c_linalg_SV_lsd_solve (double rcond, c_matrix *a, c_vector *b, c_vector **s, int
 	if (c_vector_is_empty (b)) c_error ("c_linalg_SV_lsd_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_SV_lsd_solve", "matrix is empty.");
 	if (a->size1 != b->size) c_error ("c_linalg_SV_lsd_solve", "vector and matrix size dose not match.");
-	if (b->size < a->size2) b->data = (double *) realloc (b->data, a->size2 * sizeof (double));
+	if (b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
 
 	{
 		c_matrix	*x = c_matrix_view_array (a->size1, 1, a->lda, b->data);
