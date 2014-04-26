@@ -297,7 +297,7 @@ c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_rowcols", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_add_rowcols", "cannot resize matrix of !a->owner.");
+	if (!a->owner) c_error ("c_matrix_add_rowcols", "cannot resize matrix_view.");
 
 	n = (int) a->size1;
 	lda = (int) a->lda;
@@ -333,8 +333,9 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_rowcols", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_remove_rowcols", "cannot resize matrix of !a->owner.");
-	if (a->size1 <= 1) c_error ("c_matrix_remove_rowcols", "a->size1 must be > 1.");
+	if (!a->owner) c_error ("c_matrix_remove_rowcols", "cannot resize matrix_view.");
+	if (a->size1 - dm <= 0) c_error ("c_matrix_remove_rowcols", "a->size1 must be > dm.");
+	if (a->size2 - dn <= 0) c_error ("c_matrix_remove_rowcols", "a->size2 must be > dn.");
 
 	lda = (int) a->lda;
 	a->size1 -= dm;

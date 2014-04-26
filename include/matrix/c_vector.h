@@ -57,6 +57,8 @@ void			c_vector_set (c_vector *x, const int i, const double val);
 double			c_vector_get (const c_vector *x, const int i);
 
 void			c_vector_memcpy (c_vector *dest, const c_vector *src);
+void			c_vector_ncopy (c_vector *dest, const size_t n0, const size_t n, const c_vector *src);
+
 void			c_vector_set_all (c_vector *x, const double val);
 void			c_vector_set_zero (c_vector *x);
 

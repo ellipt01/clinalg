@@ -140,7 +140,7 @@ c_vector_memcpy (c_vector *dest, const c_vector *src)
 }
 
 void
-c_vector_ncopy (const size_t n0, const size_t n, c_vector *dest, const c_vector *src)
+c_vector_ncopy (c_vector *dest, const size_t n0, const size_t n, const c_vector *src)
 {
 	int		len;
 	int		incx;
