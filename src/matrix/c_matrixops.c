@@ -298,6 +298,7 @@ c_matrix_add_row (c_matrix *a)
 	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_add_row", "cannot resize matrix of !a->owner.");
 
 	n = (int) a->size1;
 	lda = (int) a->lda;
@@ -324,6 +325,7 @@ c_matrix_add_col (c_matrix *a)
 	size_t	lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_col", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_add_col", "cannot resize matrix of !a->owner.");
 
 	lda = (int) a->lda;
 	a->size2++;
@@ -344,6 +346,7 @@ c_matrix_add_row_col (c_matrix *a)
 	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row_col", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_add_row_col", "cannot resize matrix of !a->owner.");
 
 	n = (int) a->size1;
 	lda = (int) a->lda;
@@ -375,6 +378,7 @@ c_matrix_remove_row (c_matrix *a)
 	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_remove_row", "cannot resize matrix of !a->owner.");
 	if (a->size1 <= 1) c_error ("c_matrix_remove_row", "a->size1 must be > 1.");
 
 	lda = (int) a->lda;
@@ -401,6 +405,7 @@ c_matrix_remove_col (c_matrix *a)
 	size_t	lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_col", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_remove_col", "cannot resize matrix of !a->owner.");
 
 	lda = (int) a->lda;
 	a->size2--;
@@ -419,8 +424,9 @@ c_matrix_remove_row_col (c_matrix *a)
 	size_t		lda;
 	c_vector	*col;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row", "matrix is empty.");
-	if (a->size1 <= 1) c_error ("c_matrix_remove_row", "a->size1 must be > 1.");
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row_col", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_remove_row_col", "cannot resize matrix of !a->owner.");
+	if (a->size1 <= 1) c_error ("c_matrix_remove_row_col", "a->size1 must be > 1.");
 
 	lda = (int) a->lda;
 	a->size1--;
