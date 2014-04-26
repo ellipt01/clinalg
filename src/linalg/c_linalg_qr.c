@@ -450,10 +450,10 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 		| D0  R22 | -> | D0  R22 D0 |
                       | D0  D0  D0 |
 	*/
-		c_matrix_add_col (q);
-		c_matrix_add_row (r);
+		c_matrix_add_rowcols (q, 0, 1);
+		c_matrix_add_rowcols (r, 1, 0);
 	}
-	c_matrix_add_col (r);
+	c_matrix_add_rowcols (r, 0, 1);
 	ldr = r->lda;
 
 	j = index + 1;	// differ from fortran to C
@@ -492,10 +492,10 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 		| D0  R22 R23 | -> | D0  R22 R23 |
 		                   | D0  D0  D0  |
 	*/
-		c_matrix_add_col (q);
-		c_matrix_add_row (r);
+		c_matrix_add_rowcols (q, 0, 1);
+		c_matrix_add_rowcols (r, 1, 0);
 	}
-	c_matrix_add_row (q);
+	c_matrix_add_rowcols (q, 1, 0);
 	ldq = q->lda;
 	ldr = r->lda;
 
@@ -543,10 +543,10 @@ c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index)
 		| D0  R22 xx | -> | D0  R22 |
        | D0  D0  xx |
 	*/
-		c_matrix_remove_col (q);
-		c_matrix_remove_row (r);
+		c_matrix_remove_rowcols (q, 0, 1);
+		c_matrix_remove_rowcols (r, 1, 0);
 	}
-	c_matrix_remove_col (r);
+	c_matrix_remove_rowcols (r, 0, 1);
 
 	return;
 }
@@ -585,10 +585,10 @@ c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const size_t index)
 		| D0  R22 R23 | -> | D0  R22 R23 |
 		| xx  xx  xx  |
 	*/
-		c_matrix_remove_col (q);
-		c_matrix_remove_row (q);
+		c_matrix_remove_rowcols (q, 0, 1);
+		c_matrix_remove_rowcols (q, 1, 0);
 	}
-	c_matrix_remove_row (r);
+	c_matrix_remove_rowcols (r, 1, 0);
 
 	return;
 }

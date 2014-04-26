@@ -27,13 +27,11 @@ void			c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a);
 void			c_matrix_permute_rows (c_matrix *a, const c_vector_int *p);
 void			c_matrix_permute_cols (c_matrix *a, const c_vector_int *p);
 
-void			c_matrix_add_col (c_matrix *a);
-void			c_matrix_add_row (c_matrix *a);
-void			c_matrix_add_row_col (c_matrix *a);
+void			c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn);
+void			c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn);
 
-void			c_matrix_remove_col (c_matrix *a);
-void			c_matrix_remove_row (c_matrix *a);
-void			c_matrix_remove_row_col (c_matrix *a);
+void			c_matrix_merge_row (c_matrix *a, const c_matrix *b);
+void			c_matrix_merge_col (c_matrix *a, const c_matrix *b);
 
 c_matrix		*c_matrix_identity (const size_t size1, const size_t size2);
 c_vector		*c_matrix_dot_vector (double alpha, const c_matrix *a, const c_vector *v, double beta);

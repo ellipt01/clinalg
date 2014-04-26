@@ -207,8 +207,8 @@ c_linalg_cholesky_insert (c_matrix *l, const int index, c_vector *u)
 
 	n = l->size1;
 
-	c_matrix_add_col (l);
-	c_matrix_add_row (l);
+	c_matrix_add_rowcols (l, 0, 1);
+	c_matrix_add_rowcols (l, 1, 0);
 
 	ldr = l->lda;
 	w = (double *) malloc (ldr * sizeof (double));
@@ -239,8 +239,8 @@ c_linalg_cholesky_delete (c_matrix *l, const int index)
 
 	dchdex_ (&n, l->data, &ldr, &j, w);
 	free (w);
-	c_matrix_remove_col (l);
-	if (!c_matrix_is_empty (l)) c_matrix_remove_row (l);
+	c_matrix_remove_rowcols (l, 0, 1);
+	if (!c_matrix_is_empty (l)) c_matrix_remove_rowcols (l, 1, 0);
 
 	return;
 }

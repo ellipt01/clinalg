@@ -288,56 +288,7 @@ c_matrix_permute_cols (c_matrix *a, const c_vector_int *p)
 }
 
 void
-c_matrix_add_row (c_matrix *a)
-{
-	int			j;
-	int			n;
-	int			incx = 1;
-	int			incy = 1;
-	size_t		lda;
-	c_vector	*col;
-
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_add_row", "cannot resize matrix of !a->owner.");
-
-	n = (int) a->size1;
-	lda = (int) a->lda;
-	a->size1++;
-	a->lda++;
-	a->tsize = a->lda * a->size2;
-	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
-
-	col = c_vector_alloc (n);
-	for (j = a->size2 - 1; 0 < j; j--) {
-		dcopy_ (&n, a->data + j * lda, &incx, col->data, &incy);
-		dcopy_ (&n, col->data, &incy, POINTER_OF_MATRIX (a, 0, j), &incx);
-	}
-	c_vector_free (col);
-	for (j = 0; j < a->size2; j++) a->data[a->size1 - 1 + j * a->lda] = 0.;
-
-	return;
-}
-
-void
-c_matrix_add_col (c_matrix *a)
-{
-	int		i;
-	size_t	lda;
-
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_col", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_add_col", "cannot resize matrix of !a->owner.");
-
-	lda = (int) a->lda;
-	a->size2++;
-	a->tsize = a->lda * a->size2;
-	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
-	for (i = 0; i < a->size1; i++) a->data[i + (a->size2 - 1) * a->lda] = 0.;
-
-	return;
-}
-
-void
-c_matrix_add_row_col (c_matrix *a)
+c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 {
 	int			i, j;
 	int			n;
@@ -345,31 +296,35 @@ c_matrix_add_row_col (c_matrix *a)
 	size_t		lda;
 	c_vector	*col;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_row_col", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_add_row_col", "cannot resize matrix of !a->owner.");
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_rowcols", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_add_rowcols", "cannot resize matrix of !a->owner.");
 
 	n = (int) a->size1;
 	lda = (int) a->lda;
-	a->size1++;
-	a->lda++;
-	a->size2++;
+	a->size1 += dm;
+	a->lda += dm;
+	a->size2 += dn;
 	a->tsize = a->lda * a->size2;
 	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
 
 	col = c_vector_alloc (n);
-	for (j = (a->size2 - 1) - 1; 0 < j; j--) {
+	for (j = (a->size2 - dn) - 1; 0 < j; j--) {
 		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
 		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
 	}
 	c_vector_free (col);
-	for (i = 0; i < a->size1 - 1; i++) a->data[i + (a->size2 - 1) * a->lda] = 0.;
-	for (j = 0; j < a->size2; j++) a->data[a->size1 - 1 + j * a->lda] = 0.;
+	for (i = a->size1 - dm; i < a->size1; i++) {
+		for (j = 0; j < a->size2; j++) c_matrix_set (a, i, j, 0.);
+	}
+	for (j = a->size2 - dn; j < a->size2; j++) {
+		for (i = 0; i < a->size1 - dm; i++) c_matrix_set (a, i, j, 0.);
+	}
 
 	return;
 }
 
 void
-c_matrix_remove_row (c_matrix *a)
+c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 {
 	int			j;
 	int			n;
@@ -377,13 +332,14 @@ c_matrix_remove_row (c_matrix *a)
 	size_t		lda;
 	c_vector	*col;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_remove_row", "cannot resize matrix of !a->owner.");
-	if (a->size1 <= 1) c_error ("c_matrix_remove_row", "a->size1 must be > 1.");
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_rowcols", "matrix is empty.");
+	if (!a->owner) c_error ("c_matrix_remove_rowcols", "cannot resize matrix of !a->owner.");
+	if (a->size1 <= 1) c_error ("c_matrix_remove_rowcols", "a->size1 must be > 1.");
 
 	lda = (int) a->lda;
-	a->size1--;
-	a->lda--;
+	a->size1 -= dm;
+	a->lda -= dm;
+	a->size2 -= dn;
 	a->tsize = a->lda * a->size2;
 	n = (int) a->size1;
 
@@ -400,50 +356,46 @@ c_matrix_remove_row (c_matrix *a)
 }
 
 void
-c_matrix_remove_col (c_matrix *a)
+c_matrix_merge_row (c_matrix *a, const c_matrix *b)
 {
-	size_t	lda;
+	int			j;
+	int			m, n;
+	int			inc;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_row", "matrix *a is empty.");
+	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_row", "matrix *b is empty.");
+	if (a->size1 != b->size1) c_error ("c_matrix_merge_row", "matrix size dose not match.");
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_col", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_remove_col", "cannot resize matrix of !a->owner.");
+	m = (int) a->size2;
+	c_matrix_add_rowcols (a, 0, b->size2);
 
-	lda = (int) a->lda;
-	a->size2--;
-	a->tsize = a->lda * a->size2;
-	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
-
+	n = (int) b->size1;
+	inc = 1;
+	for (j = 0; j < b->size2; j++) {
+		double	*bj = POINTER_OF_MATRIX (b, 0, j);
+		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, 0, m + j), &inc);
+	}
 	return;
 }
 
 void
-c_matrix_remove_row_col (c_matrix *a)
+c_matrix_merge_col (c_matrix *a, const c_matrix *b)
 {
 	int			j;
-	int			n;
-	int			inc = 1;
-	size_t		lda;
-	c_vector	*col;
+	int			m, n;
+	int			inc;
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_col", "matrix *a is empty.");
+	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_col", "matrix *b is empty.");
+	if (a->size2 != b->size2) c_error ("c_matrix_merge_col", "matrix size dose not match.");
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_row_col", "matrix is empty.");
-	if (!a->owner) c_error ("c_matrix_remove_row_col", "cannot resize matrix of !a->owner.");
-	if (a->size1 <= 1) c_error ("c_matrix_remove_row_col", "a->size1 must be > 1.");
+	m = (int) a->size1;
+	c_matrix_add_rowcols (a, b->size1, 0);
 
-	lda = (int) a->lda;
-	a->size1--;
-	a->lda--;
-	a->size2--;
-	a->tsize = a->lda * a->size2;
-	n = (int) a->size1;
-
-	col = c_vector_alloc (a->size1);
-	for (j = 1; j < a->size2; j++) {
-		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+	n = (int) b->size1;
+	inc = 1;
+	for (j = 0; j < b->size2; j++) {
+		double	*bj = POINTER_OF_MATRIX (b, 0, j);
+		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, m, j), &inc);
 	}
-	c_vector_free (col);
-
-	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
-
 	return;
 }
 
