@@ -294,25 +294,30 @@ c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	int			n;
 	int			inc = 1;
 	size_t		lda;
-	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_rowcols", "matrix is empty.");
 	if (!a->owner) c_error ("c_matrix_add_rowcols", "cannot resize matrix_view.");
 
+	if (dm <= 0 && dn <= 0) return;
+
 	n = (int) a->size1;
 	lda = (int) a->lda;
-	a->size1 += dm;
-	a->lda += dm;
-	a->size2 += dn;
+	if (dm > 0) {
+		a->size1 += dm;
+		a->lda += dm;
+	}
+	if (dn > 0) a->size2 += dn;
 	a->tsize = a->lda * a->size2;
 	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
 
-	col = c_vector_alloc (n);
-	for (j = (a->size2 - dn) - 1; 0 < j; j--) {
-		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+	if (dm > 0) {
+		c_vector	*col = c_vector_alloc (n);
+		for (j = (a->size2 - dn) - 1; 0 < j; j--) {
+			dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
+			dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+		}
+		c_vector_free (col);
 	}
-	c_vector_free (col);
 	for (i = a->size1 - dm; i < a->size1; i++) {
 		for (j = 0; j < a->size2; j++) c_matrix_set (a, i, j, 0.);
 	}
@@ -330,27 +335,31 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	int			n;
 	int			inc = 1;
 	size_t		lda;
-	c_vector	*col;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_rowcols", "matrix is empty.");
 	if (!a->owner) c_error ("c_matrix_remove_rowcols", "cannot resize matrix_view.");
 	if (a->size1 - dm <= 0) c_error ("c_matrix_remove_rowcols", "a->size1 must be > dm.");
 	if (a->size2 - dn <= 0) c_error ("c_matrix_remove_rowcols", "a->size2 must be > dn.");
 
+	if (dm <= 0 && dn <= 0) return;
+
 	lda = (int) a->lda;
-	a->size1 -= dm;
-	a->lda -= dm;
-	a->size2 -= dn;
+	if (dm > 0) {
+		a->size1 -= dm;
+		a->lda -= dm;
+	}
+	if (dn > 0) a->size2 -= dn;
 	a->tsize = a->lda * a->size2;
 	n = (int) a->size1;
 
-	col = c_vector_alloc (a->size1);
-	for (j = 1; j < a->size2; j++) {
-		dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-		dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+	if (dm > 0) {
+		c_vector	*col = c_vector_alloc (a->size1);
+		for (j = 1; j < a->size2; j++) {
+			dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
+			dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+		}
+		c_vector_free (col);
 	}
-	c_vector_free (col);
-
 	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
 
 	return;

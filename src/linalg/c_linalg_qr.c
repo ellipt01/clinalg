@@ -438,9 +438,8 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 
 	m = q->size1;
 	n = r->size2;
-	k = q->size2;
 	ldq = q->lda;
-	if (!c_matrix_is_square (q)) {
+	if (q->size1 > q->size2) {	// economy mode
 	/*
 		| Q11 Q12 |    | Q11 Q12 D0 |
 		| Q21 Q22 | -> | Q21 Q22 D0 |
@@ -451,9 +450,12 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
                       | D0  D0  D0 |
 	*/
 		c_matrix_add_rowcols (q, 0, 1);
-		c_matrix_add_rowcols (r, 1, 0);
+		c_matrix_add_rowcols (r, 1, 1);
+		k = q->size2;
+	} else {
+		c_matrix_add_rowcols (r, 0, 1);
+		k = q->size1;
 	}
-	c_matrix_add_rowcols (r, 0, 1);
 	ldr = r->lda;
 
 	j = index + 1;	// differ from fortran to C
@@ -492,10 +494,10 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 		| D0  R22 R23 | -> | D0  R22 R23 |
 		                   | D0  D0  D0  |
 	*/
-		c_matrix_add_rowcols (q, 0, 1);
+		c_matrix_add_rowcols (q, 1, 1);
 		c_matrix_add_rowcols (r, 1, 0);
-	}
-	c_matrix_add_rowcols (q, 1, 0);
+	} else c_matrix_add_rowcols (q, 1, 0);
+
 	ldq = q->lda;
 	ldr = r->lda;
 
@@ -544,9 +546,8 @@ c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index)
        | D0  D0  xx |
 	*/
 		c_matrix_remove_rowcols (q, 0, 1);
-		c_matrix_remove_rowcols (r, 1, 0);
-	}
-	c_matrix_remove_rowcols (r, 0, 1);
+		c_matrix_remove_rowcols (r, 1, 1);
+	} else c_matrix_remove_rowcols (r, 0, 1);
 
 	return;
 }
@@ -585,8 +586,7 @@ c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const size_t index)
 		| D0  R22 R23 | -> | D0  R22 R23 |
 		| xx  xx  xx  |
 	*/
-		c_matrix_remove_rowcols (q, 0, 1);
-		c_matrix_remove_rowcols (q, 1, 0);
+		c_matrix_remove_rowcols (q, 1, 1);
 	}
 	c_matrix_remove_rowcols (r, 1, 0);
 
