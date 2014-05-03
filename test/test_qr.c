@@ -277,7 +277,7 @@ test_QR_colinsert (void)
 		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
 		c_matrix_memcpy (qr, a);
 		c_linalg_QR_decomp (qr, NULL, &tau);
-		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_linalg_QR_unpack (qr, tau, &q, &r, true);
 		c_vector_free (tau);
 		c_matrix_free (qr);
 	}
@@ -394,7 +394,7 @@ test_QR_coldelete (void)
 		c_matrix	*qr = c_matrix_alloc (a->size1, a->size2);
 		c_matrix_memcpy (qr, a);
 		c_linalg_QR_decomp (qr, NULL, &tau);
-		c_linalg_QR_unpack (qr, tau, &q, &r, false);
+		c_linalg_QR_unpack (qr, tau, &q, &r, true);
 		c_vector_free (tau);
 		c_matrix_free (qr);
 	}

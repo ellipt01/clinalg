@@ -438,8 +438,9 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 
 	m = q->size1;
 	n = r->size2;
+	k = C_MIN (m, n);
 	ldq = q->lda;
-	if (q->size1 > q->size2) {	// economy mode
+	if (!c_matrix_is_square (q)) {	// economy mode
 	/*
 		| Q11 Q12 |    | Q11 Q12 D0 |
 		| Q21 Q22 | -> | Q21 Q22 D0 |
@@ -451,11 +452,8 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	*/
 		c_matrix_add_rowcols (q, 0, 1);
 		c_matrix_add_rowcols (r, 1, 1);
-		k = q->size2;
-	} else {
-		c_matrix_add_rowcols (r, 0, 1);
-		k = q->size1;
-	}
+	} else c_matrix_add_rowcols (r, 0, 1);
+
 	ldr = r->lda;
 
 	j = index + 1;	// differ from fortran to C
@@ -478,7 +476,7 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	if (c_vector_is_empty (u)) c_error ("c_linalg_QR_rowinsert", "vector *u is empty.");
 	if (u->size != r->size2) c_error ("c_linalg_QR_rowinsert", "matrix size dose not match..");
 	if (q->size2 != r->size1) c_error ("c_linalg_QR_rowinsert", "matrix size dose not match..");
-	if (index < 0 || r->size1 < index) c_error ("c_linalg_QR_rowinsert", "index out of range.");
+	if (index < 0 || q->size1 < index) c_error ("c_linalg_QR_rowinsert", "index out of range.");
 	if (!c_matrix_is_square (q) && c_matrix_is_square (r))
 		c_error ("c_linalg_QR_rowinsert", "rowinsert cannot treat QR economy mode.");
 
@@ -525,9 +523,9 @@ c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index)
 
 	m = q->size1;
 	n = r->size2;
-	k = q->size2;
+	k = C_MIN (m, n);
 	ldq = q->lda;
-	ldr = r->lda;
+	ldr = k;
 
 	j = index + 1;	// differ from fortran to C
 
@@ -561,7 +559,7 @@ c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const size_t index)
 	if (c_matrix_is_empty (q)) c_error ("c_linalg_QR_rowdelete", "matrix *q is empty.");
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_rowdelete", "matrix *r is empty.");
 	if (q->size2 != r->size1) c_error ("c_linalg_QR_rowdelete", "matrix size dose not match..");
-	if (index < 0 || r->size1 <= index) c_error ("c_linalg_QR_rowdelete", "index out of range.");
+	if (index < 0 || q->size1 <= index) c_error ("c_linalg_QR_rowdelete", "index out of range.");
 	if (!c_matrix_is_square (q) && c_matrix_is_square (r))
 		c_error ("c_linalg_QR_rowdelete", "rowdelete cannot treat QR economy mode.");
 
