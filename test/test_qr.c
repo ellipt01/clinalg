@@ -158,14 +158,14 @@ test_lsQ_solve (void)
 bool
 test_QR_Rsolve (void)
 {
-	size_t 	size1 = size2 + 10;
+	size_t 	_size1 = size2 + 10;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
 	c_vector	*z;
 	double		nrm;
 
-	a = random_matrix (size1, size2);
+	a = random_matrix (_size1, size2);
 	x = random_vector (a->size2);
 	y = c_matrix_dot_vector (1., a, x, 0.);
 	c_vector_free (x);

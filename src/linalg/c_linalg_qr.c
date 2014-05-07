@@ -369,6 +369,7 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, in
 	return info;
 }
 
+/* solve R *x = Q^T * y */
 void
 c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 {
@@ -382,6 +383,10 @@ c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
 	if (c_vector_is_empty (qty)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
 	if (qty->size != r->size1) c_error ("c_linalg_QR_Rsolve", "vector and matrix size dose not match.");
+	if (r->size2 > qty->size) {
+		qty->data = (double *) realloc (qty->data, r->size2 * sizeof (double));
+		qty->tsize = r->size2 * qty->stride;
+	}
 
 	uplo = 'U';
 	trans = 'N';
@@ -391,6 +396,36 @@ c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 	incy = (int) qty->stride;
 	dtrsv_ (&uplo, &trans, &diag, &n, r->data, &lda, qty->data, &incy);
 	if (qty->size != r->size2) qty->size = r->size2;
+	return;
+}
+
+/* solve R^T *(Q^T * x) = y */
+void
+c_linalg_QR_RTsolve (c_matrix *r, c_vector *y)
+{
+	char	uplo;
+	char	trans;
+	char	diag;
+	int		n;
+	int		lda;
+	int		incy;
+
+	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
+	if (c_vector_is_empty (y)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
+	if (y->size != r->size2) c_error ("c_linalg_QR_Rsolve", "vector and matrix size dose not match.");
+	if (r->size1 > y->size) {
+		y->data = (double *) realloc (y->data, r->size1 * sizeof (double));
+		y->tsize = r->size1 * y->stride;
+	}
+
+	uplo = 'U';
+	trans = 'T';
+	diag = 'N';
+	n = (int) r->size1;
+	lda = (int) r->lda;
+	incy = (int) y->stride;
+	dtrsv_ (&uplo, &trans, &diag, &n, r->data, &lda, y->data, &incy);
+	if (y->size != r->size1) y->size = r->size1;
 	return;
 }
 
@@ -440,16 +475,16 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	n = r->size2;
 	k = C_MIN (m, n);
 	ldq = q->lda;
-	if (!c_matrix_is_square (q)) {	// economy mode
-	/*
-		| Q11 Q12 |    | Q11 Q12 D0 |
-		| Q21 Q22 | -> | Q21 Q22 D0 |
-		| Q31 Q32 |    | Q31 Q32 D0 |
-
-		| R11 R12 |    | R11 R12 D0 |
-		| D0  R22 | -> | D0  R22 D0 |
-                      | D0  D0  D0 |
-	*/
+	if (q->size1 > q->size2) {	// economy mode
+		/*=
+		 *= | Q11 Q12 |    | Q11 Q12 D0 |
+		 *= | Q21 Q22 | -> | Q21 Q22 D0 |
+		 *= | Q31 Q32 |    | Q31 Q32 D0 |
+		 *=
+		 *= | R11 R12 |    | R11 R12 D0 |
+		 *= | D0  R22 | -> | D0  R22 D0 |
+		 *=                | D0  D0  D0 |
+		 */
 		c_matrix_add_rowcols (q, 0, 1);
 		c_matrix_add_rowcols (r, 1, 1);
 	} else c_matrix_add_rowcols (r, 0, 1);
@@ -482,19 +517,18 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 
 	m = q->size1;
 	n = r->size2;
-	if (c_matrix_is_square (q)) {
-	/*
-		| Q11 Q12 |        | Q11 Q12 D0 |
-		| Q21 Q22 |     -> | Q21 Q22 D0 |
-		                   | D0  D0  D0 |
 
-		| R11 R12 R13 |    | R11 R12 R13 |
-		| D0  R22 R23 | -> | D0  R22 R23 |
-		                   | D0  D0  D0  |
-	*/
-		c_matrix_add_rowcols (q, 1, 1);
-		c_matrix_add_rowcols (r, 1, 0);
-	} else c_matrix_add_rowcols (q, 1, 0);
+	/*=
+	 *= | Q11 Q12 |        | Q11 Q12 D0 |
+	 *= | Q21 Q22 |     -> | Q21 Q22 D0 |
+	 *=                    | D0  D0  D0 |
+	 *=
+	 *= | R11 R12 R13 |    | R11 R12 R13 |
+	 *= | D0  R22 R23 | -> | D0  R22 R23 |
+	 *=                    | D0  D0  D0  |
+	 */
+	c_matrix_add_rowcols (q, 1, 1);
+	c_matrix_add_rowcols (r, 1, 0);
 
 	ldq = q->lda;
 	ldr = r->lda;
@@ -533,16 +567,16 @@ c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index)
 	dqrdec_ (&m, &n, &k, q->data, &ldq, r->data, &ldr, &j, w);
 	free (w);
 
-	if (!c_matrix_is_square (q)) {
-	/*
-		| Q11 Q12 xx |    | Q11 Q12 |
-		| Q21 Q22 xx | -> | Q21 Q22 |
-		| xx  xx  xx |
-
-		| R11 R12 xx |    | R11 R12 |
-		| D0  R22 xx | -> | D0  R22 |
-       | D0  D0  xx |
-	*/
+	if (q->size1 >= q->size2) {
+		/*=
+		 *= | Q11 Q12 xx |    | Q11 Q12 |
+		 *= | Q21 Q22 xx | -> | Q21 Q22 |
+		 *= | Q31 Q32 xx |    | Q31 Q32 |
+		 *=
+		 *= | R11 R12 xx |    | R11 R12 |
+		 *= | D0  R22 xx | -> | D0  R22 |
+		 *= | D0  D0  xx |
+		 */
 		c_matrix_remove_rowcols (q, 0, 1);
 		c_matrix_remove_rowcols (r, 1, 1);
 	} else c_matrix_remove_rowcols (r, 0, 1);
@@ -574,18 +608,17 @@ c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const size_t index)
 	dqrder_ (&m, &n, q->data, &ldq, r->data, &ldr, &j, w);
 	free (w);
 
-	if (c_matrix_is_square (q)) {
-	/*
-		| Q11 Q12 xx |     | Q11 Q12 |
-		| Q21 Q22 xx |  -> | Q21 Q22 |
-		| xx  xx  xx |
-
-		| R11 R12 R13 |    | R11 R12 R13 |
-		| D0  R22 R23 | -> | D0  R22 R23 |
-		| xx  xx  xx  |
-	*/
-		c_matrix_remove_rowcols (q, 1, 1);
-	}
+	/*=
+	 *= | Q11 Q12 xx  |     | Q11 Q12 |
+	 *= | Q21 Q22 xx  |  -> | Q21 Q22 |
+	 *= | xx  xx  xx  |
+	 *=
+	 *= | R11 R12 R13 |     | R11 R12 R13 |
+	 *= | D0  R22 R23 |  -> | D0  R22 R23 |
+	 *= | D0  D0  xx  |
+	 *=
+	 */
+	c_matrix_remove_rowcols (q, 1, 1);
 	c_matrix_remove_rowcols (r, 1, 0);
 
 	return;
