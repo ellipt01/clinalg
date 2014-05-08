@@ -23,6 +23,7 @@ int			c_linalg_QR_unpack (const c_matrix *qr, const c_vector *tau, c_matrix **q,
 int			c_linalg_QR_solve (c_matrix *a, c_vector *b);
 int			c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, int *rank);
 void		c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty);
+void		c_linalg_QR_RTsolve (c_matrix *r, c_vector *y);
 
 void		c_linalg_QR_1up (c_matrix *q, c_matrix *r, const c_vector *u, const c_vector *v);
 void		c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u);
