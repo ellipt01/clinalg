@@ -230,7 +230,7 @@ c_matrix_memcpy (c_matrix *dest, const c_matrix *src)
 }
 
 void
-c_matrix_mncopy (const size_t m0, const size_t n0, const size_t m, const size_t n, c_matrix *dest, const c_matrix *src)
+c_matrix_mncopy (c_matrix *dest, const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *src)
 {
 	int		j;
 	int		len;

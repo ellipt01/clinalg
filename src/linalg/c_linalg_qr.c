@@ -153,7 +153,7 @@ c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau)
 }
 
 int
-c_linalg_lapack_dgels (char trans, c_matrix *qr, c_matrix *b)
+c_linalg_lapack_dgels (char trans, c_matrix *a, c_matrix *b)
 {
 	int			info;
 	int			m;
@@ -165,29 +165,29 @@ c_linalg_lapack_dgels (char trans, c_matrix *qr, c_matrix *b)
 	double		*work;
 	int			lwork;
 
-	if (c_matrix_is_empty(qr)) c_error ("c_linalg_lapack_dgels", "input matrix *qr is empty.");
-	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgels", "input matrix *b is empty.");
+	if (c_matrix_is_empty(a)) c_error ("c_linalg_lapack_dgels", "matrix *a is empty.");
+	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgels", "matrix *b is empty.");
 
-	m = (int) qr->size1;
-	n = (int) qr->size2;
+	m = (int) a->size1;
+	n = (int) a->size2;
 	nrhs = (int) b->size2;
-	lda = (int) qr->lda;
+	lda = (int) a->lda;
 	ldb = (int) C_MAX (1, C_MAX (m, n));
 
 	lwork = -1;
-	dgels_ (&trans, &m, &n, &nrhs, qr->data, &lda, b->data, &ldb, &wkopt, &lwork, &info);
+	dgels_ (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, &wkopt, &lwork, &info);
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgels", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgels", "cannot allocate memory for workspace.");
-	dgels_ (&trans, &m, &n, &nrhs, qr->data, &lda, b->data, &ldb, work, &lwork, &info);
+	dgels_ (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, work, &lwork, &info);
 	free (work);
 
 	return info;
 }
 
 int
-c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, c_vector_int **p, int *rank)
+c_linalg_lapack_dgelsy (double rcond, c_matrix *a, c_matrix *b, c_vector_int **p, int *rank)
 {
 	int			info;
 	int			m;
@@ -202,24 +202,24 @@ c_linalg_lapack_dgelsy (double rcond, c_matrix *qr, c_matrix *b, c_vector_int **
 
 	c_vector_int	*_p;
 
-	if (c_matrix_is_empty (qr)) c_error ("c_linalg_lapack_dgelsy", "input matrix *qr is empty");
-	if (c_matrix_is_empty (b)) c_error ("c_linalg_lapack_dgelsy", "input matrix *b is empty");
+	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgelsy", "matrix *a is empty");
+	if (c_matrix_is_empty (b)) c_error ("c_linalg_lapack_dgelsy", "matrix *b is empty");
 
-	m = (int) qr->size1;
-	n = (int) qr->size2;
+	m = (int) a->size1;
+	n = (int) a->size2;
 	nrhs = (int) b->size2;
-	lda = (int) qr->lda;
+	lda = (int) a->lda;
 	ldb = (int) C_MAX (1, C_MAX (m, n));
-	_p = c_vector_int_alloc (qr->size2);
+	_p = c_vector_int_alloc (a->size2);
 
 	lwork = -1;
-	dgelsy_ (&m, &n, &nrhs, qr->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, &wkopt, &lwork, &info);
+	dgelsy_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelsy", "failed to query workspace");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgelsy", "cannot allocate memory work");
-	dgelsy_ (&m, &n, &nrhs, qr->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, work, &lwork, &info);
+	dgelsy_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, work, &lwork, &info);
 	free (work);
 
 	if (p) *p = _p;
@@ -272,7 +272,7 @@ _c_linalg_QR_unpack (const c_matrix *qr, const c_vector *tau, c_matrix **q, c_ma
 		size_t	min_mn = (size_t) C_MIN (qr->size1, qr->size2);
 		_q = c_matrix_alloc (qr->size1, qr->size1);
 		if (qr->size1 == qr->size2) c_matrix_memcpy (_q, qr);
-		else c_matrix_mncopy (0, 0, qr->size1, min_mn, _q, qr);
+		else c_matrix_mncopy (_q, 0, 0, qr->size1, min_mn, qr);
 		info = c_linalg_lapack_dorgqr (_q, tau);
 		*q = _q;
 	}
@@ -330,14 +330,15 @@ c_linalg_QR_solve (c_matrix *a, c_vector *b)
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_QR_solve", "matrix is empty.");
 	if (c_vector_is_empty (b)) c_error ("c_linalg_QR_solve", "vector is empty.");
+	if (b->stride != 1) c_error ("c_linalg_QR_solve", "cannot tread vector with stride.");
 	if (a->size1 != b->size) c_error ("c_linalg_QR_solve", "vector and matrix size dose not match.");
-	if (a->size1 < a->size2 && b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
+	if (b->size < a->size2) c_vector_realloc (a->size2, b, b->size);
 
 	x = c_matrix_view_array (b->size, 1, b->size, b->data);
 	info = c_linalg_lapack_dgels ('N', a, x);
 	c_matrix_free (x);
 
-	if (info == 0) b->size = a->size2;
+	if (info == 0 && b->size != a->size2) b->size = a->size2;
 
 	return info;
 }
@@ -352,14 +353,15 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, in
 
 	if (c_vector_is_empty (b)) c_error ("c_linalg_lsQ_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_lsQ_solve", "matrix is empty.");
+	if (b->stride != 1) c_error ("c_linalg_lsQ_solve", "cannot tread vector with stride.");
 	if (a->size1 != b->size) c_error ("c_linalg_lsQ_solve", "vector and matrix size dose not match.");
-	if (a->size1 < a->size2 && b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
+	if (b->size < a->size2) c_vector_realloc (a->size2, b, b->size);
 
 	x = c_matrix_view_array (b->size, 1, b->size, b->data);
 	info = c_linalg_lapack_dgelsy (rcond, a, x, &_p, &_rank);
 	c_matrix_free (x);
 
-	if (info == 0) b->size = a->size2;
+	if (info == 0 && b->size != a->size2) b->size = a->size2;
 
 	if (p) *p = _p;
 	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);

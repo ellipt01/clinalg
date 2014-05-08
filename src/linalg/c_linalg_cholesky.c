@@ -99,6 +99,7 @@ c_linalg_cholesky_decomp (c_matrix *a)
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_cholesky_decomp", "matrix must be square.");
 
 	info = c_linalg_lapack_dpotrf ('U', a);
+
 	z = c_vector_alloc (a->size1);
 	c_vector_set_zero (z);
 	for (j = 0; j < a->size2 - 1; j++) {
@@ -110,7 +111,27 @@ c_linalg_cholesky_decomp (c_matrix *a)
 	return info;
 }
 
-/* solve b = a * x */
+/* solve b = a * x by dpotrf and dpotrs */
+int
+c_linalg_cholesky_solve (c_matrix *a, c_vector *b)
+{
+	int			info;
+	c_matrix	*c;
+
+	if (c_matrix_is_empty (a)) c_error ("c_linalg_cholesky_decomp", "matrix is empty.");
+	if (!c_matrix_is_square (a)) c_error ("c_linalg_cholesky_decomp", "matrix must be square.");
+
+	info = c_linalg_lapack_dpotrf ('U', a);
+	if (info != 0) c_error ("c_linalg_cholesky_solve", "dpotrf failed.");
+
+	c = c_matrix_view_array (b->size, 1, b->size, b->data);
+	info = c_linalg_lapack_dpotrs ('U', a, c);
+	c_matrix_free (c);
+
+	return info;
+}
+
+/* solve b = l' * l * x */
 int
 c_linalg_cholesky_svx (c_matrix *l, c_vector *b)
 {

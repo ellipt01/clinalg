@@ -358,16 +358,17 @@ c_linalg_SV_solve (double rcond, c_matrix *a, c_vector *b, c_vector **s, int *ra
 
 	if (c_vector_is_empty (b)) c_error ("c_linalg_SV_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_SV_solve", "matrix is empty.");
+	if (b->stride != 1) c_error ("c_linalg_SV_solve", "cannot tread vector with stride.");
 	if (a->size1 != b->size) c_error ("c_linalg_SV_solve", "vector and matrix size dose not match.");
-	if (b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
+	if (b->size < a->size2) c_vector_realloc (a->size2, b, b->size);
 
 	{
-		c_matrix	*x = c_matrix_view_array (a->size1, 1, a->lda, b->data);
+		c_matrix	*x = c_matrix_view_array (b->size, 1, b->size, b->data);
 		info = c_linalg_lapack_dgelss (rcond, a, x, &_s, &_rank);
 		c_matrix_free (x);
 	}
 
-	if (b->size != a->size2) b->size = a->size2;
+	if (info == 0 && b->size != a->size2) b->size = a->size2;
 
 	if (rank) *rank = _rank;
 
@@ -386,16 +387,17 @@ c_linalg_SV_lsd_solve (double rcond, c_matrix *a, c_vector *b, c_vector **s, int
 
 	if (c_vector_is_empty (b)) c_error ("c_linalg_SV_lsd_solve", "vector is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_SV_lsd_solve", "matrix is empty.");
+	if (b->stride != 1) c_error ("c_linalg_SV_lsd_solve", "cannot tread vector with stride.");
 	if (a->size1 != b->size) c_error ("c_linalg_SV_lsd_solve", "vector and matrix size dose not match.");
-	if (b->size < a->size2) c_vector_realloc (a->size2, b, a->size2);
+	if (b->size < a->size2) c_vector_realloc (a->size2, b, b->size);
 
 	{
-		c_matrix	*x = c_matrix_view_array (a->size1, 1, a->lda, b->data);
+		c_matrix	*x = c_matrix_view_array (b->size, 1, b->size, b->data);
 		info = c_linalg_lapack_dgelsd (rcond, a, x, &_s, &_rank);
 		c_matrix_free (x);
 	}
 
-	if (b->size != a->size2) b->size = a->size2;
+	if (info == 0 && b->size != a->size2) b->size = a->size2;
 
 	if (rank) *rank = _rank;
 
