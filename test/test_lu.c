@@ -57,7 +57,6 @@ test_LU_solve (void)
 
 	c_matrix		*lu;
 	c_vector		*y;
-	c_vector_int	*p;
 	double			nrm;
 
 	a = random_matrix (size1, size1);
@@ -67,13 +66,11 @@ test_LU_solve (void)
 
 	lu = c_matrix_alloc (a->size1, a->size2);
 	c_matrix_memcpy (lu, a);
-	c_linalg_LU_decomp (lu, &p);
 
 	x = c_vector_alloc (b->size);
 	c_vector_memcpy (x, b);
-	c_linalg_LU_solve (lu, x, p);
+	c_linalg_LU_solve (lu, x, NULL);
 	c_matrix_free (lu);
-	c_vector_int_free (p);
 
 	y = c_matrix_dot_vector (1., a, x, 0.);
 	c_matrix_free (a);
