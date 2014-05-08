@@ -32,18 +32,20 @@ bool	(*test_cholesky_func_ptr[]) (void) = {
 	test_cholesky_delete
 };
 
-const int	n_test_LU_func = 4;
+const int	n_test_LU_func = 5;
 
 const char	*test_LU_func_name[] = {
-	"test_LU_decomp",
-	"test_LU_solve ",
-	"test_LU_invert",
-	"test_LU_1up   "
+	"test_LU_decomp      ",
+	"test_LU_solve       ",
+	"test_LU_svx         ",
+	"test_LU_invert      ",
+	"test_LU_1up         "
 };
 
 bool	(*test_LU_func_ptr[]) (void) = {
 	test_LU_decomp,
 	test_LU_solve,
+	test_LU_svx,
 	test_LU_invert,
 	test_LU_1up
 };
@@ -51,16 +53,16 @@ bool	(*test_LU_func_ptr[]) (void) = {
 const int	n_test_QR_func = 10;
 
 const char	*test_QR_func_name[] = {
-	"test_QR_decomp     ",
-	"test_QR_decomp_econ",
-	"test_QR_solve      ",
-	"test_lsQ_solve     ",
-	"test_QR_Rsolve     ",
-	"test_QR_1up        ",
-	"test_QR_colinsert  ",
-	"test_QR_rowinsert  ",
-	"test_QR_coldelete  ",
-	"test_QR_rowdelete  "
+	"test_QR_decomp      ",
+	"test_QR_decomp_econ ",
+	"test_QR_solve       ",
+	"test_lsQ_solve      ",
+	"test_QR_Rsolve      ",
+	"test_QR_1up         ",
+	"test_QR_colinsert   ",
+	"test_QR_rowinsert   ",
+	"test_QR_coldelete   ",
+	"test_QR_rowdelete   "
 };
 
 bool	(*test_QR_func_ptr[]) (void) = {
@@ -79,9 +81,9 @@ bool	(*test_QR_func_ptr[]) (void) = {
 const int	n_test_SV_func = 3;
 
 const char	*test_SV_func_name[] = {
-	"test_SV_decomp   ",
-	"test_SV_solve    ",
-	"test_SV_lsd_solve"
+	"test_SV_decomp      ",
+	"test_SV_solve       ",
+	"test_SV_lsd_solve   "
 };
 
 bool	(*test_SV_func_ptr[]) (void) = {

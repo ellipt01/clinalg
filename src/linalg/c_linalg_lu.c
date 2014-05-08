@@ -12,9 +12,10 @@ extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack */
 #ifndef HAVE_LAPACK_H
-extern void	dgetrf_ (int *m, int *n, double *data, int *lda, int *ipiv, int *info);
+extern void	dgetrf_ (int *m, int *n, double *a, int *lda, int *ipiv, int *info);
 extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
-extern void	dgetri_ (int *n, double *data, int *lda, int *ipiv, double *work, int *lwork, int *info);
+extern void	dgesv_  (int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
+extern void	dgetri_ (int *n, double *a, int *lda, int *ipiv, double *work, int *lwork, int *info);
 #endif
 /* qrupdate */
 extern void	dlup1up_ (int *m, int *n, double *L, int *ldl, double *R, int *ldr, int *p, double *u, double *v, double *w);
@@ -38,6 +39,33 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
 	for (i = 0; i < _p->size; i++) _p->data[i] = i + 1;
 
 	dgetrf_ (&m, &n, a->data, &lda, _p->data, &info);
+
+	if (p) *p = _p;
+	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
+
+	return info;
+}
+
+int
+c_linalg_lapack_dgesv (c_matrix *a, c_matrix *b, c_vector_int **p)
+{
+	int				info;
+	int				n;
+	int				nrhs;
+	int				lda;
+	int				ldb;
+	c_vector_int	*_p;
+
+	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgesv", "matrix is empty.");
+	if (!c_matrix_is_square (a)) c_error ("c_linalg_lapack_dgesv", "matrix must be square.");
+
+	n = (int) a->size1;
+	nrhs = (int) b->size2;
+	lda = (int) a->lda;
+	ldb = (int) b->lda;
+
+	_p = c_vector_int_alloc (n);
+	dgesv_ (&n, &nrhs, a->data, &lda, _p->data, b->data, &ldb, &info);
 
 	if (p) *p = _p;
 	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
@@ -151,18 +179,34 @@ c_linalg_LU_solve (c_matrix *a, c_vector *b, c_vector_int **p)
 
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_solve", "matrix is empty.");
 	if (c_vector_is_empty (b)) c_error ("c_linalg_LU_solve", "vector is empty.");
-	if (b->size != a->size1) c_error ("c_linalg_LU_solve", "matrix and vector size dose not match.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_LU_solve", "matrix must be square.");
-
-	info = c_linalg_lapack_dgetrf (a, &_p);
-	if (info != 0) c_error ("c_linalg_LU_solve", "dgetrf failed.");
+	if (b->size != a->size1) c_error ("c_linalg_LU_solve", "matrix and vector size dose not match.");
 
 	c = c_matrix_view_array (b->size, 1, b->size, b->data);
-	info = c_linalg_lapack_dgetrs ('N', a, c, _p);
+	info = c_linalg_lapack_dgesv (a, c, &_p);
 	c_matrix_free (c);
 
 	if (p) *p = _p;
 	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
+
+	return info;
+}
+
+int
+c_linalg_LU_svx (c_matrix *lu, c_vector *b, c_vector_int *p)
+{
+	int  			info;
+	c_matrix		*c;
+
+	if (c_matrix_is_empty (lu)) c_error ("c_linalg_LU_svx", "matrix is empty.");
+	if (c_vector_is_empty (b)) c_error ("c_linalg_LU_svx", "vector is empty.");
+	if (c_vector_int_is_empty (p)) c_error ("c_linalg_LU_svx", "permutation is empty.");
+	if (!c_matrix_is_square (lu)) c_error ("c_linalg_LU_svx", "matrix must be square.");
+	if (b->size != lu->size1) c_error ("c_linalg_LU_svx", "matrix and vector size dose not match.");
+
+	c = c_matrix_view_array (b->size, 1, b->size, b->data);
+	info = c_linalg_lapack_dgetrs ('N', lu, c, p);
+	c_matrix_free (c);
 
 	return info;
 }

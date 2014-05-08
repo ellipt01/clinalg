@@ -86,6 +86,46 @@ test_LU_solve (void)
 }
 
 bool
+test_LU_svx (void)
+{
+	c_matrix		*a;
+	c_vector		*x;
+	c_vector		*b;
+
+	c_matrix		*lu;
+	c_vector_int	*p;
+	c_vector		*y;
+	double			nrm;
+
+	a = random_matrix (size1, size1);
+	x = random_vector (size1);
+	b = c_matrix_dot_vector (1., a, x, 0.);
+	c_vector_free (x);
+
+	lu = c_matrix_alloc (a->size1, a->size2);
+	c_matrix_memcpy (lu, a);
+	c_linalg_LU_decomp (lu, &p);
+
+	x = c_vector_alloc (b->size);
+	c_vector_memcpy (x, b);
+	c_linalg_LU_svx (lu, x, p);
+	c_matrix_free (lu);
+	c_vector_int_free (p);
+
+	y = c_matrix_dot_vector (1., a, x, 0.);
+	c_matrix_free (a);
+	c_vector_free (x);
+
+	c_vector_sub (b, y);
+	c_vector_free (y);
+
+	nrm = c_vector_nrm (b);
+	c_vector_free (b);
+
+	return (nrm < 1.e-8);
+}
+
+bool
 test_LU_invert (void)
 {
 	c_matrix		*a;

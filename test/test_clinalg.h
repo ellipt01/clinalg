@@ -20,6 +20,7 @@ bool	test_cholesky_delete (void);
 
 bool	test_LU_decomp (void);
 bool	test_LU_solve (void);
+bool	test_LU_svx (void);
 bool	test_LU_invert (void);
 bool	test_LU_1up (void);
 
