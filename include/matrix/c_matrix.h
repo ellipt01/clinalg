@@ -14,14 +14,6 @@ extern "C" {
 
 #include <c_vector.h>
 
-#ifndef INDEX_OF_MATRIX
-#define INDEX_OF_MATRIX(a, i, j) ((i) + (j) * (a->lda))
-#endif
-
-#ifndef POINTER_OF_MATRIX
-#define POINTER_OF_MATRIX(a, i, j) ((a->data) + (i) + (j) * (a->lda))
-#endif
-
 typedef struct s_c_matrix	c_matrix;
 
 struct s_c_matrix {
