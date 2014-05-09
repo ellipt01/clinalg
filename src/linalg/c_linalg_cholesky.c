@@ -7,7 +7,7 @@
 
 #include <clinalg.h>
 
-/* c_linalg_util.c */
+/* c_linalg_utils.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* blas */
@@ -21,11 +21,14 @@ extern void	dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
 extern void	dpotrs_ (char *uplo, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
 extern void	dpotri_ (char *uplo, int *n, double *a, int *lda, int *info);
 #endif
+
 /* qrupdate: cholinsert/delete */
+#ifndef HAVE_QRUPDATE_H
 extern void	dch1up_ (int *n, double *L, int *ldr, double *u, double *w);
 extern void	dch1dn_ (int *n, double *L, int *ldr, double *u, double *w, int *info);
 extern void	dchinx_ (int *n, double *L, int *ldr, int *j, double *u, double *w, int *info);
 extern void	dchdex_ (int *n, double *L, int *ldr, int *j, double *w);
+#endif
 
 /* interface of lapack dpotrf_ */
 int

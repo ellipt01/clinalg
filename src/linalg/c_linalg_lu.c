@@ -7,7 +7,7 @@
 
 #include <clinalg.h>
 
-/* c_linalg_util.c */
+/* c_linalg_utils.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack */
@@ -17,8 +17,11 @@ extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *i
 extern void	dgesv_  (int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
 extern void	dgetri_ (int *n, double *a, int *lda, int *ipiv, double *work, int *lwork, int *info);
 #endif
+
 /* qrupdate */
+#ifndef HAVE_QRUPDATE_H
 extern void	dlup1up_ (int *m, int *n, double *L, int *ldl, double *R, int *ldr, int *p, double *u, double *v, double *w);
+#endif
 
 int
 c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)

@@ -369,21 +369,21 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 void
 c_matrix_merge_row (c_matrix *a, const c_matrix *b)
 {
-	int			j;
-	int			m, n;
+	int			j, k;
+	int			n;
 	int			inc;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_row", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_row", "matrix *b is empty.");
 	if (a->size1 != b->size1) c_error ("c_matrix_merge_row", "matrix size dose not match.");
 
-	m = (int) a->size2;
+	k = (int) a->size2;
 	c_matrix_add_rowcols (a, 0, b->size2);
 
 	n = (int) b->size1;
 	inc = 1;
 	for (j = 0; j < b->size2; j++) {
 		double	*bj = POINTER_OF_MATRIX (b, 0, j);
-		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, 0, m + j), &inc);
+		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, 0, k + j), &inc);
 	}
 	return;
 }
@@ -391,21 +391,21 @@ c_matrix_merge_row (c_matrix *a, const c_matrix *b)
 void
 c_matrix_merge_col (c_matrix *a, const c_matrix *b)
 {
-	int			j;
-	int			m, n;
+	int			j, k;
+	int			n;
 	int			inc;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_col", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_col", "matrix *b is empty.");
 	if (a->size2 != b->size2) c_error ("c_matrix_merge_col", "matrix size dose not match.");
 
-	m = (int) a->size1;
+	k = (int) a->size1;
 	c_matrix_add_rowcols (a, b->size1, 0);
 
 	n = (int) b->size1;
 	inc = 1;
 	for (j = 0; j < b->size2; j++) {
 		double	*bj = POINTER_OF_MATRIX (b, 0, j);
-		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, m, j), &inc);
+		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, k, j), &inc);
 	}
 	return;
 }

@@ -8,7 +8,7 @@
 #include <math.h>
 #include <clinalg.h>
 
-/* c_linalg_util.c */
+/* c_linalg_utils.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
 /* lapack */
@@ -222,8 +222,8 @@ c_linalg_lapack_dgelss (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	int			_rank;
 	c_vector	*_s;
 
-	if (c_matrix_is_empty(a)) c_error ("c_linalg_lapack_dgelss", "input matrix *a is empty.");
-	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgelss", "input matrix *b is empty.");
+	if (c_matrix_is_empty(a)) c_error ("c_linalg_lapack_dgelss", "matrix *a is empty.");
+	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgelss", "matrix *b is empty.");
 
 	m = (int) a->size1;
 	n = (int) a->size2;
@@ -271,8 +271,8 @@ c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	int			_rank;
 	c_vector	*_s;
 
-	if (c_matrix_is_empty(a)) c_error ("c_linalg_lapack_dgelsd", "input matrix *a is empty.");
-	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgelsd", "input matrix *b is empty.");
+	if (c_matrix_is_empty(a)) c_error ("c_linalg_lapack_dgelsd", "matrix *a is empty.");
+	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgelsd", "matrix *b is empty.");
 
 	m = (int) a->size1;
 	n = (int) a->size2;
