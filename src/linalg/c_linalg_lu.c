@@ -180,6 +180,7 @@ c_linalg_LU_solve (c_matrix *a, c_vector *b, c_vector_int **p)
 	if (c_matrix_is_empty (a)) c_error ("c_linalg_LU_solve", "matrix is empty.");
 	if (c_vector_is_empty (b)) c_error ("c_linalg_LU_solve", "vector is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_linalg_LU_solve", "matrix must be square.");
+	if (b->stride != 1) c_error ("c_linalg_LU_solve", "cannot tread vector with stride.");
 	if (b->size != a->size1) c_error ("c_linalg_LU_solve", "matrix and vector size dose not match.");
 
 	c = c_matrix_view_array (b->size, 1, b->size, b->data);
@@ -202,6 +203,7 @@ c_linalg_LU_svx (c_matrix *lu, c_vector *b, c_vector_int *p)
 	if (c_vector_is_empty (b)) c_error ("c_linalg_LU_svx", "vector is empty.");
 	if (c_vector_int_is_empty (p)) c_error ("c_linalg_LU_svx", "permutation is empty.");
 	if (!c_matrix_is_square (lu)) c_error ("c_linalg_LU_svx", "matrix must be square.");
+	if (b->stride != 1) c_error ("c_linalg_LU_svx", "cannot tread vector with stride.");
 	if (b->size != lu->size1) c_error ("c_linalg_LU_svx", "matrix and vector size dose not match.");
 
 	c = c_matrix_view_array (b->size, 1, b->size, b->data);
@@ -217,6 +219,7 @@ c_linalg_LU_invert (c_matrix *lu, c_vector_int *p)
 	int		info;
 
 	if (c_matrix_is_empty (lu)) c_error ("c_linalg_LU_invert", "matrix is empty.");
+	if (c_vector_int_is_empty (p)) c_error ("c_linalg_LU_invert", "permutation is empty.");
 	if (!c_matrix_is_square (lu)) c_error ("c_linalg_LU_invert", "matrix must be square.");
 
 	info = c_linalg_lapack_dgetri (lu, p);
@@ -240,6 +243,7 @@ c_linalg_LU_1up (c_matrix *l, c_matrix *u, c_vector_int *p, c_vector *s, c_vecto
 	if (c_vector_int_is_empty (p)) c_error ("c_linalg_LU_1up", "permulation is empty.");
 	if (s->size != l->size1) c_error ("c_linalg_LU_1up", "vector and matrix size dose not match.");
 	if (t->size != u->size2) c_error ("c_linalg_LU_1up", "vector and matrix size dose not match.");
+	if (s->stride != 1 || t->stride != 1) c_error ("c_linalg_LU_1up", "cannot tread vector with stride.");
 
 	m = (int) l->size1;
 	n = (int) u->size2;

@@ -384,6 +384,7 @@ c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
 	if (c_vector_is_empty (qty)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
+	if (qty->stride != 1) c_error ("c_linalg_QR_Rsolve", "cannot tread vector with stride.");
 	if (qty->size != r->size1) c_error ("c_linalg_QR_Rsolve", "vector and matrix size dose not match.");
 	if (r->size2 > qty->size) {
 		qty->data = (double *) realloc (qty->data, r->size2 * sizeof (double));
@@ -414,6 +415,7 @@ c_linalg_QR_RTsolve (c_matrix *r, c_vector *y)
 
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
 	if (c_vector_is_empty (y)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
+	if (y->stride != 1) c_error ("c_linalg_QR_RTsolve", "cannot tread vector with stride.");
 	if (y->size != r->size2) c_error ("c_linalg_QR_Rsolve", "vector and matrix size dose not match.");
 	if (r->size1 > y->size) {
 		y->data = (double *) realloc (y->data, r->size1 * sizeof (double));
@@ -443,6 +445,7 @@ c_linalg_QR_1up (c_matrix *q, c_matrix *r, const c_vector *u, const c_vector *v)
 	if (c_vector_is_empty (u)) c_error ("c_linalg_QR_1up", "vector *u is empty.");
 	if (c_vector_is_empty (v)) c_error ("c_linalg_QR_1up", "vector *v is empty.");
 	if (q->size2 != r->size1) c_error ("c_linalg_QR_1up", "matrix size dose not match.");
+	if (u->stride != 1 || v->stride != 1) c_error ("c_linalg_QR_1up", "cannot tread vector with stride.");
 
 	m = q->size1;
 	n = r->size2;
@@ -472,6 +475,7 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	if (u->size != q->size1) c_error ("c_linalg_QR_colinsert", "vector and matrix size dose not match..");
 	if (q->size2 != r->size1) c_error ("c_linalg_QR_colinsert", "matrix size dose not match..");
 	if (index < 0 || r->size2 < index) c_error ("c_linalg_QR_colinsert", "index out of range.");
+	if (u->stride != 1) c_error ("c_linalg_QR_colinsert", "cannot tread vector with stride.");
 
 	m = q->size1;
 	n = r->size2;
@@ -516,6 +520,7 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 	if (index < 0 || q->size1 < index) c_error ("c_linalg_QR_rowinsert", "index out of range.");
 	if (!c_matrix_is_square (q) && c_matrix_is_square (r))
 		c_error ("c_linalg_QR_rowinsert", "rowinsert cannot treat QR economy mode.");
+	if (u->stride != 1) c_error ("c_linalg_QR_rowinsert", "cannot tread vector with stride.");
 
 	m = q->size1;
 	n = r->size2;
