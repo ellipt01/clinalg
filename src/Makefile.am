@@ -18,6 +18,7 @@ libclinalg_la_SOURCES = \
 	matrix/c_matrixops.c\
 	matrix/c_vectorops.c\
 	linalg/c_linalg_utils.c\
+	linalg/c_linalg_lapack.c\
 	linalg/c_linalg_lu.c\
 	linalg/c_linalg_cholesky.c\
 	linalg/c_linalg_qr.c\

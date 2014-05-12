@@ -22,8 +22,9 @@ extern "C" {
 #include <c_matrix.h>
 #include <c_matrixops.h>
 #include <c_linalg_utils.h>
-#include <c_linalg_cholesky.h>
+#include <c_linalg_lapack.h>
 #include <c_linalg_lu.h>
+#include <c_linalg_cholesky.h>
 #include <c_linalg_qr.h>
 #include <c_linalg_sv.h>
 

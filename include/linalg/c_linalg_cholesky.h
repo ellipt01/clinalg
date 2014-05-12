@@ -14,10 +14,6 @@ extern "C" {
 
 #include <c_matrix.h>
 
-int		c_linalg_lapack_dpotrf (char uplo, c_matrix *a);
-int		c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b);
-int		c_linalg_lapack_dpotri (char uplo, c_matrix *l);
-
 int		c_linalg_cholesky_decomp (c_matrix *a);
 int		c_linalg_cholesky_solve (c_matrix *a, c_vector *b);
 int		c_linalg_cholesky_svx (c_matrix *l, c_vector *b);

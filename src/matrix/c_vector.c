@@ -60,7 +60,7 @@ c_vector_realloc (const size_t tsize, c_vector *x, const size_t size)
 	if (x->tsize == tsize) return;
 
 	x->data = (double *) realloc (x->data, tsize * sizeof (double));
-	if (x->data == NULL) c_error ("c_vector_realloc", "cannot reallocate vector.");
+	if (x->data == NULL) c_error ("c_vector_realloc", "reallocation of array failed.");
 	x->tsize = tsize;
 	if (x->size != size) x->size = size;
 

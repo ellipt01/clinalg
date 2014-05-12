@@ -26,6 +26,7 @@ struct s_c_matrix {
 };
 
 c_matrix		*c_matrix_alloc (const size_t size1, const size_t size2);
+void			c_matrix_realloc (const size_t tsize, c_matrix *x, const size_t size1, const size_t size2);
 c_matrix		*c_matrix_view_array (const size_t size1, const size_t size2, const size_t lda, double *data);
 bool			c_matrix_is_empty (const c_matrix *a);
 bool			c_matrix_is_square (const c_matrix *a);

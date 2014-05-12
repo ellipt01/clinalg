@@ -10,16 +10,6 @@
 /* c_linalg_utils.c */
 extern void	c_error (const char * function_name, const char *error_msg);
 
-/* lapack */
-#ifndef HAVE_LAPACK_H
-extern void	dgeqrf_ (int *m, int *n, double *data, int *lda, double *tau, double *work, int *lwork, int *info);
-extern void	dgeqp3_ (int *m, int *n, double *a, int *lda, int *jpvt, double *tau, double *work, int *lwork, int *info);
-extern void	dorgqr_ (int *m, int *n, int *k, double *data, int *lda, double *tau, double *work, int *lwork, int *info);
-extern void	dgels_  (char *trans, int *m, int *n, int *nrhs, double *a_data, int *lda, double *b_data, int *ldb, double *w, int *lwork, int *info);
-extern void	dgelsy_ (int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *jpvt, double *rcond, int *rank, double *work, int *lwork, int *info);
-extern void	dtrsv_ (char *uplo, char *trans, char *diag, int *n, double *r, int *lda, double *y, int *incy);
-#endif
-
 /* qrupdate*/
 #ifndef HAVE_QRUPDATE_H
 extern void	dqr1up_ (int *m, int *n, int *k, double *Q, int *ldq, double *R, int *ldr, double *u, double *v, double *w);
@@ -28,209 +18,6 @@ extern void	dqrinr_ (int *m, int *n, double *Q, int *ldq, double *R, int *ldr, i
 extern void	dqrdec_ (int *m, int *n, int *k, double *Q, int *ldq, double *R, int *ldr, int *j, double *w);
 extern void	dqrder_ (int *m, int *n, double *Q, int *ldq, double *R, int *ldr, int *j, double *w);
 #endif
-
-int
-c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
-{
-	int   		info;
-	int			m;
-	int			n;
-	int			lda;
-
-	size_t		min_mn;
-	size_t		ltau;
-
-	double		wkopt;
-	int			lwork;
-	double		*work;
-
-	c_vector	*_tau;
-
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgeqrf", "matrix is empty.");
-
-	m = (int) a->size1;
-	n = (int) a->size2;
-	lda = (int) a->lda;
-
-	min_mn = (size_t) C_MIN (a->size1, a->size2);
-	ltau = (size_t) C_MAX (min_mn, 1);
-
-	_tau = c_vector_alloc (ltau);
-
- 	lwork = -1;
- 	dgeqrf_ (&m, &n, a->data, &lda, _tau->data, &wkopt, &lwork, &info);
-
- 	lwork = (int) wkopt;
-	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqrf", "failed to query size of workspace.");
-	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
-		c_error ("c_linalg_lapack_dgeqrf", "cannot allocate memory for workspace.");
-	dgeqrf_ (&m, &n, a->data, &lda, _tau->data, work, &lwork, &info);
-	free (work);
-
-	if (tau) *tau = _tau;
-	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
-
-	return info;
-}
-
-int
-c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
-{
-	int			i;
-	int   		info;
-	int			m;
-	int			n;
-	int			lda;
-	size_t		min_mn;
-
-	double		wkopt;
-	int			lwork;
-	double		*work;
-
-	c_vector		*_tau;
-	c_vector_int	*_p;
-
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgeqp3", "matrix is empty.");
-
-	m = (int) a->size1;
-	n = (int) a->size2;
-	lda = (int) a->lda;
-	min_mn = (size_t) C_MIN (a->size1, a->size2);
-
-	_tau = c_vector_alloc (min_mn);
-	_p = c_vector_int_alloc (n);
-	for (i = 0; i < _p->size; i++) _p->data[i] = i + 1;
-
-	lwork = -1;
-	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, &wkopt, &lwork, &info);
-
-	lwork = (int) wkopt;
-	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqp3", "failed to query size of workspace.");
-	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
-		c_error ("c_linalg_lapack_dgeqp3", "cannot allocate memory for workspace.");
-	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, work, &lwork, &info);
-	free (work);
-
-	if (p) *p = _p;
-	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
-
-	if (tau) *tau = _tau;
-	else if (!c_vector_is_empty (_tau)) c_vector_free (_tau);
-
-	return info;
-}
-
-int
-c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau)
-{
-	int 		info;
-	int			m;
-	int			n;
-	int			min_mn;
-	int			k;
-	int			lda;
-	int			lwork;
-	double		wkopt;
-	double		*work;
-
-	if (c_matrix_is_empty (qr)) c_error ("c_linalg_lapack_dorgqr", "matrix is empty.");
-	if (c_vector_is_empty (tau)) c_error ("c_linalg_lapack_dorgqr", "vector *tau is empty.");
-
-	m = (int) qr->size1;
-	n = (int) qr->size2;
-	min_mn = (int) C_MIN (m, n);
-	k = (int) tau->size;
-	lda = (int) qr->lda;
-
- 	lwork = -1;
-	dorgqr_ (&m, &min_mn, &k, qr->data, &lda, tau->data, &wkopt, &lwork, &info);
-	lwork = (int) wkopt;
-	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dorgqr", "failed to query size of workspace.");
-	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
-		c_error ("c_linalg_lapack_dorgqr", "cannot allocate memory for workspace.");
-	dorgqr_ (&m, &min_mn, &k, qr->data, &lda, tau->data, work, &lwork, &info);
-	free (work);
-
-	return info;
-}
-
-int
-c_linalg_lapack_dgels (char trans, c_matrix *a, c_matrix *b)
-{
-	int			info;
-	int			m;
-	int			n;
-	int			nrhs;
-	int			lda;
-	int			ldb;
-	double		wkopt;
-	double		*work;
-	int			lwork;
-
-	if (c_matrix_is_empty(a)) c_error ("c_linalg_lapack_dgels", "matrix *a is empty.");
-	if (c_matrix_is_empty(b)) c_error ("c_linalg_lapack_dgels", "matrix *b is empty.");
-
-	m = (int) a->size1;
-	n = (int) a->size2;
-	nrhs = (int) b->size2;
-	lda = (int) a->lda;
-	ldb = (int) C_MAX (1, C_MAX (m, n));
-
-	lwork = -1;
-	dgels_ (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, &wkopt, &lwork, &info);
-	lwork = (int) wkopt;
-	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgels", "failed to query size of workspace.");
-	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
-		c_error ("c_linalg_lapack_dgels", "cannot allocate memory for workspace.");
-	dgels_ (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, work, &lwork, &info);
-	free (work);
-
-	return info;
-}
-
-int
-c_linalg_lapack_dgelsy (double rcond, c_matrix *a, c_matrix *b, c_vector_int **p, int *rank)
-{
-	int			info;
-	int			m;
-	int			n;
-	int			nrhs;
-	int			lda;
-	int			ldb;
-	int			_rank;
-	double		wkopt;
-	double		*work;
-	int			lwork;
-
-	c_vector_int	*_p;
-
-	if (c_matrix_is_empty (a)) c_error ("c_linalg_lapack_dgelsy", "matrix *a is empty");
-	if (c_matrix_is_empty (b)) c_error ("c_linalg_lapack_dgelsy", "matrix *b is empty");
-
-	m = (int) a->size1;
-	n = (int) a->size2;
-	nrhs = (int) b->size2;
-	lda = (int) a->lda;
-	ldb = (int) C_MAX (1, C_MAX (m, n));
-	_p = c_vector_int_alloc (a->size2);
-
-	lwork = -1;
-	dgelsy_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, &wkopt, &lwork, &info);
-
-	lwork = (int) wkopt;
-	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelsy", "failed to query workspace");
-	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
-		c_error ("c_linalg_lapack_dgelsy", "cannot allocate memory work");
-	dgelsy_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, work, &lwork, &info);
-	free (work);
-
-	if (p) *p = _p;
-	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
-
-	if (rank) *rank = _rank;
-
-	return info;
-}
 
 int
 c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
@@ -374,15 +161,11 @@ c_linalg_lsQ_solve (double rcond, c_matrix *a, c_vector *b, c_vector_int **p, in
 }
 
 /* solve R *x = Q^T * y */
-void
+int
 c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 {
-	char	uplo;
-	char	trans;
-	char	diag;
-	int		n;
-	int		lda;
-	int		incy;
+	int			info;
+	c_matrix	*c;
 
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
 	if (c_vector_is_empty (qty)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
@@ -393,27 +176,19 @@ c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty)
 		qty->tsize = r->size2 * qty->stride;
 	}
 
-	uplo = 'U';
-	trans = 'N';
-	diag = 'N';
-	n = (int) r->size1;
-	lda = (int) r->lda;
-	incy = (int) qty->stride;
-	dtrsv_ (&uplo, &trans, &diag, &n, r->data, &lda, qty->data, &incy);
+	c = c_matrix_view_array (qty->size, 1, qty->size, qty->data);
+	info = c_linalg_lapack_dtrtrs ('U', 'N', 'N', r, c);
+	c_matrix_free (c);
 	if (qty->size != r->size2) qty->size = r->size2;
-	return;
+	return info;
 }
 
 /* solve R^T *(Q^T * x) = y */
-void
+int
 c_linalg_QR_RTsolve (c_matrix *r, c_vector *y)
 {
-	char	uplo;
-	char	trans;
-	char	diag;
-	int		n;
-	int		lda;
-	int		incy;
+	int			info;
+	c_matrix	*c;
 
 	if (c_matrix_is_empty (r)) c_error ("c_linalg_QR_Rsolve", "matrix is empty.");
 	if (c_vector_is_empty (y)) c_error ("c_linalg_QR_Rsolve", "vector is empty.");
@@ -424,15 +199,11 @@ c_linalg_QR_RTsolve (c_matrix *r, c_vector *y)
 		y->tsize = r->size1 * y->stride;
 	}
 
-	uplo = 'U';
-	trans = 'T';
-	diag = 'N';
-	n = (int) r->size1;
-	lda = (int) r->lda;
-	incy = (int) y->stride;
-	dtrsv_ (&uplo, &trans, &diag, &n, r->data, &lda, y->data, &incy);
+	c = c_matrix_view_array (y->size, 1, y->size, y->data);
+	info = c_linalg_lapack_dtrtrs ('U', 'T', 'N', r, c);
+	c_matrix_free (c);
 	if (y->size != r->size1) y->size = r->size1;
-	return;
+	return info;
 }
 
 /*** qr 1-rank update a + u * v' : u and v are vector ***/

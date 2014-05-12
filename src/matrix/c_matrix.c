@@ -54,6 +54,22 @@ c_matrix_alloc (const size_t size1, const size_t size2)
 	return a;
 }
 
+void
+c_matrix_realloc (const size_t tsize, c_matrix *x, const size_t size1, const size_t size2)
+{
+	if (c_matrix_is_empty (x)) c_error ("c_matrix_realloc", "matrix is empty.");
+	if (!x->owner) c_error ("c_matrix_realloc", "cannot reallocate matrix of !x->owner.");
+	if (x->tsize == tsize) return;
+
+	x->data = (double *) realloc (x->data, tsize * sizeof (double));
+	if (x->data == NULL) c_error ("c_matrix_realloc", "reallocation of array failed.");
+	x->tsize = tsize;
+	if (x->size1 != size1) x->size1 = size1;
+	if (x->size2 != size2) x->size2 = size2;
+
+	return;
+}
+
 c_matrix *
 c_matrix_view_array (const size_t size1, const size_t size2, const size_t lda, double *data)
 {
