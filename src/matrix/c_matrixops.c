@@ -339,8 +339,8 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_rowcols", "matrix is empty.");
 	if (!a->owner) c_error ("c_matrix_remove_rowcols", "cannot resize matrix_view.");
-	if (a->size1 - dm <= 0) c_error ("c_matrix_remove_rowcols", "a->size1 must be > dm.");
-	if (a->size2 - dn <= 0) c_error ("c_matrix_remove_rowcols", "a->size2 must be > dn.");
+	if (a->size1 - dm < 0) c_error ("c_matrix_remove_rowcols", "a->size1 must be > dm.");
+	if (a->size2 - dn < 0) c_error ("c_matrix_remove_rowcols", "a->size2 must be > dn.");
 
 	if (dm <= 0 && dn <= 0) return;
 
@@ -353,7 +353,7 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	a->tsize = a->lda * a->size2;
 	n = (int) a->size1;
 
-	if (dm > 0) {
+	if (dm > 0 && a->size1 > 0 && a->size2 > 0) {
 		c_vector	*col = c_vector_alloc (a->size1);
 		for (j = 1; j < a->size2; j++) {
 			dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
@@ -361,7 +361,7 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 		}
 		c_vector_free (col);
 	}
-	if (a->data) a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
+	a->data = (double *) realloc (a->data, a->tsize * sizeof (double));
 
 	return;
 }
