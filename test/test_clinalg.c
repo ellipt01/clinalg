@@ -12,6 +12,18 @@
 size_t		size1;
 size_t		size2;
 
+const int	n_test_matrix_func = 2;
+
+const char	*test_matrix_func_name[] = {
+	"test_matrix_mv",
+	"test_matrix_mm"
+};
+
+bool	(*test_matrix_func_ptr[]) (void) = {
+		test_matrix_mv,
+		test_matrix_mm
+};
+
 const int	n_test_cholesky_func = 6;
 
 const char	*test_cholesky_func_name[] = {
@@ -106,7 +118,15 @@ main (void)
 	size2 = (size_t) 100 * rand () / RAND_MAX + 10;
 	fprintf (stderr, "size1 = %zd, size2 = %zd\n\n", size1, size2);
 
-	fprintf (stderr, "*** test_cholesky ***\n");
+	fprintf (stderr, "*** test_matrix ***\n");
+	for (i = 0; i < n_test_matrix_func; i++) {
+		bool	status = test_matrix_func_ptr[i] ();
+		fprintf (stderr, "\t %s ...", test_matrix_func_name[i]);
+		fprintf (stderr, status ? "SUCCESS\n" : "FAILED\n");
+		if (success && !status) success = false;
+	}
+
+	fprintf (stderr, "\n*** test_cholesky ***\n");
 	for (i = 0; i < n_test_cholesky_func; i++) {
 		bool	status = test_cholesky_func_ptr[i] ();
 		fprintf (stderr, "\t %s ...", test_cholesky_func_name[i]);

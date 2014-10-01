@@ -182,7 +182,7 @@ c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
 	double		*rowi;
 	double		*rowj;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
+	if (c_matrix_is_empty (a))  c_error ("c_matrix_swap_rows", "matrix is empty.");
 	if (i < 0 || a->size1 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
 	if (j < 0 || a->size1 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
 	if (i == j) return;
@@ -205,7 +205,7 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 	double		*coli;
 	double		*colj;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_swap_rows", "matrix is empty.");
+	if (c_matrix_is_empty (a))  c_error ("c_matrix_swap_rows", "matrix is empty.");
 	if (i < 0 || a->size2 <= i) c_error ("c_matrix_swap_rows", "first index out of range.");
 	if (j < 0 || a->size2 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
 	if (i == j) return;
@@ -342,7 +342,7 @@ c_matrix_merge_row (c_matrix *a, const c_matrix *b)
 	int			inc;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_row", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_row", "matrix *b is empty.");
-	if (a->size1 != b->size1) c_error ("c_matrix_merge_row", "matrix size dose not match.");
+	if (a->size1 != b->size1)  c_error ("c_matrix_merge_row", "matrix size dose not match.");
 
 	k = (int) a->size2;
 	c_matrix_add_rowcols (a, 0, b->size2);
@@ -364,7 +364,7 @@ c_matrix_merge_col (c_matrix *a, const c_matrix *b)
 	int			inc;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_col", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_col", "matrix *b is empty.");
-	if (a->size2 != b->size2) c_error ("c_matrix_merge_col", "matrix size dose not match.");
+	if (a->size2 != b->size2)  c_error ("c_matrix_merge_col", "matrix size dose not match.");
 
 	k = (int) a->size1;
 	c_matrix_add_rowcols (a, b->size1, 0);
@@ -422,7 +422,7 @@ c_matrix_dot_vector (double alpha, const c_matrix *a, const c_vector *x, double 
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_vector", "matrix is empty.");
 	if (c_vector_is_empty (x)) c_error ("c_matrix_dot_vector", "vector is empty.");
-	if (a->size2 != x->size) c_error ("c_matrix_dot_vector", "vector and matrix size does not match.");
+	if (a->size2 != x->size)   c_error ("c_matrix_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size1);
 	n = (int) a->size1;
@@ -448,7 +448,7 @@ c_matrix_transpose_dot_vector (double alpha, const c_matrix *a, const c_vector *
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_vector", "matrix is empty.");
 	if (c_vector_is_empty (x)) c_error ("c_matrix_transpose_dot_vector", "vector is empty.");
-	if (a->size1 != x->size) c_error ("c_matrix_transpose_dot_vector", "vector and matrix size does not match.");
+	if (a->size1 != x->size)   c_error ("c_matrix_transpose_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size2);
 	n = (int) a->size1;
@@ -470,8 +470,8 @@ c_matrix_symm_upper_dot_vector (double alpha, const c_matrix *a, const c_vector 
 	int			incy;
 	c_vector	*y;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_symm_upper_dot_vector", "matrix is empty.");
-	if (c_vector_is_empty (x)) c_error ("c_matrix_symm_upper_dot_vector", "vector is empty.");
+	if (c_matrix_is_empty (a))   c_error ("c_matrix_symm_upper_dot_vector", "matrix is empty.");
+	if (c_vector_is_empty (x))   c_error ("c_matrix_symm_upper_dot_vector", "vector is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_matrix_symm_upper_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size1);
@@ -493,8 +493,8 @@ c_matrix_symm_lower_dot_vector (double alpha, const c_matrix *a, const c_vector 
 	int			incy;
 	c_vector	*y;
 
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_symm_lower_dot_vector", "matrix is empty.");
-	if (c_vector_is_empty (x)) c_error ("c_matrix_symm_lower_dot_vector", "vector is empty.");
+	if (c_matrix_is_empty (a))   c_error ("c_matrix_symm_lower_dot_vector", "matrix is empty.");
+	if (c_vector_is_empty (x))   c_error ("c_matrix_symm_lower_dot_vector", "vector is empty.");
 	if (!c_matrix_is_square (a)) c_error ("c_matrix_symm_lower_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size1);
@@ -522,7 +522,7 @@ c_matrix_dot_matrix (double alpha, const c_matrix *a, const c_matrix *b, double 
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix", "matrix *b is empty.");
-	if (a->size2 != b->size1) c_error ("c_matrix_dot_matrix", "matrix size does not match.");
+	if (a->size2 != b->size1)  c_error ("c_matrix_dot_matrix", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size1, b->size2);
 	m = (int) a->size1;
@@ -551,7 +551,7 @@ c_matrix_dot_matrix_transpose (double alpha, const c_matrix *a, const c_matrix *
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_transpose", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_transpose", "matrix *b is empty.");
-	if (a->size2 != b->size2) c_error ("c_matrix_dot_matrix_transpose", "matrix size does not match.");
+	if (a->size2 != b->size2)  c_error ("c_matrix_dot_matrix_transpose", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size1, b->size1);
 	m = (int) a->size1;
@@ -580,7 +580,7 @@ c_matrix_transpose_dot_matrix (double alpha, const c_matrix *a, const c_matrix *
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_transpose_dot_matrix", "matrix *b is empty.");
-	if (a->size1 != b->size1) c_error ("c_matrix_transpose_dot_matrix", "matrix size does not match.");
+	if (a->size1 != b->size1)  c_error ("c_matrix_transpose_dot_matrix", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size2, b->size2);
 	m = (int) a->size2;
@@ -609,7 +609,7 @@ c_matrix_transpose_dot_matrix_transpose (double alpha, const c_matrix *a, const 
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix *b is empty.");
-	if (a->size1 != b->size2) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix size does not match.");
+	if (a->size1 != b->size2)  c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size2, b->size1);
 	m = (int) a->size2;
@@ -624,18 +624,16 @@ c_matrix_transpose_dot_matrix_transpose (double alpha, const c_matrix *a, const 
 
 /* c = alpha * a * b + beta */
 static c_matrix *
-c_matrix_dot_matrix_symm (char *side, char *uplo, double alpha, const c_matrix *a, const c_matrix *b, double beta)
+c_matrix_dsymm (char *side, char *uplo, double alpha, const c_matrix *a, const c_matrix *b, double beta)
 {
 	int			m;
 	int			n;
-	int			k;
 	int			lda;
 	int			ldb;
 	int			ldc;
-	c_matrix	*c = c_matrix_alloc (a->size2, b->size1);
-	m = (int) a->size2;
-	n = (int) b->size1;
-	k = (int) a->size1;
+	c_matrix	*c = c_matrix_alloc (a->size1, b->size2);
+	m = (int) c->size1;
+	n = (int) c->size2;
 	lda = (int) a->lda;
 	ldb = (int) b->lda;
 	ldc = (int) c->lda;
@@ -648,9 +646,9 @@ c_matrix_symm_upper_dot_matrix (double alpha, const c_matrix *a, const c_matrix 
 {
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_symm_upper_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_symm_upper_dot_matrix", "matrix *b is empty.");
-	if (a->size1 != b->size2) c_error ("c_matrix_symm_upper_dot_matrix", "matrix size does not match.");
+	if (a->size2 != b->size1)  c_error ("c_matrix_symm_upper_dot_matrix", "matrix size does not match.");
 
-	return c_matrix_dot_matrix_symm ("L", "U", alpha, a, b, beta);
+	return c_matrix_dsymm ("L", "U", alpha, a, b, beta);
 }
 
 c_matrix *
@@ -658,27 +656,27 @@ c_matrix_symm_lower_dot_matrix (double alpha, const c_matrix *a, const c_matrix 
 {
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_symm_lower_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_symm_lower_dot_matrix", "matrix *b is empty.");
-	if (a->size1 != b->size2) c_error ("c_matrix_symm_lower_dot_matrix", "matrix size does not match.");
+	if (a->size2 != b->size1)  c_error ("c_matrix_symm_lower_dot_matrix", "matrix size does not match.");
 
-	return c_matrix_dot_matrix_symm ("L", "L", alpha, a, b, beta);
+	return c_matrix_dsymm ("L", "L", alpha, a, b, beta);
 }
 
 c_matrix *
-c_matrix_dot_matrix_symm_upper (double alpha, const c_matrix *a, const c_matrix *b, double beta)
+c_matrix_dot_matrix_symm_upper (double alpha, const c_matrix *b, const c_matrix *a, double beta)
 {
-	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_symm_upper", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_symm_upper", "matrix *b is empty.");
-	if (a->size1 != b->size2) c_error ("c_matrix_dot_matrix_symm_upper", "matrix size does not match.");
+	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_symm_upper", "matrix *a is empty.");
+	if (b->size2 != a->size1)  c_error ("c_matrix_dot_matrix_symm_upper", "matrix size does not match.");
 
-	return c_matrix_dot_matrix_symm ("R", "U", alpha, a, b, beta);
+	return c_matrix_dsymm ("R", "U", alpha, b, a, beta);
 }
 
 c_matrix *
-c_matrix_dot_matrix_symm_lower (double alpha, const c_matrix *a, const c_matrix *b, double beta)
+c_matrix_dot_matrix_symm_lower (double alpha, const c_matrix *b, const c_matrix *a, double beta)
 {
+	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_symm_lower", "matrix *b is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_symm_lower", "matrix *a is empty.");
-	if (c_matrix_is_empty (b)) c_error ("c_matrix_symm_lower_dot_matrix", "matrix *b is empty.");
-	if (a->size1 != b->size2) c_error ("c_matrix_dot_matrix_symm_lower", "matrix size does not match.");
+	if (b->size2 != a->size1)  c_error ("c_matrix_dot_matrix_symm_lower", "matrix size does not match.");
 
-	return c_matrix_dot_matrix_symm ("R", "L", alpha, a, b, beta);
+	return c_matrix_dsymm ("R", "L", alpha, a, b, beta);
 }

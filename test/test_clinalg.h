@@ -11,6 +11,9 @@
 c_vector	*random_vector (size_t size);
 c_matrix	*random_matrix (size_t size1, size_t size2);
 
+bool	test_matrix_mv (void);
+bool	test_matrix_mm (void);
+
 bool	test_cholesky_decomp (void);
 bool	test_cholesky_svx (void);
 bool	test_cholesky_1up (void);
