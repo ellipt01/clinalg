@@ -44,6 +44,8 @@ c_vector		*c_matrix_row (c_matrix *a, int index);
 
 void			c_matrix_memcpy (c_matrix *dest, const c_matrix *src);
 void			c_matrix_mncopy (c_matrix *dest, const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *src);
+void			c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a);
+void			c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a);
 
 void			c_matrix_set_all (c_matrix *a, const double val);
 void			c_matrix_set_zero (c_matrix *a);

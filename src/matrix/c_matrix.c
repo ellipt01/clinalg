@@ -266,6 +266,40 @@ c_matrix_mncopy (c_matrix *dest, const size_t m0, const size_t n0, const size_t 
 }
 
 void
+c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a)
+{
+	int		j;
+	int		incx = 1;
+	int		incy = 1;
+
+	size_t	min_m = C_MIN (tr->size1, a->size1);
+	size_t	min_n = C_MIN (tr->size2, a->size2);
+	for (j = 0; j < min_n; j++) {
+		int	n = (j + 1 < min_m) ? (int) (j + 1) : (int) min_m;
+		dcopy_ (&n, a->data + j * a->lda, &incx, tr->data + j * tr->lda, &incy);
+	}
+	return;
+}
+
+void
+c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a)
+{
+	int		j;
+	int		incx = 1;
+	int		incy = 1;
+
+	size_t	min_m = C_MIN (tr->size1, a->size1);
+	size_t	min_n = C_MIN (tr->size2, a->size2);
+	for (j = 0; j < min_n; j++) {
+		int	n;
+		n = min_m - j;
+		if (n <= 0) break;
+		dcopy_ (&n, a->data + j * (a->lda + 1), &incx, tr->data + j * (tr->lda + 1), &incy);
+	}
+	return;
+}
+
+void
 c_matrix_set_all (c_matrix *a, const double val)
 {
 	int			i, j;
