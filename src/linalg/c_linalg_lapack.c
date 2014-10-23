@@ -8,40 +8,7 @@
 #include <math.h>
 #include <clinalg.h>
 
-/* c_linalg_utils.c */
-extern void	c_error (const char * function_name, const char *error_msg);
-
-#ifndef HAVE_LAPACK_H
-extern void	dtrtrs_ (char *uplo, char *trans, char *diag, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
-/* LU decomposition */
-extern void	dgetrf_ (int *m, int *n, double *a, int *lda, int *ipiv, int *info);
-extern void	dgetrs_ (char *trans, int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
-extern void	dgesv_  (int *n, int *nrhs, double *a, int *lda, int *ipiv, double *b, int *ldb, int *info);
-extern void	dgetri_ (int *n, double *a, int *lda, int *ipiv, double *work, int *lwork, int *info);
-
-/* Cholesky decomposition */
-extern void	dpotrf_ (char *uplo, int *n, double *a, int *lda, int *info);
-extern void	dpotrs_ (char *uplo, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *info);
-extern void	dpotri_ (char *uplo, int *n, double *a, int *lda, int *info);
-
-/* QR decomposition */
-extern void	dgeqrf_ (int *m, int *n, double *data, int *lda, double *tau, double *work, int *lwork, int *info);
-extern void	dgeqp3_ (int *m, int *n, double *a, int *lda, int *jpvt, double *tau, double *work, int *lwork, int *info);
-extern void	dorgqr_ (int *m, int *n, int *k, double *data, int *lda, double *tau, double *work, int *lwork, int *info);
-extern void	dgels_  (char *trans, int *m, int *n, int *nrhs, double *a_data, int *lda, double *b_data, int *ldb, double *w, int *lwork, int *info);
-extern void	dgelsy_ (int *m, int *n, int *nrhs, double *a, int *lda, double *b, int *ldb, int *jpvt, double *rcond, int *rank, double *work, int *lwork, int *info);
-
-/* SV decomposition */
-extern int		ilaenv_ (int *ispec, char *name, char *opts, int *n1, int *n2, int *n3, int *n4);
-extern void	dgesvd_ (char *jobu, char *jobvt, int *m, int *n, double *a_data, int *lda, double *s_data,
-						  double *u_data, int *ldu, double *vt_data, int *ldvt, double *w, int *lwork, int *info);
-extern void	dgesdd_ (char *jobz, int *m, int *n, double *a_data, int *lda, double *s_data, double *u_data, int *ldu,
-						  double *vt_data, int *ldvt, double *work, int *lwork, int *iwork, int *info);
-extern void	dgelss_ (int *m, int *n, int *nrhs, double *a_data, int *lda, double *b_data, int *ldb,
-						  double *s_data, double *rcond, int *lrank, double *w, int *lwork, int *info);
-extern void	dgelsd_ (int *m, int *n, int *nrhs, double *a_data, int *lda, double *b_data, int *ldb,
-						  double *s_data, double *rcond, int *lrank, double *w, int *lwork, int *iwork, int *info);
-#endif
+#include "private.h"
 
 int
 c_linalg_lapack_dtrtrs (char uplo, char trans, char diag, c_matrix *a, c_matrix *b)

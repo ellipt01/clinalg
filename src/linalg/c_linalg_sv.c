@@ -7,8 +7,7 @@
 
 #include <clinalg.h>
 
-/* c_linalg_utils.c */
-extern void	c_error (const char * function_name, const char *error_msg);
+#include "private.h"
 
 static int
 _c_linalg_SV_decomp (c_matrix *a, c_matrix **u, c_matrix **vt, c_vector **s)

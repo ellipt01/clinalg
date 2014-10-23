@@ -7,9 +7,7 @@
 
 #include <clinalg_macros.h>
 #include <c_vector.h>
-
-/* c_linalg_util.c */
-extern void	c_error (const char * function_name, const char *error_msg);
+#include <c_linalg_utils.h>
 
 static c_vector_int *
 _allocate_c_vector_int (void)

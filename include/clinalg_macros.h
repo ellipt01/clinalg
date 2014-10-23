@@ -8,6 +8,10 @@
 #ifndef CLINALG_MACROS_H_
 #define CLINALG_MACROS_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef C_MAX
 #define C_MAX(a, b)	((a) >= (b)) ? (a) : (b)
 #endif
@@ -26,6 +30,10 @@
 
 #ifndef POINTER_OF_MATRIX
 #define POINTER_OF_MATRIX(a, i, j) ((a->data) + (i) + (j) * (a->lda))
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif /* CLINALG_MACROS_H_ */

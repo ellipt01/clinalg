@@ -7,21 +7,7 @@
 
 #include <clinalg.h>
 
-/* c_linalg_utilsc */
-extern void	c_error (const char * function_name, const char *error_msg);
-
-/* blas */
-#ifndef HAVE_BLAS_H
-extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
-#endif
-
-/* qrupdate: cholinsert/delete */
-#ifndef HAVE_QRUPDATE_H
-extern void	dch1up_ (int *n, double *L, int *ldr, double *u, double *w);
-extern void	dch1dn_ (int *n, double *L, int *ldr, double *u, double *w, int *info);
-extern void	dchinx_ (int *n, double *L, int *ldr, int *j, double *u, double *w, int *info);
-extern void	dchdex_ (int *n, double *L, int *ldr, int *j, double *w);
-#endif
+#include "private.h"
 
 /* cholesky decomposition */
 int

@@ -7,28 +7,10 @@
 
 #include <clinalg_macros.h>
 #include <c_matrix.h>
+#include <c_linalg_lapack.h>
+#include <c_linalg_utils.h>
 
-/* c_linalg_util.c */
-extern void	c_error (const char * function_name, const char *error_msg);
-
-/* c_linalg_sv.c */
-extern int		c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matrix **vt, c_vector **s);
-
-/* blas */
-#ifndef HAVE_BLAS_H
-extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
-extern void	daxpy_ (int *n, double *alpha, double *x, int *incx, double *y, int *incy);
-extern void	dgemv_ (char *trans, int *n, int *m, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy);
-extern void	dsymv_ (char *uplo, int *n, double *alpha, double *a, int *lda, double *x, int *incx, double *beta, double *y, int *incy);
-extern void	dgemm_ (char *transA, char *transB, int *m, int *n, int *k, double *alpha, double *a, int *lda, double *b, int *ldb, double *beta, double *c, int *ldc);
-extern void	dsymm_ (char *side, char *uplo, int *m, int *n, double *alpha, double *a, int *lda, double *b, int *ldb, double *beta, double *c, int *ldc);
-#endif
-
-/* lapack */
-#ifndef HAVE_LAPACK_H
-extern double	dlange_ (char *norm, int *m, int *n, double *data, int *lda, double *w);
-extern void	dswap_ (int *n, double *x, int *incx, double *y, int *incy);
-#endif
+#include "private.h"
 
 /* y = x + y */
 void

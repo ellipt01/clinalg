@@ -7,13 +7,7 @@
 
 #include <clinalg.h>
 
-/* c_linalg_utils.c */
-extern void	c_error (const char * function_name, const char *error_msg);
-
-/* qrupdate */
-#ifndef HAVE_QRUPDATE_H
-extern void	dlup1up_ (int *m, int *n, double *L, int *ldl, double *R, int *ldr, int *p, double *u, double *v, double *w);
-#endif
+#include "private.h"
 
 int
 c_linalg_LU_decomp (c_matrix *a, c_vector_int **p)

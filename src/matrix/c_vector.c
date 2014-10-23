@@ -7,14 +7,9 @@
 
 #include <clinalg_macros.h>
 #include <c_vector.h>
+#include <c_linalg_utils.h>
 
-/* c_linalg_util.c */
-extern void	c_error (const char * function_name, const char *error_msg);
-
-/* blas */
-#ifndef HAVE_BLAS_H
-extern void	dcopy_ (int *n, double *x, int *incx, double *y, int *incy);
-#endif
+#include "private.h"
 
 static c_vector *
 _allocate_c_vector (void)

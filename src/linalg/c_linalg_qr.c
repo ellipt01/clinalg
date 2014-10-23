@@ -7,17 +7,7 @@
 
 #include <clinalg.h>
 
-/* c_linalg_utils.c */
-extern void	c_error (const char * function_name, const char *error_msg);
-
-/* qrupdate*/
-#ifndef HAVE_QRUPDATE_H
-extern void	dqr1up_ (int *m, int *n, int *k, double *Q, int *ldq, double *R, int *ldr, double *u, double *v, double *w);
-extern void	dqrinc_ (int *m, int *n, int *k, double *Q, int *ldq, double *R, int *ldr, int *j, double *x, double *w);
-extern void	dqrinr_ (int *m, int *n, double *Q, int *ldq, double *R, int *ldr, int *j, double *x, double *w);
-extern void	dqrdec_ (int *m, int *n, int *k, double *Q, int *ldq, double *R, int *ldr, int *j, double *w);
-extern void	dqrder_ (int *m, int *n, double *Q, int *ldq, double *R, int *ldr, int *j, double *w);
-#endif
+#include "private.h"
 
 int
 c_linalg_QR_decomp (c_matrix *a, c_vector_int **p, c_vector **tau)
