@@ -33,19 +33,15 @@ c_matrix_alloc (const size_t size1, const size_t size2)
 	if (size1 <= 0 || size2 <= 0) c_error ("c_matrix_alloc", "invalid size.");
 
 	a = _allocate_c_matrix ();
-	if (!a) {
-		fprintf (stderr, "WARNING: c_matrix_alloc: failed to allocate memory.\n");
-		return NULL;
-	}
+	if (!a) c_error ("c_matrix_alloc", "failed to allocate memory.");
 	a->data = (double *) malloc (size1 * size2 * sizeof (double));
-	if (!a->data) fprintf (stderr, "WARNING: c_matrix_alloc: failed to allocate memory.\n");
-	else {
-		a->size1 = size1;
-		a->size2 = size2;
-		a->lda = size1;
-		a->tsize = a->lda * a->size2;
-		a->owner = true;
-	}
+	if (!a->data) c_error ("c_matrix_alloc", "failed to allocate memory.");
+	a->size1 = size1;
+	a->size2 = size2;
+	a->lda = size1;
+	a->tsize = a->lda * a->size2;
+	a->owner = true;
+
 	return a;
 }
 

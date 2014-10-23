@@ -3,7 +3,6 @@
 
 AC_PREREQ([2.63])
 AC_INIT([clinalg], [0.12])
-AC_CONFIG_SRCDIR([example/example.c])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
@@ -58,6 +57,5 @@ AC_CONFIG_FILES([clinalg.pc:pkgconfig/clinalg.pc.in])
 AC_CONFIG_FILES([Makefile
                  include/Makefile
                  src/Makefile
-                 example/Makefile
                  test/Makefile])
 AC_OUTPUT

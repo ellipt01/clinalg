@@ -30,18 +30,14 @@ c_vector_int_alloc (const size_t size)
 	if (size <= 0) c_error ("c_vector_int_alloc", "invalid size.");
 
 	v = _allocate_c_vector_int ();
-	if (!v) {
-		fprintf (stderr, "WARNING: c_vector_int_alloc: failed to allocate memory.\n");
-		return NULL;
-	}
+	if (!v) c_error ("c_vector_int_alloc", "failed to allocate memory.");
 	v->data = (int *) malloc (size * sizeof (int));
-	if (!v->data) fprintf (stderr, "WARNING: c_vector_int_alloc: failed to allocate memory.\n");
-	else {
-		v->size = size;
-		v->stride = 1;
-		v->tsize = v->stride * v->size;
-		v->owner = true;
-	}
+	if (!v->data) c_error ("c_vector_int_alloc", "failed to allocate memory.");
+	v->size = size;
+	v->stride = 1;
+	v->tsize = v->stride * v->size;
+	v->owner = true;
+
 	return v;
 }
 
