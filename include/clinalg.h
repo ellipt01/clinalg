@@ -16,12 +16,12 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include <clinalg_macros.h>
+#include <c_linalg_macros.h>
+#include <c_linalg_utils.h>
 #include <c_vector.h>
 #include <c_vectorops.h>
 #include <c_matrix.h>
 #include <c_matrixops.h>
-#include <c_linalg_utils.h>
 #include <c_linalg_lapack.h>
 #include <c_linalg_lu.h>
 #include <c_linalg_cholesky.h>

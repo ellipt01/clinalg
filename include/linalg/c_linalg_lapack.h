@@ -26,11 +26,11 @@ int		c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b);
 int		c_linalg_lapack_dpotri (char uplo, c_matrix *l);
 
 /* QR decomposition */
-int			c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau);
-int			c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p);
-int			c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau);
-int			c_linalg_lapack_dgels (char trans, c_matrix *a, c_matrix *b);
-int			c_linalg_lapack_dgelsy (double rcond, c_matrix *a, c_matrix *b, c_vector_int **p, int *rank);
+int		c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau);
+int		c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p);
+int		c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau);
+int		c_linalg_lapack_dgels (char trans, c_matrix *a, c_matrix *b);
+int		c_linalg_lapack_dgelsy (double rcond, c_matrix *a, c_matrix *b, c_vector_int **p, int *rank);
 
 /* SV decomposition */
 int		c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matrix **vt, c_vector **s);

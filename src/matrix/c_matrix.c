@@ -5,7 +5,7 @@
  *      Author: utsugi
  */
 
-#include <clinalg_macros.h>
+#include <c_linalg_macros.h>
 #include <c_matrix.h>
 #include <c_linalg_utils.h>
 
