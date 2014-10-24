@@ -1,10 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES =\
-	 -I$(top_srcdir)/include\
-	 -I$(top_srcdir)/include/matrix\
-	 -I$(top_srcdir)/include/linalg
-
 AM_CFLAGS =\
 	 -Wall\
 	 -g
@@ -24,10 +19,8 @@ libclinalg_la_SOURCES = \
 	linalg/c_linalg_qr.c\
 	linalg/c_linalg_sv.c
 
-libclinalg_la_CPPFLAGS =\
+libclinalg_la_LIBADD = -L$(top_srcdir)/src
+libclinalg_la_CPPFLAGS = -I$(top_srcdir)/include\
 	-I$(top_srcdir)/include/matrix -I$(top_srcdir)/include/linalg
-
-libclinalg_la_LDFLAGS = 
-
-libclinalg_la_LIBADD = -lm
+libclinalg_la_LDFLAGS = -version-info $(CLINALG_LT_VERSION)
 

@@ -2,8 +2,14 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([clinalg], [0.12])
+AC_INIT([clinalg], [0.20])
 AC_CONFIG_HEADERS([config.h])
+
+CLINALG_CURRENT=1
+CLINALG_REVISION=0
+CLINALG_AGE=0
+CLINALG_LT_VERSION="${CLINALG_CURRENT}:${CLINALG_REVISION}:${CLINALG_AGE}"
+AC_SUBST(CLINALG_LT_VERSION)
 
 # Checks for programs.
 AC_PROG_CC
