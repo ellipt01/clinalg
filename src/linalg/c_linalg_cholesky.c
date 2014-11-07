@@ -75,13 +75,8 @@ c_linalg_cholesky_svx (c_matrix *l, c_vector *b)
 int
 c_linalg_cholesky_invert (c_matrix *l)
 {
-	int		info;
-
 	if (c_matrix_is_empty (l)) c_error ("c_linalg_cholesky_invert", "matrix is empty.");
 	if (!c_matrix_is_square (l)) c_error ("c_linalg_cholesky_invert", "matrix must be square.");
-
-	info = c_linalg_lapack_dpotrf ('U', l);
-	if (info != 0) c_error ("c_linalg_cholesky_invert", "DPOTRF failed.");
 
 	return c_linalg_lapack_dpotri ('U', l);
 }

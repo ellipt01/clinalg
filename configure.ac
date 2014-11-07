@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([clinalg], [0.20])
+AC_INIT([clinalg], [0.2.1])
 AC_CONFIG_HEADERS([config.h])
 
 CLINALG_CURRENT=1

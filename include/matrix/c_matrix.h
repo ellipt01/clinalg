@@ -31,7 +31,7 @@ c_matrix		*c_matrix_view_array (const size_t size1, const size_t size2, const si
 bool			c_matrix_is_empty (const c_matrix *a);
 bool			c_matrix_is_square (const c_matrix *a);
 void			c_matrix_free (c_matrix *a);
-void			c_matrix_set (c_matrix *a, const int i, const int j, double val);
+void			c_matrix_set (c_matrix *a, const int i, const int j, const double val);
 double			c_matrix_get (const c_matrix *a, const int i, const int j);
 
 void			c_matrix_get_row (c_vector *v, const c_matrix *a, const size_t index);
@@ -39,8 +39,8 @@ void			c_matrix_get_col (c_vector *v, const c_matrix *a, const size_t index);
 void			c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *v);
 void			c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *v);
 
-c_vector		*c_matrix_column (c_matrix *a, int index);
-c_vector		*c_matrix_row (c_matrix *a, int index);
+c_vector		*c_matrix_column (c_matrix *a, const int index);
+c_vector		*c_matrix_row (c_matrix *a, const int index);
 
 void			c_matrix_memcpy (c_matrix *dest, const c_matrix *src);
 void			c_matrix_mncopy (c_matrix *dest, const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *src);

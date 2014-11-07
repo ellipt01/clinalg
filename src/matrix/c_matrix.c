@@ -105,7 +105,7 @@ c_matrix_free (c_matrix *a)
 }
 
 void
-c_matrix_set (c_matrix *a, const int i, const int j, double val)
+c_matrix_set (c_matrix *a, const int i, const int j, const double val)
 {
 	int		index;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_set", "matrix is empty.");
@@ -197,7 +197,7 @@ c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *x)
 
 /* create vector view of row */
 c_vector *
-c_matrix_row (c_matrix *a, int index)
+c_matrix_row (c_matrix *a, const int index)
 {
 	c_vector	*x;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_row", "matrix is empty.");
@@ -209,7 +209,7 @@ c_matrix_row (c_matrix *a, int index)
 
 /* create vector view of column */
 c_vector *
-c_matrix_column (c_matrix *a, int index)
+c_matrix_column (c_matrix *a, const int index)
 {
 	c_vector	*x;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_column", "matrix is empty.");

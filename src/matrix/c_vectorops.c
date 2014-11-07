@@ -10,6 +10,7 @@
 
 #include "private.h"
 
+/* x = x + c */
 void
 c_vector_add_constant (c_vector *x, const double c)
 {
@@ -19,6 +20,7 @@ c_vector_add_constant (c_vector *x, const double c)
 	return;
 }
 
+/* sum_i x(i) */
 double
 c_vector_sum (const c_vector *x)
 {
@@ -30,6 +32,7 @@ c_vector_sum (const c_vector *x)
 	return sum;
 }
 
+/* sum_i x(i) / x->size */
 double
 c_vector_mean (const c_vector *x)
 {
@@ -40,6 +43,7 @@ c_vector_mean (const c_vector *x)
 	return sum / (double) x->size;
 }
 
+/* y = y - x */
 void
 c_vector_sub (c_vector *y, const c_vector *x)
 {
@@ -58,6 +62,7 @@ c_vector_sub (c_vector *y, const c_vector *x)
 	return;
 }
 
+/* sum_i |x(i)| */
 double
 c_vector_asum (const c_vector *x)
 {
@@ -70,6 +75,7 @@ c_vector_asum (const c_vector *x)
 	return dasum_ (&n, x->data, &incv);
 }
 
+/* max_i |x(i)| */
 int
 c_vector_amax (const c_vector *x)
 {
@@ -82,8 +88,9 @@ c_vector_amax (const c_vector *x)
 	return (int) idamax_ (&n, x->data, &incv) - 1;
 }
 
+/* x = alpha * x */
 void
-c_vector_scale (c_vector *x, double alpha)
+c_vector_scale (c_vector *x, const double alpha)
 {
 	int		n;
 	int		incv;
@@ -95,6 +102,7 @@ c_vector_scale (c_vector *x, double alpha)
 	return;
 }
 
+/* sqrt (x' * x) */
 double
 c_vector_nrm (const c_vector *x)
 {
@@ -106,8 +114,9 @@ c_vector_nrm (const c_vector *x)
 	return dnrm2_ (&n, x->data, &incv);
 }
 
+/* y = a * x + y */
 void
-c_vector_axpy (double alpha, const c_vector *x, c_vector *y)
+c_vector_axpy (const double alpha, const c_vector *x, c_vector *y)
 {
 	int		n;
 	int		incx;
@@ -123,6 +132,7 @@ c_vector_axpy (double alpha, const c_vector *x, c_vector *y)
 	return;
 }
 
+/* x' * y */
 double
 c_vector_dot_vector (const c_vector *x, const c_vector *y)
 {
