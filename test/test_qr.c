@@ -36,7 +36,7 @@ test_QR_decomp (void)
 	c_matrix_free (qr);
 
 	/* b = q * r * p */
-	b = c_matrix_dot_matrix (1., q, r, 0.);
+	b = c_matrix_dot_matrix (1., q, r);
 	c_matrix_free (q);
 	c_matrix_free (r);
 	c_matrix_permute_cols (b, p);
@@ -73,7 +73,7 @@ test_QR_decomp_econ (void)
 	c_matrix_free (qr);
 
 	/* b = q * r */
-	b = c_matrix_dot_matrix (1., q, r, 0.);
+	b = c_matrix_dot_matrix (1., q, r);
 	c_matrix_free (q);
 	c_matrix_free (r);
 
@@ -97,7 +97,7 @@ test_QR_solve (void)
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 
 	{
@@ -110,7 +110,7 @@ test_QR_solve (void)
 		c_linalg_QR_solve (tmp, x);
 		c_matrix_free (tmp);
 	}
-	z = c_matrix_dot_vector (1., a, x, 0.);
+	z = c_matrix_dot_vector (1., a, x);
 
 	c_vector_sub (z, y);
 	c_vector_free (y);
@@ -132,7 +132,7 @@ test_lsQ_solve (void)
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 
 	{
@@ -144,7 +144,7 @@ test_lsQ_solve (void)
 		c_linalg_lsQ_solve (1.e-8, tmp, x, NULL, NULL);
 		c_matrix_free (tmp);
 	}
-	z = c_matrix_dot_vector (1., a, x, 0.);
+	z = c_matrix_dot_vector (1., a, x);
 
 	c_vector_sub (z, y);
 	c_vector_free (y);
@@ -167,7 +167,7 @@ test_QR_Rsolve (void)
 
 	a = random_matrix (_size1, size2);
 	x = random_vector (a->size2);
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 
 	{
@@ -182,14 +182,14 @@ test_QR_Rsolve (void)
 		c_matrix_free (qr);
 
 		/* x = q' * y */
-		x = c_matrix_transpose_dot_vector (1., q, y, 0.);
+		x = c_matrix_transpose_dot_vector (1., q, y);
 		c_matrix_free (q);
 
 		/* x = r^-1 * (q' * y) */
 		c_linalg_QR_Rsolve (r, x);
 		c_matrix_free (r);
 	}
-	z = c_matrix_dot_vector (1., a, x, 0.);
+	z = c_matrix_dot_vector (1., a, x);
 	c_matrix_free (a);
 	c_vector_free (x);
 
@@ -229,7 +229,7 @@ test_QR_1up (void)
 	{
 		c_matrix	*u0 = c_matrix_view_array (u->size, 1, u->size, u->data);
 		c_matrix	*v0 = c_matrix_view_array (v->size, 1, v->size, v->data);
-		c_matrix	*c = c_matrix_dot_matrix_transpose (1., u0, v0, 0.);
+		c_matrix	*c = c_matrix_dot_matrix_transpose (1., u0, v0);
 		c_matrix_free (u0);
 		c_matrix_free (v0);
 		c_matrix_add (a, c);
@@ -241,7 +241,7 @@ test_QR_1up (void)
 	c_vector_free (v);
 
 	{
-		c_matrix	*a2 = c_matrix_dot_matrix (1., q, r, 0.);
+		c_matrix	*a2 = c_matrix_dot_matrix (1., q, r);
 		c_matrix_free (q);
 		c_matrix_free (r);
 
@@ -282,7 +282,7 @@ test_QR_colinsert (void)
 		c_matrix_free (qr);
 	}
 	c_linalg_QR_colinsert (q, r, index, u);
-	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	a2 = c_matrix_dot_matrix (1., q, r);
 	c_matrix_free (q);
 	c_matrix_free (r);
 
@@ -342,7 +342,7 @@ test_QR_rowinsert (void)
 		c_matrix_free (qr);
 	}
 	c_linalg_QR_rowinsert (q, r, index, u);
-	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	a2 = c_matrix_dot_matrix (1., q, r);
 	c_matrix_free (q);
 	c_matrix_free (r);
 
@@ -399,7 +399,7 @@ test_QR_coldelete (void)
 		c_matrix_free (qr);
 	}
 	c_linalg_QR_coldelete (q, r, index);
-	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	a2 = c_matrix_dot_matrix (1., q, r);
 	c_matrix_free (q);
 	c_matrix_free (r);
 
@@ -455,7 +455,7 @@ test_QR_rowdelete (void)
 		c_matrix_free (qr);
 	}
 	c_linalg_QR_rowdelete (q, r, index);
-	a2 = c_matrix_dot_matrix (1., q, r, 0.);
+	a2 = c_matrix_dot_matrix (1., q, r);
 	c_matrix_free (q);
 	c_matrix_free (r);
 

@@ -45,11 +45,11 @@ test_SV_decomp (void)
 		c_vector_free (diag);
 		c_vector_free (s);
 
-		c1 = c_matrix_dot_matrix (1., u, d, 0.);
+		c1 = c_matrix_dot_matrix (1., u, d);
 		c_matrix_free (u);
 		c_matrix_free (d);
 
-		c = c_matrix_dot_matrix (1., c1, vt, 0.);
+		c = c_matrix_dot_matrix (1., c1, vt);
 		c_matrix_free (c1);
 		c_matrix_free (vt);
 	}
@@ -74,7 +74,7 @@ test_SV_solve (void)
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 	{
 		int			rank;
@@ -86,7 +86,7 @@ test_SV_solve (void)
 		c_linalg_SV_solve (1.e-8, tmp, x, &s, &rank);
 		c_matrix_free (tmp);
 	}
-	b = c_matrix_dot_vector (1., a, x, 0.);
+	b = c_matrix_dot_vector (1., a, x);
 	c_matrix_free (a);
 	c_vector_free (x);
 
@@ -110,7 +110,7 @@ test_SV_lsd_solve (void)
 
 	a = random_matrix (size1, size2);
 	x = random_vector (size2);
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 	{
 		int			rank;
@@ -122,7 +122,7 @@ test_SV_lsd_solve (void)
 		c_linalg_SV_lsd_solve (1.e-8, tmp, x, &s, &rank);
 		c_matrix_free (tmp);
 	}
-	b = c_matrix_dot_vector (1., a, x, 0.);
+	b = c_matrix_dot_vector (1., a, x);
 	c_matrix_free (a);
 	c_vector_free (x);
 

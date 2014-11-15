@@ -17,7 +17,7 @@ c_matrix *
 create_symmetric_matrix (int n)
 {
 	c_matrix	*tmp = random_matrix (n, n);
-	c_matrix	*c = c_matrix_dot_matrix_transpose (1., tmp, tmp, 0.);
+	c_matrix	*c = c_matrix_dot_matrix_transpose (1., tmp, tmp);
 	c_matrix_free (tmp);
 
 	return c;
@@ -29,9 +29,9 @@ test_matrix_mv (void)
 	c_matrix	*a = create_symmetric_matrix (size1);
 	c_vector	*x = random_vector (size1);
 
-	c_vector	*v0 = c_matrix_dot_vector (1., a, x, 0.);
-	c_vector	*v1 = c_matrix_symm_upper_dot_vector (1., a, x, 0.);
-	c_vector	*v2 = c_matrix_symm_lower_dot_vector (1., a, x, 0.);
+	c_vector	*v0 = c_matrix_dot_vector (1., a, x);
+	c_vector	*v1 = c_matrix_symm_upper_dot_vector (1., a, x);
+	c_vector	*v2 = c_matrix_symm_lower_dot_vector (1., a, x);
 
 	c_vector_sub (v1, v0);
 	c_vector_sub (v2, v0);
@@ -43,9 +43,9 @@ test_matrix_mm (void)
 {
 	c_matrix	*a = create_symmetric_matrix (size1);
 	c_matrix	*b = random_matrix (size1, size2);
-	c_matrix	*m0 = c_matrix_dot_matrix (1., a, b, 0.);
-	c_matrix	*m1 = c_matrix_symm_upper_dot_matrix (1., a, b, 0.);
-	c_matrix	*m2 = c_matrix_symm_lower_dot_matrix (1., a, b, 0.);
+	c_matrix	*m0 = c_matrix_dot_matrix (1., a, b);
+	c_matrix	*m1 = c_matrix_symm_upper_dot_matrix (1., a, b);
+	c_matrix	*m2 = c_matrix_symm_lower_dot_matrix (1., a, b);
 
 	c_matrix_sub (m1, m0);
 	c_matrix_sub (m2, m0);

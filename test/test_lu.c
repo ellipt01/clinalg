@@ -32,7 +32,7 @@ test_LU_decomp (void)
 	c_linalg_LU_unpack (lu, &l, &u);
 	c_matrix_free (lu);
 
-	b = c_matrix_dot_matrix (1., l, u, 0.);
+	b = c_matrix_dot_matrix (1., l, u);
 	c_matrix_free (l);
 	c_matrix_free (u);
 
@@ -61,7 +61,7 @@ test_LU_solve (void)
 
 	a = random_matrix (size1, size1);
 	x = random_vector (size1);
-	b = c_matrix_dot_vector (1., a, x, 0.);
+	b = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 
 	lu = c_matrix_alloc (a->size1, a->size2);
@@ -72,7 +72,7 @@ test_LU_solve (void)
 	c_linalg_LU_solve (lu, x, NULL);
 	c_matrix_free (lu);
 
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_matrix_free (a);
 	c_vector_free (x);
 
@@ -99,7 +99,7 @@ test_LU_svx (void)
 
 	a = random_matrix (size1, size1);
 	x = random_vector (size1);
-	b = c_matrix_dot_vector (1., a, x, 0.);
+	b = c_matrix_dot_vector (1., a, x);
 	c_vector_free (x);
 
 	lu = c_matrix_alloc (a->size1, a->size2);
@@ -112,7 +112,7 @@ test_LU_svx (void)
 	c_matrix_free (lu);
 	c_vector_int_free (p);
 
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 	c_matrix_free (a);
 	c_vector_free (x);
 
@@ -142,7 +142,7 @@ test_LU_invert (void)
 	c_linalg_LU_invert (lu, p);
 	c_vector_int_free (p);
 
-	c = c_matrix_dot_matrix (1., lu, a, 0.);
+	c = c_matrix_dot_matrix (1., lu, a);
 	c_matrix_free (a);
 	c_matrix_free (lu);
 
@@ -178,7 +178,7 @@ test_LU_1up (void)
 	{
 		c_matrix	*s0 = c_matrix_view_array (s->size, 1, s->size, s->data);
 		c_matrix	*t0 = c_matrix_view_array (t->size, 1, t->size, t->data);
-		c_matrix	*c = c_matrix_dot_matrix_transpose (1., s0, t0, 0.);
+		c_matrix	*c = c_matrix_dot_matrix_transpose (1., s0, t0);
 		c_matrix_free (s0);
 		c_matrix_free (t0);
 		c_matrix_add (a, c);
@@ -190,7 +190,7 @@ test_LU_1up (void)
 	c_vector_free (t);
 
 	{
-		c_matrix	*a1 = c_matrix_dot_matrix (1., l, u, 0.);
+		c_matrix	*a1 = c_matrix_dot_matrix (1., l, u);
 		c_matrix_free (l);
 		c_matrix_free (u);
 

@@ -33,19 +33,19 @@ void			c_matrix_merge_col (c_matrix *a, const c_matrix *b);
 
 c_matrix		*c_matrix_identity (const size_t size1, const size_t size2);
 
-c_vector		*c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *v, const double beta);
-c_vector		*c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta);
-c_vector		*c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta);
-c_vector		*c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta);
+c_vector		*c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *v);
+c_vector		*c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_vector *x);
+c_vector		*c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_vector *x);
+c_vector		*c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_vector *x);
 
-c_matrix		*c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_symm_upper_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_symm_lower_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_dot_matrix_symm_upper (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
-c_matrix		*c_matrix_dot_matrix_symm_lower (const double alpha, const c_matrix *a, const c_matrix *b, const double beta);
+c_matrix		*c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_symm_upper_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_symm_lower_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_dot_matrix_symm_upper (const double alpha, const c_matrix *a, const c_matrix *b);
+c_matrix		*c_matrix_dot_matrix_symm_lower (const double alpha, const c_matrix *a, const c_matrix *b);
 
 #ifdef __cplusplus
 }

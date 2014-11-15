@@ -402,7 +402,7 @@ c_matrix_transpose (c_matrix *a)
 
 /* y = alpha * a * x + beta */
 c_vector *
-c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta)
+c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
 	char		trans = 'N';
 	int			n;
@@ -410,6 +410,7 @@ c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, c
 	int			lda;
 	int			incx;
 	int			incy;
+	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_vector", "matrix is empty.");
@@ -428,7 +429,7 @@ c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, c
 
 /* y = alpha * a' * x + beta */
 c_vector *
-c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta)
+c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
 	char		trans = 'T';
 	int			n;
@@ -436,6 +437,7 @@ c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_ve
 	int			lda;
 	int			incx;
 	int			incy;
+	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_vector", "matrix is empty.");
@@ -454,12 +456,13 @@ c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_ve
 
 /* y = alpha * a * x + beta, only refer upper triangular part of a */
 c_vector *
-c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta)
+c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
 	int			n;
 	int			lda;
 	int			incx;
 	int			incy;
+	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a))   c_error ("c_matrix_symm_upper_dot_vector", "matrix is empty.");
@@ -477,12 +480,13 @@ c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_v
 
 /* y = alpha * a * x + beta, only refer lower triangular part of a */
 c_vector *
-c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_vector *x, const double beta)
+c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
 	int			n;
 	int			lda;
 	int			incx;
 	int			incy;
+	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a))   c_error ("c_matrix_symm_lower_dot_vector", "matrix is empty.");
@@ -500,7 +504,7 @@ c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_v
 
 /* c = alpha * a * b + beta */
 c_matrix *
-c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	char		transA = 'N';
 	char		transB = 'N';
@@ -510,6 +514,7 @@ c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, c
 	int			lda;
 	int			ldb;
 	int			ldc;
+	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix", "matrix *a is empty.");
@@ -529,7 +534,7 @@ c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, c
 
 /* c = alpha * a * b' + beta */
 c_matrix *
-c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	char		transA = 'N';
 	char		transB = 'T';
@@ -539,6 +544,7 @@ c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_ma
 	int			lda;
 	int			ldb;
 	int			ldc;
+	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_transpose", "matrix *a is empty.");
@@ -558,7 +564,7 @@ c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_ma
 
 /* c = alpha * a' * b + beta */
 c_matrix *
-c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	char		transA = 'T';
 	char		transB = 'N';
@@ -568,6 +574,7 @@ c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_ma
 	int			lda;
 	int			ldb;
 	int			ldc;
+	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix", "matrix *a is empty.");
@@ -587,7 +594,7 @@ c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_ma
 
 /* c = alpha * a' * b' + beta */
 c_matrix *
-c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	char		transA = 'T';
 	char		transB = 'T';
@@ -597,6 +604,7 @@ c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, 
 	int			lda;
 	int			ldb;
 	int			ldc;
+	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix *a is empty.");
@@ -616,14 +624,16 @@ c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, 
 
 /* c = alpha * a * b + beta */
 static c_matrix *
-c_matrix_dsymm (char *side, char *uplo, const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_dsymm (char *side, char *uplo, const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	int			m;
 	int			n;
 	int			lda;
 	int			ldb;
 	int			ldc;
+	double		beta = 0.;
 	c_matrix	*c = c_matrix_alloc (a->size1, b->size2);
+
 	m = (int) c->size1;
 	n = (int) c->size2;
 	lda = (int) a->lda;
@@ -634,41 +644,41 @@ c_matrix_dsymm (char *side, char *uplo, const double alpha, const c_matrix *a, c
 }
 
 c_matrix *
-c_matrix_symm_upper_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_symm_upper_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_symm_upper_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_symm_upper_dot_matrix", "matrix *b is empty.");
 	if (a->size2 != b->size1)  c_error ("c_matrix_symm_upper_dot_matrix", "matrix size does not match.");
 
-	return c_matrix_dsymm ("L", "U", alpha, a, b, beta);
+	return c_matrix_dsymm ("L", "U", alpha, a, b);
 }
 
 c_matrix *
-c_matrix_symm_lower_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b, const double beta)
+c_matrix_symm_lower_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_symm_lower_dot_matrix", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_symm_lower_dot_matrix", "matrix *b is empty.");
 	if (a->size2 != b->size1)  c_error ("c_matrix_symm_lower_dot_matrix", "matrix size does not match.");
 
-	return c_matrix_dsymm ("L", "L", alpha, a, b, beta);
+	return c_matrix_dsymm ("L", "L", alpha, a, b);
 }
 
 c_matrix *
-c_matrix_dot_matrix_symm_upper (const double alpha, const c_matrix *b, const c_matrix *a, const double beta)
+c_matrix_dot_matrix_symm_upper (const double alpha, const c_matrix *b, const c_matrix *a)
 {
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_symm_upper", "matrix *b is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_symm_upper", "matrix *a is empty.");
 	if (b->size2 != a->size1)  c_error ("c_matrix_dot_matrix_symm_upper", "matrix size does not match.");
 
-	return c_matrix_dsymm ("R", "U", alpha, b, a, beta);
+	return c_matrix_dsymm ("R", "U", alpha, b, a);
 }
 
 c_matrix *
-c_matrix_dot_matrix_symm_lower (const double alpha, const c_matrix *b, const c_matrix *a, const double beta)
+c_matrix_dot_matrix_symm_lower (const double alpha, const c_matrix *b, const c_matrix *a)
 {
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_dot_matrix_symm_lower", "matrix *b is empty.");
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_symm_lower", "matrix *a is empty.");
 	if (b->size2 != a->size1)  c_error ("c_matrix_dot_matrix_symm_lower", "matrix size does not match.");
 
-	return c_matrix_dsymm ("R", "L", alpha, a, b, beta);
+	return c_matrix_dsymm ("R", "L", alpha, a, b);
 }

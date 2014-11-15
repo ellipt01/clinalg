@@ -24,7 +24,7 @@ test_cholesky_decomp (void)
 	{
 		int			i;
 		c_matrix	*a0 = random_matrix (size1, size1);
-		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0);
 		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
@@ -39,7 +39,7 @@ test_cholesky_decomp (void)
 	c_matrix_free (c);
 
 	/* b = l' * l */
-	b = c_matrix_transpose_dot_matrix (1., l, l, 0.);
+	b = c_matrix_transpose_dot_matrix (1., l, l);
 	c_matrix_free (l);
 	c_matrix_sub (a, b);
 	c_matrix_free (b);
@@ -65,7 +65,7 @@ test_cholesky_svx (void)
 	{
 		int			i;
 		c_matrix	*a0 = random_matrix (size1, size1);
-		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0);
 		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
@@ -73,7 +73,7 @@ test_cholesky_svx (void)
 	x = random_vector (size1);
 
 	/* vector *y */
-	y = c_matrix_dot_vector (1., a, x, 0.);
+	y = c_matrix_dot_vector (1., a, x);
 
 	/* cholesky_svx */
 	c_linalg_cholesky_decomp (a);
@@ -102,7 +102,7 @@ test_cholesky_1up (void)
 	{
 		int			i;
 		c_matrix	*a0 = random_matrix (size1, size1);
-		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0);
 		c_matrix_free (a0);
 		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
 	}
@@ -113,7 +113,7 @@ test_cholesky_1up (void)
 	u = random_vector (size1);
 	{
 		c_matrix	*ut = c_matrix_view_array (u->size, 1, u->size, u->data);
-		c = c_matrix_dot_matrix_transpose (1., ut, ut, 0.);
+		c = c_matrix_dot_matrix_transpose (1., ut, ut);
 		c_matrix_free (ut);
 		c_matrix_add (a, c);
 		c_matrix_free (c);
@@ -145,7 +145,7 @@ test_cholesky_1down (void)
 	{
 		int			i;
 		c_matrix	*a0 = random_matrix (size1, size1);
-		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0);
 		c_matrix_free (a0);
 		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 1.);
 	}
@@ -156,7 +156,7 @@ test_cholesky_1down (void)
 	c_vector_scale (u, 0.1);
 	{
 		c_matrix	*ut = c_matrix_view_array (u->size, 1, u->size, u->data);
-		c = c_matrix_dot_matrix_transpose (1., ut, ut, 0.);
+		c = c_matrix_dot_matrix_transpose (1., ut, ut);
 		c_matrix_free (ut);
 		c_matrix_sub (a, c);
 		c_matrix_free (c);
@@ -188,7 +188,7 @@ test_cholesky_insert (void)
 	{
 		int			i;
 		c_matrix	*a0 = random_matrix (size1, size1);
-		a = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		a = c_matrix_transpose_dot_matrix (1., a0, a0);
 		for (i = 0; i < size1; i++) c_matrix_set (a, i, i, c_matrix_get(a, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
@@ -218,7 +218,7 @@ test_cholesky_insert (void)
 			for (j = 0; j < i; j++) c_matrix_set (l, i, j, 0.);
 		}
 	}
-	b = c_matrix_transpose_dot_matrix (1., l, l, 0.);
+	b = c_matrix_transpose_dot_matrix (1., l, l);
 	c_matrix_free (l);
 
 	c_matrix_sub (a, b);
@@ -243,7 +243,7 @@ test_cholesky_delete (void)
 	{
 		int			i;
 		c_matrix	*a0 = random_matrix (size1, size1);
-		l = c_matrix_transpose_dot_matrix (1., a0, a0, 0.);
+		l = c_matrix_transpose_dot_matrix (1., a0, a0);
 		for (i = 0; i < size1; i++) c_matrix_set (l, i, i, c_matrix_get(l, i, i) + 0.1);
 		c_matrix_free (a0);
 	}
@@ -270,7 +270,7 @@ test_cholesky_delete (void)
 			for (j = 0; j < i; j++) c_matrix_set (l, i, j, 0.);
 		}
 	}
-	b = c_matrix_transpose_dot_matrix (1., l, l, 0.);
+	b = c_matrix_transpose_dot_matrix (1., l, l);
 	c_matrix_free (l);
 
 	c_matrix_sub (a, b);
