@@ -112,7 +112,7 @@ test_QR_solve (void)
 	}
 	z = c_matrix_dot_vector (1., a, x);
 
-	c_vector_sub (z, y);
+	c_vector_axpy (-1., y, z);
 	c_vector_free (y);
 
 	nrm = c_vector_nrm (z);
@@ -146,7 +146,7 @@ test_lsQ_solve (void)
 	}
 	z = c_matrix_dot_vector (1., a, x);
 
-	c_vector_sub (z, y);
+	c_vector_axpy (-1., y, z);
 	c_vector_free (y);
 
 	nrm = c_vector_nrm (z);
@@ -193,7 +193,7 @@ test_QR_Rsolve (void)
 	c_matrix_free (a);
 	c_vector_free (x);
 
-	c_vector_sub (z, y);
+	c_vector_axpy (-1., y, z);
 	c_vector_free (y);
 
 	nrm = c_vector_nrm (z);

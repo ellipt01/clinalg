@@ -19,19 +19,19 @@ void			c_matrix_axpy (double alpha, const c_matrix *x, c_matrix *y);
 void			c_matrix_scale (c_matrix *x, const double alpha);
 double			c_matrix_nrm (c_matrix *a, const char norm);
 
-void			c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a);
-void			c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a);
+void			c_matrix_swap_rows (const int i, const int j, c_matrix *a);
+void			c_matrix_swap_cols (const int i, const int j, c_matrix *a);
 
 void			c_matrix_permute_rows (c_matrix *a, const c_vector_int *p);
 void			c_matrix_permute_cols (c_matrix *a, const c_vector_int *p);
 
-void			c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn);
-void			c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn);
+void			c_matrix_add_rowcols (c_matrix *a, const int dm, const int dn);
+void			c_matrix_remove_rowcols (c_matrix *a, const int dm, const int dn);
 
 void			c_matrix_merge_row (c_matrix *a, const c_matrix *b);
 void			c_matrix_merge_col (c_matrix *a, const c_matrix *b);
 
-c_matrix		*c_matrix_identity (const size_t size1, const size_t size2);
+c_matrix		*c_matrix_identity (const int size1, const int size2);
 
 c_vector		*c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *v);
 c_vector		*c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_vector *x);

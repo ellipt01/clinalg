@@ -76,7 +76,8 @@ test_LU_solve (void)
 	c_matrix_free (a);
 	c_vector_free (x);
 
-	c_vector_sub (b, y);
+	/* b = -y + b */
+	c_vector_axpy (-1., y, b);
 	c_vector_free (y);
 
 	nrm = c_vector_nrm (b);
@@ -116,7 +117,8 @@ test_LU_svx (void)
 	c_matrix_free (a);
 	c_vector_free (x);
 
-	c_vector_sub (b, y);
+	/* b = -y + b */
+	c_vector_axpy (-1., y, b);
 	c_vector_free (y);
 
 	nrm = c_vector_nrm (b);

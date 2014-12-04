@@ -43,92 +43,48 @@ c_vector_mean (const c_vector *x)
 	return sum / (double) x->size;
 }
 
-/* y = y - x */
-void
-c_vector_sub (c_vector *y, const c_vector *x)
-{
-	int		n;
-	int		incx;
-	int		incy;
-	double	alpha = - 1.;
-	if (c_vector_is_empty (y)) c_error ("c_vector_sub", "first vector is empty.");
-	if (c_vector_is_empty (x)) c_error ("c_vector_sub", "second vector is empty.");
-	if (x->size != y->size) c_error ("c_vector_sub", "vector size does not match.");
-	/* y = y - x */
-	n = (int) x->size;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
-	return;
-}
-
 /* sum_i |x(i)| */
 double
 c_vector_asum (const c_vector *x)
 {
-	int		n;
-	int		incv;
 	if (c_vector_is_empty (x)) c_error ("c_vector_asum", "vector is empty.");
 	/* x = sum |x| */
-	n = (int) x->size;
-	incv = (int) x->stride;
-	return dasum_ (&n, x->data, &incv);
+	return dasum_ (&x->size, x->data, &x->stride);
 }
 
 /* max_i |x(i)| */
 int
 c_vector_amax (const c_vector *x)
 {
-	int		n;
-	int		incv;
 	if (c_vector_is_empty (x)) c_error ("c_vector_amax", "vector is empty.");
-
-	n = (int) x->size;
-	incv = (int) x->stride;
-	return (int) idamax_ (&n, x->data, &incv) - 1;
+	return (int) idamax_ (&x->size, x->data, &x->stride) - 1;
 }
 
 /* x = alpha * x */
 void
 c_vector_scale (c_vector *x, const double alpha)
 {
-	int		n;
-	int		incv;
 	if (c_vector_is_empty (x)) c_error ("c_vector_scale", "vector is empty.");
-	/* x = alpha * x */
-	n = (int) x->size;
-	incv = (int) x->stride;
-	dscal_ (&n, &alpha, x->data, &incv);
+	dscal_ (&x->size, &alpha, x->data, &x->stride);
 	return;
 }
 
-/* sqrt (x' * x) */
+/* nrm (x) */
 double
 c_vector_nrm (const c_vector *x)
 {
-	int		n;
-	int		incv;
 	if (c_vector_is_empty (x)) c_error ("c_vector_nrm", "vector is empty.");
-	n = (int) x->size;
-	incv = (int) x->stride;
-	return dnrm2_ (&n, x->data, &incv);
+	return dnrm2_ (&x->size, x->data, &x->stride);
 }
 
 /* y = a * x + y */
 void
 c_vector_axpy (const double alpha, const c_vector *x, c_vector *y)
 {
-	int		n;
-	int		incx;
-	int		incy;
 	if (c_vector_is_empty (x)) c_error ("c_vector_axpy", "first vector is empty.");
 	if (c_vector_is_empty (y)) c_error ("c_vector_axpy", "second vector is empty.");
 	if (x->size != y->size) c_error ("c_vector_axpy", "vector size does not match.");
-	/* y = y + alpha * x */
-	n = (int) x->size;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
+	daxpy_ (&x->size, &alpha, x->data, &x->stride, y->data, &y->stride);
 	return;
 }
 
@@ -136,14 +92,8 @@ c_vector_axpy (const double alpha, const c_vector *x, c_vector *y)
 double
 c_vector_dot_vector (const c_vector *x, const c_vector *y)
 {
-	int		n;
-	int		incx;
-	int		incy;
 	if (c_vector_is_empty (x)) c_error ("c_vector_dot_vector", "first vector is empty.");
 	if (c_vector_is_empty (y)) c_error ("c_vector_dot_vector", "second vector is empty.");
 	if (x->size != y->size) c_error ("c_vector_dot_vector", "vector size does not match.");
-	n = (int) x->size;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	return ddot_ (&n, x->data, &incx, y->data, &incy);
+	return ddot_ (&x->size, x->data, &x->stride, y->data, &y->stride);
 }

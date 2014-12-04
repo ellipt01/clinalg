@@ -8,6 +8,27 @@
 #ifndef PRIVATE_H_
 #define PRIVATE_H_
 
+extern const int		izero;
+extern const int		ione;
+extern const double	dzero;
+extern const double	done;
+extern const double	dmone;
+
+/* positive infinity  */
+#ifndef CDESCENT_POSINF
+#define CDESCENT_POSINF	((+1.)/(+0.))
+#endif
+
+/* DBL_EPSILOM */
+#ifndef DBL_EPSILON
+#define DBL_EPSILON		2.2204460492503131e-16
+#endif
+
+/* SQRT_DBL_EPSILOM */
+#ifndef SQRT_DBL_EPSILON
+#define SQRT_DBL_EPSILON	1.4901161193847656e-08
+#endif
+
 /* blas */
 #ifdef HAVE_BLAS_H
 #include <blas.h>

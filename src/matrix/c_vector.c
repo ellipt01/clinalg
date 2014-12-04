@@ -25,7 +25,7 @@ _allocate_c_vector (void)
 }
 
 c_vector *
-c_vector_alloc (const size_t size)
+c_vector_alloc (const int size)
 {
 	c_vector	*x;
 
@@ -44,7 +44,7 @@ c_vector_alloc (const size_t size)
 }
 
 void
-c_vector_realloc (const size_t tsize, c_vector *x, const size_t size)
+c_vector_realloc (const int tsize, c_vector *x, const int size)
 {
 	if (c_vector_is_empty (x)) c_error ("c_vector_realloc", "vector is empty.");
 	if (!x->owner) c_error ("c_vector_realloc", "cannot reallocate vector of !x->owner.");
@@ -59,7 +59,7 @@ c_vector_realloc (const size_t tsize, c_vector *x, const size_t size)
 }
 
 c_vector *
-c_vector_view_array (const size_t size, const size_t stride, double *data)
+c_vector_view_array (const int size, const int stride, double *data)
 {
 	c_vector *x;
 
@@ -118,25 +118,16 @@ c_vector_get (const c_vector *x, const int i)
 void
 c_vector_memcpy (c_vector *dest, const c_vector *src)
 {
-	int		n;
-	int		incx;
-	int		incy;
 	if (c_vector_is_empty (src)) c_error ("c_vector_memcpy", "first vector is empty.");
 	if (c_vector_is_empty (dest)) c_error ("c_vector_memcpy", "second vector is empty.");
 	if (dest->size != src->size) c_error ("c_vector_memcpy", "vector size does not match.");
-	n = (int) src->size;
-	incx = (int) src->stride;
-	incy = (int) dest->stride;
-	dcopy_ (&n, src->data, &incx, dest->data, &incy);
+	dcopy_ (&src->size, src->data, &src->stride, dest->data, &dest->stride);
 	return;
 }
 
 void
-c_vector_ncopy (c_vector *dest, const size_t n0, const size_t n, const c_vector *src)
+c_vector_ncopy (c_vector *dest, const int n0, const int n, const c_vector *src)
 {
-	int		len;
-	int		incx;
-	int		incy;
 	if (c_vector_is_empty (src)) c_error ("c_vector_ncopy", "first vector is empty.");
 	if (c_vector_is_empty (dest)) c_error ("c_vector_ncopy", "second vector is empty.");
 	if (n0 < 0 || src->size - 1 <= n0) c_error ("c_vector_ncopy", "n0 must be in [0, size - 1).");
@@ -144,10 +135,7 @@ c_vector_ncopy (c_vector *dest, const size_t n0, const size_t n, const c_vector 
 	if (n0 + n < 0 || src->size < n0 + n) c_error ("c_vector_ncopy", "n0 + n must be in [0, src->size]");
 	if (dest->size < n) c_error ("c_vector_ncopy", "index out of range.");
 
-	len = (int) n;
-	incx = (int) src->stride;
-	incy = (int) dest->stride;
-	dcopy_ (&len, src->data + n0, &incx, dest->data, &incy);
+	dcopy_ (&n, src->data + n0, &src->stride, dest->data, &dest->stride);
 	return;
 }
 
@@ -168,7 +156,7 @@ c_vector_set_zero (c_vector *x)
 }
 
 c_vector *
-c_vector_subvector (const size_t size, const c_vector *x)
+c_vector_subvector (const int size, const c_vector *x)
 {
 	if (size < 0 || x->size < size) c_error ("c_vector_subvector", "size must be in [0, x->size]");
 	return c_vector_view_array (size, x->stride, x->data);

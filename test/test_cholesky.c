@@ -80,8 +80,8 @@ test_cholesky_svx (void)
 	c_linalg_cholesky_svx (a, y);
 	c_matrix_free (a);
 
-	/* x = x - y */
-	c_vector_sub (x, y);
+	/* x = - y + x */
+	c_vector_axpy (-1., y, x);
 	c_vector_free (y);
 	nrm = c_vector_nrm (x);
 	c_vector_free (x);

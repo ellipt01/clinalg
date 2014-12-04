@@ -15,7 +15,6 @@ extern "C" {
 void		c_vector_add_constant (c_vector *x, const double c);
 double		c_vector_sum (const c_vector *x);
 double		c_vector_mean (const c_vector *x);
-void		c_vector_sub (c_vector *y, const c_vector *x);
 double		c_vector_asum (const c_vector *x);
 int			c_vector_amax (const c_vector *x);
 void		c_vector_scale (c_vector *x, const double alpha);

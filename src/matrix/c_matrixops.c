@@ -16,22 +16,16 @@
 void
 c_matrix_add (c_matrix *y, const c_matrix *x)
 {
-	int		n;
-	int		incx = 1;
-	int		incy = 1;
 	double	alpha = 1.;
 	if (x->size1 != y->size1 || x->size2 != y->size2) c_error ("c_matrix_add", "matrix size done not match.");
 
-	if (x->size1 == x->lda || y->size1 == y->lda) {
-		n = x->tsize;
-		daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
-	} else {
+	if (x->size1 == x->lda || y->size1 == y->lda) daxpy_ (&x->tsize, &alpha, x->data, &ione, y->data, &ione);
+	else {
 		int		j;
-		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
 			double	*xj = POINTER_OF_MATRIX (x, 0, j);
 			double	*yj = POINTER_OF_MATRIX (y, 0, j);
-			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
+			daxpy_ (&x->size1, &alpha, xj, &ione, yj, &ione);
 		}
 	}
 	return;
@@ -41,22 +35,16 @@ c_matrix_add (c_matrix *y, const c_matrix *x)
 void
 c_matrix_sub (c_matrix *y, const c_matrix *x)
 {
-	int		n;
-	int		incx = 1;
-	int		incy = 1;
 	double	alpha = -1.;
 	if (x->size1 != y->size1 || x->size2 != y->size2) c_error ("c_matrix_sub", "matrix size done not match.");
 
-	if (x->size1 == x->lda || y->size1 == y->lda) {
-		n = x->tsize;
-		daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
-	} else {
+	if (x->size1 == x->lda || y->size1 == y->lda) daxpy_ (&x->tsize, &alpha, x->data, &ione, y->data, &ione);
+	else {
 		int		j;
-		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
 			double	*xj = POINTER_OF_MATRIX (x, 0, j);
 			double	*yj = POINTER_OF_MATRIX (y, 0, j);
-			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
+			daxpy_ (&x->size1, &alpha, xj, &ione, yj, &ione);
 		}
 	}
 	return;
@@ -66,21 +54,15 @@ c_matrix_sub (c_matrix *y, const c_matrix *x)
 void
 c_matrix_axpy (const double alpha, const c_matrix *x, c_matrix *y)
 {
-	int		n;
-	int		incx = 1;
-	int		incy = 1;
 	if (x->size1 != y->size1 || x->size2 != y->size2) c_error ("c_matrix_axpy", "matrix size done not match.");
 
-	if (x->size1 == x->lda || y->size1 == y->lda) {
-		n = x->tsize;
-		daxpy_ (&n, &alpha, x->data, &incx, y->data, &incy);
-	} else {
+	if (x->size1 == x->lda || y->size1 == y->lda) daxpy_ (&x->tsize, &alpha, x->data, &ione, y->data, &ione);
+	else {
 		int		j;
-		n = x->size1;
 		for (j = 0; j < x->size2; j++) {
 			double	*xj = POINTER_OF_MATRIX (x, 0, j);
 			double	*yj = POINTER_OF_MATRIX (y, 0, j);
-			daxpy_ (&n, &alpha, xj, &incx, yj, &incy);
+			daxpy_ (&x->size1, &alpha, xj, &ione, yj, &ione);
 		}
 	}
 	return;
@@ -90,9 +72,7 @@ c_matrix_axpy (const double alpha, const c_matrix *x, c_matrix *y)
 void
 c_matrix_scale (const double alpha, const c_matrix *x)
 {
-	int		n = x->tsize;;
-	int		inc = 1;
-	dscal_ (&n, &alpha, x->data, &inc);
+	dscal_ (&x->tsize, &alpha, x->data, &ione);
 	return;
 }
 
@@ -167,10 +147,8 @@ c_matrix_nrm (c_matrix *a, const char norm)
 }
 
 void
-c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
+c_matrix_swap_rows (const int i, const int j, c_matrix *a)
 {
-	int			n;
-	int			inc;
 	double		*rowi;
 	double		*rowj;
 
@@ -179,21 +157,17 @@ c_matrix_swap_rows (const size_t i, const size_t j, c_matrix *a)
 	if (j < 0 || a->size1 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
 	if (i == j) return;
 
-	n = (int) a->size2;
-	inc = (int) a->lda;
 	rowi = POINTER_OF_MATRIX (a, i, 0);
 	rowj = POINTER_OF_MATRIX (a, j, 0);
 
-	dswap_ (&n, rowi, &inc, rowj, &inc);
+	dswap_ (&a->size2, rowi, &a->lda, rowj, &a->lda);
 
 	return;
 }
 
 void
-c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
+c_matrix_swap_cols (const int i, const int j, c_matrix *a)
 {
-	int			n;
-	int			inc;
 	double		*coli;
 	double		*colj;
 
@@ -202,12 +176,10 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 	if (j < 0 || a->size2 <= j) c_error ("c_matrix_swap_rows", "second index out of range.");
 	if (i == j) return;
 
-	n = (int) a->size1;
-	inc = 1;
 	coli = POINTER_OF_MATRIX (a, 0, i);
 	colj = POINTER_OF_MATRIX (a, 0, j);
 
-	dswap_ (&n, coli, &inc, colj, &inc);
+	dswap_ (&a->size1, coli, &ione, colj, &ione);
 
 	return;
 }
@@ -215,13 +187,13 @@ c_matrix_swap_cols (const size_t i, const size_t j, c_matrix *a)
 void
 c_matrix_permute_rows (c_matrix *a, const c_vector_int *p)
 {
-	int			i;
-	size_t		size;
+	int		i;
+	int		size;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_permute_rows", "matrix is empty.");
 	if (c_vector_int_is_empty (p)) c_error ("c_matrix_permute_rows", "permutation is empty.");
 
-	size = (size_t) C_MIN (a->size1, p->size);
+	size = (int) C_MIN (a->size1, p->size);
 	for (i = 0; i < size; i++) {
 		int		pi = c_vector_int_get (p, i) - 1;
 		if (pi < 0 || pi == i || a->size1 <= pi) continue;
@@ -233,13 +205,13 @@ c_matrix_permute_rows (c_matrix *a, const c_vector_int *p)
 void
 c_matrix_permute_cols (c_matrix *a, const c_vector_int *p)
 {
-	int			i;
-	size_t		size;
+	int		i;
+	int		size;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_permute_cols", "matrix is empty.");
 	if (c_vector_int_is_empty (p)) c_error ("c_matrix_permute_cols", "permutation is empty.");
 
-	size = (size_t) C_MIN (a->size2, p->size);
+	size = (int) C_MIN (a->size2, p->size);
 	for (i = 0; i < size; i++) {
 		int		pi = c_vector_int_get (p, i) - 1;
 		if (pi < 0 || pi == i || a->size2 <= pi) continue;
@@ -249,12 +221,11 @@ c_matrix_permute_cols (c_matrix *a, const c_vector_int *p)
 }
 
 void
-c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn)
+c_matrix_add_rowcols (c_matrix *a, const int dm, const int dn)
 {
-	int			i, j;
-	int			n;
-	int			inc = 1;
-	size_t		lda;
+	int		i, j;
+	int		n;
+	int		lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_add_rowcols", "matrix is empty.");
 	if (!a->owner) c_error ("c_matrix_add_rowcols", "cannot resize matrix_view.");
@@ -274,8 +245,8 @@ c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	if (dm > 0) {
 		c_vector	*col = c_vector_alloc (n);
 		for (j = (a->size2 - dn) - 1; 0 < j; j--) {
-			dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-			dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+			dcopy_ (&n, a->data + j * lda, &ione, col->data, &ione);
+			dcopy_ (&n, col->data, &ione, POINTER_OF_MATRIX (a, 0, j), &ione);
 		}
 		c_vector_free (col);
 	}
@@ -290,12 +261,11 @@ c_matrix_add_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 }
 
 void
-c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
+c_matrix_remove_rowcols (c_matrix *a, const int dm, const int dn)
 {
-	int			j;
-	int			n;
-	int			inc = 1;
-	size_t		lda;
+	int		j;
+	int		n;
+	int		lda;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_remove_rowcols", "matrix is empty.");
 	if (!a->owner) c_error ("c_matrix_remove_rowcols", "cannot resize matrix_view.");
@@ -316,8 +286,8 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 	if (dm > 0 && a->size1 > 0 && a->size2 > 0) {
 		c_vector	*col = c_vector_alloc (a->size1);
 		for (j = 1; j < a->size2; j++) {
-			dcopy_ (&n, a->data + j * lda, &inc, col->data, &inc);
-			dcopy_ (&n, col->data, &inc, POINTER_OF_MATRIX (a, 0, j), &inc);
+			dcopy_ (&n, a->data + j * lda, &ione, col->data, &ione);
+			dcopy_ (&n, col->data, &ione, POINTER_OF_MATRIX (a, 0, j), &ione);
 		}
 		c_vector_free (col);
 	}
@@ -329,21 +299,17 @@ c_matrix_remove_rowcols (c_matrix *a, const size_t dm, const size_t dn)
 void
 c_matrix_merge_row (c_matrix *a, const c_matrix *b)
 {
-	int			j, k;
-	int			n;
-	int			inc;
+	int		j, k;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_row", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_row", "matrix *b is empty.");
 	if (a->size1 != b->size1)  c_error ("c_matrix_merge_row", "matrix size dose not match.");
 
-	k = (int) a->size2;
+	k = a->size2;
 	c_matrix_add_rowcols (a, 0, b->size2);
 
-	n = (int) b->size1;
-	inc = 1;
 	for (j = 0; j < b->size2; j++) {
 		double	*bj = POINTER_OF_MATRIX (b, 0, j);
-		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, 0, k + j), &inc);
+		dcopy_ (&b->size1, bj, &ione, POINTER_OF_MATRIX (a, 0, k + j), &ione);
 	}
 	return;
 }
@@ -351,30 +317,26 @@ c_matrix_merge_row (c_matrix *a, const c_matrix *b)
 void
 c_matrix_merge_col (c_matrix *a, const c_matrix *b)
 {
-	int			j, k;
-	int			n;
-	int			inc;
+	int		j, k;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_merge_col", "matrix *a is empty.");
 	if (c_matrix_is_empty (b)) c_error ("c_matrix_merge_col", "matrix *b is empty.");
 	if (a->size2 != b->size2)  c_error ("c_matrix_merge_col", "matrix size dose not match.");
 
-	k = (int) a->size1;
+	k = a->size1;
 	c_matrix_add_rowcols (a, b->size1, 0);
 
-	n = (int) b->size1;
-	inc = 1;
 	for (j = 0; j < b->size2; j++) {
 		double	*bj = POINTER_OF_MATRIX (b, 0, j);
-		dcopy_ (&n, bj, &inc, POINTER_OF_MATRIX (a, k, j), &inc);
+		dcopy_ (&b->size1, bj, &ione, POINTER_OF_MATRIX (a, k, j), &ione);
 	}
 	return;
 }
 
 c_matrix *
-c_matrix_identity (const size_t size1, const size_t size2)
+c_matrix_identity (const int size1, const int size2)
 {
 	int			i;
-	size_t		min_mn = C_MIN (size1, size2);
+	int			min_mn = C_MIN (size1, size2);
 	c_matrix	*c = c_matrix_alloc (size1, size2);
 	c_matrix_set_zero (c);
 	for (i = 0; i < min_mn; i++) c->data[i * (c->lda + 1)] = 1.;
@@ -387,30 +349,18 @@ c_matrix_transpose (c_matrix *a)
 	int			j;
 	c_vector	*col;
 	c_matrix	*at = c_matrix_alloc (a->size2, a->size1);
-
-	int			n;
-	int			incx;
-	int			incy = (int) at->lda;
 	for (j = 0; j < a->size2; j++) {
 		col = c_matrix_column (a, j);
-		n = (int) a->size1;
-		incx = (int) col->stride;
-		dcopy_ (&n, col->data, &incx, at->data + j, &incy);
+		dcopy_ (&a->size1, col->data, &col->stride, at->data + j, &at->lda);
 	}
 	return at;
 }
 
-/* y = alpha * a * x + beta */
+/* y = alpha * a * x */
 c_vector *
 c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
 	char		trans = 'N';
-	int			n;
-	int			m;
-	int			lda;
-	int			incx;
-	int			incy;
-	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_vector", "matrix is empty.");
@@ -418,26 +368,15 @@ c_matrix_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 	if (a->size2 != x->size)   c_error ("c_matrix_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size1);
-	n = (int) a->size1;
-	m = (int) a->size2;
-	lda = (int) a->lda;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	dgemv_ (&trans, &n, &m, &alpha, a->data, &lda, x->data, &incx, &beta, y->data, &incy);
+	dgemv_ (&trans, &a->size1, &a->size2, &alpha, a->data, &a->lda, x->data, &x->stride, &dzero, y->data, &y->stride);
 	return y;
 }
 
-/* y = alpha * a' * x + beta */
+/* y = alpha * a' * x */
 c_vector *
 c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
 	char		trans = 'T';
-	int			n;
-	int			m;
-	int			lda;
-	int			incx;
-	int			incy;
-	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_vector", "matrix is empty.");
@@ -445,24 +384,14 @@ c_matrix_transpose_dot_vector (const double alpha, const c_matrix *a, const c_ve
 	if (a->size1 != x->size)   c_error ("c_matrix_transpose_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size2);
-	n = (int) a->size1;
-	m = (int) a->size2;
-	lda = (int) a->lda;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	dgemv_ (&trans, &n, &m, &alpha, a->data, &lda, x->data, &incx, &beta, y->data, &incy);
+	dgemv_ (&trans, &a->size1, &a->size2, &alpha, a->data, &a->lda, x->data, &x->stride, &dzero, y->data, &y->stride);
 	return y;
 }
 
-/* y = alpha * a * x + beta, only refer upper triangular part of a */
+/* y = alpha * a * x, only refer upper triangular part of a */
 c_vector *
 c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
-	int			n;
-	int			lda;
-	int			incx;
-	int			incy;
-	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a))   c_error ("c_matrix_symm_upper_dot_vector", "matrix is empty.");
@@ -470,23 +399,14 @@ c_matrix_symm_upper_dot_vector (const double alpha, const c_matrix *a, const c_v
 	if (!c_matrix_is_square (a)) c_error ("c_matrix_symm_upper_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size1);
-	n = (int) a->size1;
-	lda = (int) a->lda;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	dsymv_ ("U", &n, &alpha, a->data, &lda, x->data, &incx, &beta, y->data, &incy);
+	dsymv_ ("U", &a->size1, &alpha, a->data, &a->lda, x->data, &x->stride, &dzero, y->data, &y->stride);
 	return y;
 }
 
-/* y = alpha * a * x + beta, only refer lower triangular part of a */
+/* y = alpha * a * x, only refer lower triangular part of a */
 c_vector *
 c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_vector *x)
 {
-	int			n;
-	int			lda;
-	int			incx;
-	int			incy;
-	double		beta = 0.;
 	c_vector	*y;
 
 	if (c_matrix_is_empty (a))   c_error ("c_matrix_symm_lower_dot_vector", "matrix is empty.");
@@ -494,27 +414,16 @@ c_matrix_symm_lower_dot_vector (const double alpha, const c_matrix *a, const c_v
 	if (!c_matrix_is_square (a)) c_error ("c_matrix_symm_lower_dot_vector", "vector and matrix size does not match.");
 
 	y = c_vector_alloc (a->size1);
-	n = (int) a->size1;
-	lda = (int) a->lda;
-	incx = (int) x->stride;
-	incy = (int) y->stride;
-	dsymv_ ("L", &n, &alpha, a->data, &lda, x->data, &incx, &beta, y->data, &incy);
+	dsymv_ ("L", &a->size1, &alpha, a->data, &a->lda, x->data, &x->stride, &dzero, y->data, &y->stride);
 	return y;
 }
 
-/* c = alpha * a * b + beta */
+/* c = alpha * a * b */
 c_matrix *
 c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	char		transA = 'N';
 	char		transB = 'N';
-	int			m;
-	int			n;
-	int			k;
-	int			lda;
-	int			ldb;
-	int			ldc;
-	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix", "matrix *a is empty.");
@@ -522,29 +431,16 @@ c_matrix_dot_matrix (const double alpha, const c_matrix *a, const c_matrix *b)
 	if (a->size2 != b->size1)  c_error ("c_matrix_dot_matrix", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size1, b->size2);
-	m = (int) a->size1;
-	n = (int) b->size2;
-	k = (int) a->size2;
-	lda = (int) a->lda;
-	ldb = (int) b->lda;
-	ldc = (int) c->lda;
-	dgemm_ (&transA, &transB, &m, &n, &k, &alpha, a->data, &lda, b->data, &ldb, &beta, c->data, &ldc);
+	dgemm_ (&transA, &transB, &a->size1, &b->size2, &a->size2, &alpha, a->data, &a->lda, b->data, &b->lda, &dzero, c->data, &c->lda);
 	return c;
 }
 
-/* c = alpha * a * b' + beta */
+/* c = alpha * a * b' */
 c_matrix *
 c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_matrix *b)
 {
 	char		transA = 'N';
 	char		transB = 'T';
-	int			m;
-	int			n;
-	int			k;
-	int			lda;
-	int			ldb;
-	int			ldc;
-	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_dot_matrix_transpose", "matrix *a is empty.");
@@ -552,13 +448,7 @@ c_matrix_dot_matrix_transpose (const double alpha, const c_matrix *a, const c_ma
 	if (a->size2 != b->size2)  c_error ("c_matrix_dot_matrix_transpose", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size1, b->size1);
-	m = (int) a->size1;
-	n = (int) b->size1;
-	k = (int) a->size2;
-	lda = (int) a->lda;
-	ldb = (int) b->lda;
-	ldc = (int) c->lda;
-	dgemm_ (&transA, &transB, &m, &n, &k, &alpha, a->data, &lda, b->data, &ldb, &beta, c->data, &ldc);
+	dgemm_ (&transA, &transB, &a->size1, &b->size1, &a->size2, &alpha, a->data, &a->lda, b->data, &b->lda, &dzero, c->data, &c->lda);
 	return c;
 }
 
@@ -568,13 +458,6 @@ c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_ma
 {
 	char		transA = 'T';
 	char		transB = 'N';
-	int			m;
-	int			n;
-	int			k;
-	int			lda;
-	int			ldb;
-	int			ldc;
-	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix", "matrix *a is empty.");
@@ -582,13 +465,7 @@ c_matrix_transpose_dot_matrix (const double alpha, const c_matrix *a, const c_ma
 	if (a->size1 != b->size1)  c_error ("c_matrix_transpose_dot_matrix", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size2, b->size2);
-	m = (int) a->size2;
-	n = (int) b->size2;
-	k = (int) a->size1;
-	lda = (int) a->lda;
-	ldb = (int) b->lda;
-	ldc = (int) c->lda;
-	dgemm_ (&transA, &transB, &m, &n, &k, &alpha, a->data, &lda, b->data, &ldb, &beta, c->data, &ldc);
+	dgemm_ (&transA, &transB, &a->size2, &b->size2, &a->size1, &alpha, a->data, &a->lda, b->data, &b->lda, &dzero, c->data, &c->lda);
 	return c;
 }
 
@@ -598,13 +475,6 @@ c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, 
 {
 	char		transA = 'T';
 	char		transB = 'T';
-	int			m;
-	int			n;
-	int			k;
-	int			lda;
-	int			ldb;
-	int			ldc;
-	double		beta = 0.;
 	c_matrix	*c;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix *a is empty.");
@@ -612,13 +482,7 @@ c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, 
 	if (a->size1 != b->size2)  c_error ("c_matrix_transpose_dot_matrix_transpose", "matrix size does not match.");
 
 	c = c_matrix_alloc (a->size2, b->size1);
-	m = (int) a->size2;
-	n = (int) b->size1;
-	k = (int) a->size1;
-	lda = (int) a->lda;
-	ldb = (int) b->lda;
-	ldc = (int) c->lda;
-	dgemm_ (&transA, &transB, &m, &n, &k, &alpha, a->data, &lda, b->data, &ldb, &beta, c->data, &ldc);
+	dgemm_ (&transA, &transB, &a->size2, &b->size1, &a->size1, &alpha, a->data, &a->lda, b->data, &b->lda, &dzero, c->data, &c->lda);
 	return c;
 }
 
@@ -626,20 +490,8 @@ c_matrix_transpose_dot_matrix_transpose (const double alpha, const c_matrix *a, 
 static c_matrix *
 c_matrix_dsymm (char *side, char *uplo, const double alpha, const c_matrix *a, const c_matrix *b)
 {
-	int			m;
-	int			n;
-	int			lda;
-	int			ldb;
-	int			ldc;
-	double		beta = 0.;
 	c_matrix	*c = c_matrix_alloc (a->size1, b->size2);
-
-	m = (int) c->size1;
-	n = (int) c->size2;
-	lda = (int) a->lda;
-	ldb = (int) b->lda;
-	ldc = (int) c->lda;
-	dsymm_ (side, uplo, &m, &n, &alpha, a->data, &lda, b->data, &ldb, &beta, c->data, &ldc);
+	dsymm_ (side, uplo, &c->size1, &c->size2, &alpha, a->data, &a->lda, b->data, &b->lda, &dzero, c->data, &c->lda);
 	return c;
 }
 

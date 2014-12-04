@@ -19,43 +19,43 @@ extern "C" {
 typedef struct s_c_vector	c_vector;
 
 struct s_c_vector {
-	size_t		size;
-	size_t		stride;
-	size_t		tsize;
-	bool		owner;
-	double		*data;
+	int		size;
+	int		stride;
+	int		tsize;
+	bool	owner;
+	double	*data;
 };
 
 typedef struct s_c_vector_int	c_vector_int;
 
 struct s_c_vector_int {
-	size_t		size;
-	size_t		stride;
-	size_t		tsize;
-	bool		owner;
-	int			*data;
+	int		size;
+	int		stride;
+	int		tsize;
+	bool	owner;
+	int		*data;
 };
 
-c_vector		*c_vector_alloc (const size_t size);
-void			c_vector_realloc (const size_t tsize, c_vector *x, const size_t size);
-c_vector		*c_vector_view_array (const size_t size, const size_t stride, double *data);
+c_vector		*c_vector_alloc (const int size);
+void			c_vector_realloc (const int tsize, c_vector *x, const int size);
+c_vector		*c_vector_view_array (const int size, const int stride, double *data);
 bool			c_vector_is_empty (const c_vector *x);
 void			c_vector_free (c_vector *x);
 void			c_vector_set (c_vector *x, const int i, const double val);
 double			c_vector_get (const c_vector *x, const int i);
 
 void			c_vector_memcpy (c_vector *dest, const c_vector *src);
-void			c_vector_ncopy (c_vector *dest, const size_t n0, const size_t n, const c_vector *src);
+void			c_vector_ncopy (c_vector *dest, const int n0, const int n, const c_vector *src);
 
 void			c_vector_set_all (c_vector *x, const double val);
 void			c_vector_set_zero (c_vector *x);
 
-c_vector		*c_vector_subvector (const size_t size, const c_vector *x);
+c_vector		*c_vector_subvector (const int size, const c_vector *x);
 
 void			c_vector_fprintf (FILE *stream, const c_vector *x, const char *format);
 
-c_vector_int	*c_vector_int_alloc (const size_t size);
-c_vector_int	*c_vector_int_view_array (const size_t size, const size_t stride, int *data);
+c_vector_int	*c_vector_int_alloc (const int size);
+c_vector_int	*c_vector_int_view_array (const int size, const int stride, int *data);
 bool			c_vector_int_is_empty (const c_vector_int *v);
 void			c_vector_int_free (c_vector_int *v);
 void			c_vector_int_set (c_vector_int *v, const int i, int val);

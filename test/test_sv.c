@@ -90,7 +90,7 @@ test_SV_solve (void)
 	c_matrix_free (a);
 	c_vector_free (x);
 
-	c_vector_sub (y, b);
+	c_vector_axpy (-1., b, y);
 	c_vector_free (b);
 
 	nrm = c_vector_nrm (y);
@@ -126,7 +126,7 @@ test_SV_lsd_solve (void)
 	c_matrix_free (a);
 	c_vector_free (x);
 
-	c_vector_sub (y, b);
+	c_vector_axpy (-1., b, y);
 	c_vector_free (b);
 
 	nrm = c_vector_nrm (y);

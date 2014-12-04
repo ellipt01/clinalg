@@ -33,8 +33,10 @@ test_matrix_mv (void)
 	c_vector	*v1 = c_matrix_symm_upper_dot_vector (1., a, x);
 	c_vector	*v2 = c_matrix_symm_lower_dot_vector (1., a, x);
 
-	c_vector_sub (v1, v0);
-	c_vector_sub (v2, v0);
+	/* v1 = -v0 + v1 */
+	c_vector_axpy (-1., v0, v1);
+	/* v2 = -v0 + v2 */
+	c_vector_axpy (-1., v0, v2);
 	return (c_vector_nrm (v1) < 1.e-3 && c_vector_nrm (v2) < 1.e-3);
 }
 

@@ -26,7 +26,7 @@ _allocate_c_matrix (void)
 }
 
 c_matrix *
-c_matrix_alloc (const size_t size1, const size_t size2)
+c_matrix_alloc (const int size1, const int size2)
 {
 	c_matrix	*a;
 
@@ -46,7 +46,7 @@ c_matrix_alloc (const size_t size1, const size_t size2)
 }
 
 void
-c_matrix_realloc (const size_t tsize, c_matrix *x, const size_t size1, const size_t size2)
+c_matrix_realloc (const int tsize, c_matrix *x, const int size1, const int size2)
 {
 	if (c_matrix_is_empty (x)) c_error ("c_matrix_realloc", "matrix is empty.");
 	if (!x->owner) c_error ("c_matrix_realloc", "cannot reallocate matrix of !x->owner.");
@@ -62,7 +62,7 @@ c_matrix_realloc (const size_t tsize, c_matrix *x, const size_t size1, const siz
 }
 
 c_matrix *
-c_matrix_view_array (const size_t size1, const size_t size2, const size_t lda, double *data)
+c_matrix_view_array (const int size1, const int size2, const int lda, double *data)
 {
 	c_matrix *a;
 
@@ -127,7 +127,7 @@ c_matrix_get (const c_matrix *a, const int i, const int j)
 
 /* copy row */
 void
-c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
+c_matrix_get_row (c_vector *y, const c_matrix *a, const int index)
 {
 	int		n;
 	int		incx;
@@ -145,7 +145,7 @@ c_matrix_get_row (c_vector *y, const c_matrix *a, const size_t index)
 
 /* copy column */
 void
-c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
+c_matrix_get_col (c_vector *y, const c_matrix *a, const int index)
 {
 	int		n;
 	int		incx;
@@ -162,7 +162,7 @@ c_matrix_get_col (c_vector *y, const c_matrix *a, const size_t index)
 }
 
 void
-c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *x)
+c_matrix_set_row (c_matrix *a, const int index, const c_vector *x)
 {
 	int		n;
 	int		incx;
@@ -179,7 +179,7 @@ c_matrix_set_row (c_matrix *a, const size_t index, const c_vector *x)
 }
 
 void
-c_matrix_set_col (c_matrix *a, const size_t index, const c_vector *x)
+c_matrix_set_col (c_matrix *a, const int index, const c_vector *x)
 {
 	int		n;
 	int		incx;
@@ -238,7 +238,7 @@ c_matrix_memcpy (c_matrix *dest, const c_matrix *src)
 }
 
 void
-c_matrix_mncopy (c_matrix *dest, const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *src)
+c_matrix_mncopy (c_matrix *dest, const int m0, const int n0, const int m, const int n, const c_matrix *src)
 {
 	int		j;
 	int		len;
@@ -263,8 +263,8 @@ c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 	int		incx = 1;
 	int		incy = 1;
 
-	size_t	min_m = C_MIN (tr->size1, a->size1);
-	size_t	min_n = C_MIN (tr->size2, a->size2);
+	int	min_m = C_MIN (tr->size1, a->size1);
+	int	min_n = C_MIN (tr->size2, a->size2);
 	for (j = 0; j < min_n; j++) {
 		int	n = (j + 1 < min_m) ? (int) (j + 1) : (int) min_m;
 		dcopy_ (&n, a->data + j * a->lda, &incx, tr->data + j * tr->lda, &incy);
@@ -279,8 +279,8 @@ c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 	int		incx = 1;
 	int		incy = 1;
 
-	size_t	min_m = C_MIN (tr->size1, a->size1);
-	size_t	min_n = C_MIN (tr->size2, a->size2);
+	int	min_m = C_MIN (tr->size1, a->size1);
+	int	min_n = C_MIN (tr->size2, a->size2);
 	for (j = 0; j < min_n; j++) {
 		int	n;
 		n = min_m - j;
@@ -331,7 +331,7 @@ c_matrix_get_diagonal (const c_matrix *a)
 c_vector *
 c_matrix_diagonal_view_array (const c_matrix *a)
 {
-	size_t		min_mn;
+	int		min_mn;
 	c_vector	*d;
 
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_get_diagonal_view_array", "matrix is empty.");
@@ -360,7 +360,7 @@ c_matrix_set_diagonal (const c_vector *d, c_matrix *a)
 }
 
 c_matrix *
-c_matrix_submatrix (const size_t m0, const size_t n0, const size_t m, const size_t n, const c_matrix *a)
+c_matrix_submatrix (const int m0, const int n0, const int m, const int n, const c_matrix *a)
 {
 	if (m0 < 0 || a->size1 - 1 < m0) c_error ("c_matrix_submatrix", "m0 must be in [0, a->size1 - 1)");
 	if (n0 < 0 || a->size2 - 1 < n0) c_error ("c_matrix_submatrix", "n0 must be in [0, a->size2 - 1)");
@@ -400,13 +400,11 @@ c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format)
 }
 
 c_matrix *
-c_matrix_fread (FILE *stream, const size_t size1, const size_t size2)
+c_matrix_fread (FILE *stream, const int size1, const int size2)
 {
 	int			i;
 	c_matrix	*a;
 	a = c_matrix_alloc (size1, size2);
-	for (i = 0; i < a->tsize; i++) {
-		fscanf (stream, "%lf", &a->data[i]);
-	}
+	for (i = 0; i < a->tsize; i++) fscanf (stream, "%lf", &a->data[i]);
 	return a;
 }
