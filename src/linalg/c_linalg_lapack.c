@@ -208,8 +208,8 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
 	int			n;
 	int			lda;
 
-	size_t		min_mn;
-	size_t		ltau;
+	int			min_mn;
+	int			ltau;
 
 	double		wkopt;
 	int			lwork;
@@ -223,8 +223,8 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
 	n = (int) a->size2;
 	lda = (int) a->lda;
 
-	min_mn = (size_t) C_MIN (a->size1, a->size2);
-	ltau = (size_t) C_MAX (min_mn, 1);
+	min_mn = C_MIN (a->size1, a->size2);
+	ltau = C_MAX (min_mn, 1);
 
 	_tau = c_vector_alloc (ltau);
 
@@ -252,7 +252,7 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	int			m;
 	int			n;
 	int			lda;
-	size_t		min_mn;
+	int			min_mn;
 
 	double		wkopt;
 	int			lwork;
@@ -266,7 +266,7 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	m = (int) a->size1;
 	n = (int) a->size2;
 	lda = (int) a->lda;
-	min_mn = (size_t) C_MIN (a->size1, a->size2);
+	min_mn = (int) C_MIN (a->size1, a->size2);
 
 	_tau = c_vector_alloc (min_mn);
 	_p = c_vector_int_alloc (n);
@@ -409,7 +409,7 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 	int			info;
 	int			m;
 	int			n;
-	size_t		min_mn;
+	int		min_mn;
 	int			lda;
 	int			ldu = 1;
 	double		*u_data = NULL;
@@ -508,7 +508,7 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 	int			info;
 	int			m;
 	int			n;
-	size_t		min_mn;
+	int		min_mn;
 	int			lda;
 	int			ldu = 1;
 	double		*u_data = NULL;
@@ -591,7 +591,7 @@ c_linalg_lapack_dgelss (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	int			info;
 	int			m;
 	int			n;
-	size_t		min_mn;
+	int		min_mn;
 	int			nrhs;
 	int			lda;
 	int			ldb;
@@ -636,7 +636,7 @@ c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	int			info;
 	int			m;
 	int			n;
-	size_t		min_mn;
+	int			min_mn;
 	int			nrhs;
 	int			lda;
 	int			ldb;

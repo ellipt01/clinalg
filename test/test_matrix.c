@@ -10,8 +10,8 @@
 
 #include "test_clinalg.h"
 
-extern size_t		size1;
-extern size_t		size2;
+extern int		size1;
+extern int		size2;
 
 c_matrix *
 create_symmetric_matrix (int n)

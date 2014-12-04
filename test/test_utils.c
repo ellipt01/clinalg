@@ -8,7 +8,7 @@
 #include <clinalg.h>
 
 c_vector *
-random_vector (size_t size)
+random_vector (int size)
 {
 	int			i;
 	c_vector	*v = c_vector_alloc (size);
@@ -20,7 +20,7 @@ random_vector (size_t size)
 }
 
 c_matrix *
-random_matrix (size_t size1, size_t size2)
+random_matrix (int size1, int size2)
 {
 	int			i;
 	c_matrix	*a = c_matrix_alloc (size1, size2);

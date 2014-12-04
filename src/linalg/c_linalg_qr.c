@@ -48,7 +48,7 @@ _c_linalg_QR_unpack (const c_matrix *qr, const c_vector *tau, c_matrix **q, c_ma
 	}
 
 	if (q) {
-		size_t	min_mn = (size_t) C_MIN (qr->size1, qr->size2);
+		int		min_mn = (int) C_MIN (qr->size1, qr->size2);
 		_q = c_matrix_alloc (qr->size1, qr->size1);
 		if (qr->size1 == qr->size2) c_matrix_memcpy (_q, qr);
 		else c_matrix_mncopy (_q, 0, 0, qr->size1, min_mn, qr);
@@ -227,7 +227,7 @@ c_linalg_QR_1up (c_matrix *q, c_matrix *r, const c_vector *u, const c_vector *v)
 
 /*** insert ***/
 void
-c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u)
+c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const int index, const c_vector *u)
 {
 	int			j, m, n, k, ldq, ldr;
 	double		*w;
@@ -270,7 +270,7 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 }
 
 void
-c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u)
+c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const int index, const c_vector *u)
 {
 	int			j, m, n, k, ldq, ldr;
 	double		*w;
@@ -315,7 +315,7 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vec
 
 /*** delete ***/
 void
-c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index)
+c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const int index)
 {
 	int			j, m, n, k, ldq, ldr;
 	double		*w;
@@ -355,7 +355,7 @@ c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index)
 }
 
 void
-c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const size_t index)
+c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const int index)
 {
 	int			j, m, n, ldq, ldr;
 	double		*w;

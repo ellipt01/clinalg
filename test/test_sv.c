@@ -9,8 +9,8 @@
 
 #include "test_clinalg.h"
 
-extern size_t		size1;
-extern size_t		size2;
+extern int		size1;
+extern int		size2;
 
 /* check |a - u * diag(s) * vt| < 1.e-8 */
 bool

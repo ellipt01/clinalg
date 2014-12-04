@@ -20,10 +20,10 @@ int		c_linalg_QR_Rsolve (c_matrix *r, c_vector *qty);
 int		c_linalg_QR_RTsolve (c_matrix *r, c_vector *y);
 
 void	c_linalg_QR_1up (c_matrix *q, c_matrix *r, const c_vector *u, const c_vector *v);
-void	c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u);
-void	c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const size_t index, const c_vector *u);
-void	c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const size_t index);
-void	c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const size_t index);
+void	c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const int index, const c_vector *u);
+void	c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const int index, const c_vector *u);
+void	c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const int index);
+void	c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const int index);
 
 #ifdef __cplusplus
 }

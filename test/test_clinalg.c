@@ -9,8 +9,8 @@
 #include <clinalg.h>
 #include "test_clinalg.h"
 
-size_t		size1;
-size_t		size2;
+int		size1;
+int		size2;
 
 const int	n_test_matrix_func = 2;
 
@@ -114,8 +114,8 @@ main (void)
 
 	srand (time (NULL));
 
-	size1 = (size_t) 100 * rand () / RAND_MAX + 10;
-	size2 = (size_t) 100 * rand () / RAND_MAX + 10;
+	size1 = (int) 100 * rand () / RAND_MAX + 10;
+	size2 = (int) 100 * rand () / RAND_MAX + 10;
 	fprintf (stderr, "size1 = %zd, size2 = %zd\n\n", size1, size2);
 
 	fprintf (stderr, "*** test_matrix ***\n");

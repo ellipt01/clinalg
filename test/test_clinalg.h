@@ -8,8 +8,8 @@
 #ifndef TEST_CLINALG_H_
 #define TEST_CLINALG_H_
 
-c_vector	*random_vector (size_t size);
-c_matrix	*random_matrix (size_t size1, size_t size2);
+c_vector	*random_vector (int size);
+c_matrix	*random_matrix (int size1, int size2);
 
 bool	test_matrix_mv (void);
 bool	test_matrix_mm (void);

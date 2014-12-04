@@ -9,8 +9,8 @@
 
 #include "test_clinalg.h"
 
-extern size_t		size1;
-extern size_t		size2;
+extern int		size1;
+extern int		size2;
 
 /* check |a - l' * l| < 1.e-8 */
 bool
@@ -158,7 +158,7 @@ test_lsQ_solve (void)
 bool
 test_QR_Rsolve (void)
 {
-	size_t 	_size1 = size2 + 10;
+	int 		_size1 = size2 + 10;
 	c_matrix	*a;
 	c_vector	*x;
 	c_vector	*y;
@@ -258,7 +258,7 @@ bool
 test_QR_colinsert (void)
 {
 	double		nrm;
-	size_t		index = size2 * rand () / RAND_MAX;
+	int			index = size2 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_vector	*u;
 
@@ -318,7 +318,7 @@ bool
 test_QR_rowinsert (void)
 {
 	double		nrm;
-	size_t		index = size1 * rand () / RAND_MAX;
+	int			index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_vector	*u;
 
@@ -378,7 +378,7 @@ bool
 test_QR_coldelete (void)
 {
 	double		nrm;
-	size_t		index = size2 * rand () / RAND_MAX;
+	int			index = size2 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_matrix	*q;
 	c_matrix	*r;
@@ -433,7 +433,7 @@ bool
 test_QR_rowdelete (void)
 {
 	double		nrm;
-	size_t		index = size1 * rand () / RAND_MAX;
+	int			index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 
 	c_matrix	*q;

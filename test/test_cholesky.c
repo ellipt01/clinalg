@@ -9,7 +9,7 @@
 
 #include "test_clinalg.h"
 
-extern size_t		size1;
+extern int		size1;
 
 /* check |a - l' * l| < 1.e-8 */
 bool
@@ -177,7 +177,7 @@ test_cholesky_1down (void)
 bool
 test_cholesky_insert (void)
 {
-	size_t		index = size1 * rand () / RAND_MAX;
+	int			index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_matrix	*b;
 	c_matrix	*l;
@@ -233,7 +233,7 @@ test_cholesky_insert (void)
 bool
 test_cholesky_delete (void)
 {
-	size_t		index = size1 * rand () / RAND_MAX;
+	int			index = size1 * rand () / RAND_MAX;
 	c_matrix	*a;
 	c_matrix	*l;
 	c_matrix	*b;
