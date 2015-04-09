@@ -11,6 +11,10 @@ CLINALG_AGE=0
 CLINALG_LT_VERSION="${CLINALG_CURRENT}:${CLINALG_REVISION}:${CLINALG_AGE}"
 AC_SUBST(CLINALG_LT_VERSION)
 
+AM_INIT_AUTOMAKE([subdir-objects -Wall])
+
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR([ACT-IF-FAIL])])
+
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
@@ -22,8 +26,6 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 AC_PROG_LIBTOOL
-
-AM_INIT_AUTOMAKE
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [floor], [])
@@ -37,6 +39,58 @@ AC_CHECK_LIB(
 )
 AC_CHECK_FUNCS([dchinx_ dchdex_])
 
+AC_ARG_WITH(
+	[atlas],
+	[AC_HELP_STRING([--with-atlas[[=DIR]]],
+	[ATLAS library directory])],
+	[atlas_libdir="$withval"],
+	[atlas_libdir=""])
+if test "$atlas_libdir"; then
+	LDFLAGS="$LDFLAGS -L$atlas_libdir"
+	use_atlas=yes
+fi
+
+AC_ARG_WITH(
+	[tatlas],
+	[AC_HELP_STRING([--with-tatlas[[=DIR]]],
+	[parallel ATLAS library directory])],
+	[tatlas_libdir="$withval"],
+	[tatlas_libdir=""])
+if test "$tatlas_libdir"; then
+	LDFLAGS="$LDFLAGS -L$tatlas_libdir"
+	use_tatlas=yes
+fi
+
+AC_ARG_WITH(
+	[satlas],
+	[AC_HELP_STRING([--with-satlas[[=DIR]]],
+	[serial ATLAS library directory])],
+	[satlas_libdir="$withval"],
+	[satlas_libdir=""])
+if test "$satlas_libdir"; then
+	LDFLAGS="$LDFLAGS -L$satlas_libdir"
+	use_satlas=yes
+fi
+
+AC_ARG_WITH(
+	[atlas-incdir],
+	[AC_HELP_STRING([--with-atlas-incdir[[=DIR]]],
+	[ATLAS include directory])],
+	[atlas_incdir="$withval"],
+	[atlas_incdir=""])
+if test "$atlas_incdir"; then
+	CPPFLAGS="$CPPFLAGS -I$atlas_incdir"
+fi
+
+if test "x$use_atlas" == xyes; then
+	AC_CHECK_LIB([f77blas],[main],[])
+elif test "x$use_tatlas" == xyes; then
+	AC_CHECK_LIB([tatlas],[main],[])
+elif test "x$use_satlas" == xyes; then
+	AC_CHECK_LIB([satlas],[main],[])
+else
+	AC_CHECK_LIB([blas],[main],[])
+fi
 
 # Checks for header files.
 AC_CHECK_HEADER([stdlib.h])

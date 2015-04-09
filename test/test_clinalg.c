@@ -114,9 +114,9 @@ main (void)
 
 	srand (time (NULL));
 
-	size1 = (int) 100 * rand () / RAND_MAX + 10;
-	size2 = (int) 100 * rand () / RAND_MAX + 10;
-	fprintf (stderr, "size1 = %zd, size2 = %zd\n\n", size1, size2);
+	size1 = (int) 100 * rand () / RAND_MAX + 300;
+	size2 = (int) 100 * rand () / RAND_MAX + 300;
+	fprintf (stderr, "size1 = %d, size2 = %d\n\n", (int) size1, (int) size2);
 
 	fprintf (stderr, "*** test_matrix ***\n");
 	for (i = 0; i < n_test_matrix_func; i++) {

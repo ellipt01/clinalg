@@ -41,6 +41,12 @@ for i in . src include example test; do
 	rm -rf $i/.deps
 done
 
+rm -rf src/linalg/.deps
+rm -rf src/linalg/.dirstamp
+rm -rf src/matrix/.deps
+rm -rf src/matrix/.dirstamp
+rm -f ar-lib
+
 echo -n "rm "
 find . -name '*~' -print
 find . -name '*~' -exec rm {} \;

@@ -402,9 +402,13 @@ c_matrix_fprintf2 (FILE *stream, const c_matrix *a, const char *format)
 c_matrix *
 c_matrix_fread (FILE *stream, const int size1, const int size2)
 {
-	int			i;
+	int			i, k;
 	c_matrix	*a;
 	a = c_matrix_alloc (size1, size2);
-	for (i = 0; i < a->tsize; i++) fscanf (stream, "%lf", &a->data[i]);
+	k = 0;
+	for (i = 0; i < a->tsize; i++) {
+		if (fscanf (stream, "%lf", &a->data[k]) < 0) continue;
+		k++;
+	}
 	return a;
 }

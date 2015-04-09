@@ -25,3 +25,6 @@
 .autotools
 .cproject
 .settings
+
+*~
+share
