@@ -372,9 +372,8 @@ c_matrix_submatrix (const int m0, const int n0, const int m, const int n, const 
 void
 c_matrix_fprintf (FILE *stream, const c_matrix *a, const char *format)
 {
-	int		i, j, k;
+	int		i, j;
 	if (c_matrix_is_empty (a)) c_error ("c_matrix_fprintf", "matrix is empty.");
-	k = 0;
 	for (j = 0; j < a->size2; j++) {
 		for (i = 0; i < a->size1; i++) {
 			fprintf (stream, format, c_matrix_get (a, i, j));
