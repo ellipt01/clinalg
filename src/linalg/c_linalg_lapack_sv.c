@@ -16,7 +16,7 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 	int			info;
 	int			m;
 	int			n;
-	int		min_mn;
+	int			min_mn;
 	int			lda;
 	int			ldu = 1;
 	double		*u_data = NULL;
@@ -93,18 +93,23 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 	}
 
 	lwork = -1;
-	dgesvd_ (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, &wkopt, &lwork, &info);
+	F77CALL (dgesvd) (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgesvd", "failed to query workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgesvd", "cannot allocate memory for work.");
-	dgesvd_ (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, work, &lwork, &info);
+	F77CALL (dgesvd) (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, work, &lwork, &info);
 	free (work);
 
-	if (_s && s) *s = _s;
-	if (_u && u) *u = _u;
-	if (_vt && vt) *vt = _vt;
+	if (s) *s = _s;
+	else if (!c_vector_is_empty (_s)) c_vector_free (_s);
+
+	if (u) *u = _u;
+	else if (_u) c_matrix_free (_u);
+
+	if (vt) *vt = _vt;
+	else if (_vt) c_matrix_free (_vt);
 
 	return info;
 }
@@ -115,7 +120,7 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 	int			info;
 	int			m;
 	int			n;
-	int		min_mn;
+	int			min_mn;
 	int			lda;
 	int			ldu = 1;
 	double		*u_data = NULL;
@@ -174,20 +179,25 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 	}
 
 	lwork = -1;
-	dgesdd_ (&jobz, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, &wkopt, &lwork, iwork, &info);
+	F77CALL (dgesdd) (&jobz, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, &wkopt, &lwork, iwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgesdd", "failed to query workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgesdd", "failed to allocate memory for work.");
 
-	dgesdd_ (&jobz, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, work, &lwork, iwork, &info);
+	F77CALL (dgesdd) (&jobz, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, work, &lwork, iwork, &info);
 	free (work);
 	free (iwork);
 
-	if (_s && s) *s = _s;
-	if (_u && u) *u = _u;
-	if (_vt && vt) *vt = _vt;
+	if (s) *s = _s;
+	else if (!c_vector_is_empty (_s)) c_vector_free (_s);
+
+	if (u) *u = _u;
+	else if (_u) c_matrix_free (_u);
+
+	if (vt) *vt = _vt;
+	else if (_vt) c_matrix_free (_vt);
 
 	return info;
 }
@@ -198,7 +208,7 @@ c_linalg_lapack_dgelss (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	int			info;
 	int			m;
 	int			n;
-	int		min_mn;
+	int			min_mn;
 	int			nrhs;
 	int			lda;
 	int			ldb;
@@ -221,12 +231,12 @@ c_linalg_lapack_dgelss (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	_s = c_vector_alloc (min_mn);
 
 	lwork = -1;
-	dgelss_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, &wkopt, &lwork, &info);
+	F77CALL (dgelss) (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, &wkopt, &lwork, &info);
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelss", "failed to query workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgelss", "failed to allocate memory.");
-	dgelss_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, work, &lwork, &info);
+	F77CALL (dgelss) (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, work, &lwork, &info);
 	free (work);
 
 	if (rank) *rank = (int) _rank;
@@ -274,7 +284,7 @@ c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 		int	n2 = 0;
 		int	n3 = 0;
 		int	n4 = 0;
-		smlsiz = ilaenv_ (&ispec, "DGELSD", " ", &n1, &n2, &n3, &n4);
+		smlsiz = F77CALL (ilaenv) (&ispec, "DGELSD", " ", &n1, &n2, &n3, &n4);
 	}
 	nlvl = (int) C_MAX (0, (int) (log2 ((double) min_mn / (double) (smlsiz + 1))) + 1);
 	liwork = (int) C_MAX (1, 3 * min_mn * nlvl + 11 * min_mn);
@@ -284,13 +294,13 @@ c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, in
 	_s = c_vector_alloc (min_mn);
 
 	lwork = -1;
-	dgelsd_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, &wkopt, &lwork, iwork, &info);
+	F77CALL (dgelsd) (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, &wkopt, &lwork, iwork, &info);
 	lwork = (int) wkopt;
 
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelsd", "failed to query workspace.");
 	if ((work = (double *) malloc (((int) lwork) * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgelsd", "allocation of work failed.");
-	dgelsd_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, work, &lwork, iwork, &info);
+	F77CALL (dgelsd) (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _s->data, &rcond, &_rank, work, &lwork, iwork, &info);
 	free (work);
 	free (iwork);
 

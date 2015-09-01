@@ -219,7 +219,7 @@ c_linalg_QR_1up (c_matrix *q, c_matrix *r, const c_vector *u, const c_vector *v)
 	ldq = q->lda;
 	ldr = r->lda;
 
-	dqr1up_ (&m, &n, &k, q->data, &ldq, r->data, &ldr, u->data, v->data, w);
+	F77CALL (dqr1up) (&m, &n, &k, q->data, &ldq, r->data, &ldr, u->data, v->data, w);
 	free (w);
 
 	return;
@@ -263,7 +263,7 @@ c_linalg_QR_colinsert (c_matrix *q, c_matrix *r, const int index, const c_vector
 	j = index + 1;	// differ from fortran to C
 
 	w = (double *) malloc (k * sizeof (double));
-	dqrinc_ (&m, &n, &k, q->data, &ldq, r->data, &ldr, &j, u->data, w);
+	F77CALL (dqrinc) (&m, &n, &k, q->data, &ldq, r->data, &ldr, &j, u->data, w);
 	free (w);
 
 	return;
@@ -307,7 +307,7 @@ c_linalg_QR_rowinsert (c_matrix *q, c_matrix *r, const int index, const c_vector
 
 	k = C_MIN (m, n);
 	w = (double *) malloc (k * sizeof (double));
-	dqrinr_ (&m, &n, q->data, &ldq, r->data, &ldr, &j, u->data, w);
+	F77CALL (dqrinr) (&m, &n, q->data, &ldq, r->data, &ldr, &j, u->data, w);
 	free (w);
 
 	return;
@@ -334,7 +334,7 @@ c_linalg_QR_coldelete (c_matrix *q, c_matrix *r, const int index)
 	j = index + 1;	// differ from fortran to C
 
 	w = (double *) malloc ((k - 1) * sizeof (double));
-	dqrdec_ (&m, &n, &k, q->data, &ldq, r->data, &ldr, &j, w);
+	F77CALL (dqrdec) (&m, &n, &k, q->data, &ldq, r->data, &ldr, &j, w);
 	free (w);
 
 	if (q->size1 >= q->size2) {
@@ -375,7 +375,7 @@ c_linalg_QR_rowdelete (c_matrix *q, c_matrix *r, const int index)
 	j = index + 1;	// differ from fortran to C
 
 	w = (double *) malloc (2 * m * sizeof (double));
-	dqrder_ (&m, &n, q->data, &ldq, r->data, &ldr, &j, w);
+	F77CALL (dqrder) (&m, &n, q->data, &ldq, r->data, &ldr, &j, w);
 	free (w);
 
 	/*=

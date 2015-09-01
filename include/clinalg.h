@@ -16,8 +16,8 @@ extern "C" {
 
 #include <stdbool.h>
 
-#include <c_linalg_macros.h>
-#include <c_linalg_utils.h>
+#include "clinalg_macros.h"
+#include "clinalg_utils.h"
 #include <c_vector.h>
 #include <c_vectorops.h>
 #include <c_matrix.h>
@@ -27,6 +27,7 @@ extern "C" {
 #include <c_linalg_cholesky.h>
 #include <c_linalg_qr.h>
 #include <c_linalg_sv.h>
+#include <c_linalg_eigen.h>
 
 #ifdef __cplusplus
 }

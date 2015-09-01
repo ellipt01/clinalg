@@ -24,7 +24,7 @@ c_linalg_lapack_dpotrf (char uplo, c_matrix *a)
 
 	n = (int) a->size1;
 	lda = (int) a->lda;
-	dpotrf_ (&uplo, &n, a->data, &lda, &info);
+	F77CALL (dpotrf) (&uplo, &n, a->data, &lda, &info);
 	return info;
 }
 
@@ -48,7 +48,7 @@ c_linalg_lapack_dpotrs (char uplo, c_matrix *l, c_matrix *b)
 	nrhs = (int) b->size2;
 	lda = (int) l->lda;
 	ldb = (int) b->lda;
-	dpotrs_ (&uplo, &n, &nrhs, l->data, &lda, b->data, &ldb, &info);
+	F77CALL (dpotrs) (&uplo, &n, &nrhs, l->data, &lda, b->data, &ldb, &info);
 	return info;
 }
 
@@ -65,7 +65,7 @@ c_linalg_lapack_dpotri (char uplo, c_matrix *l)
 
 	n = (int) l->size1;
 	lda = (int)l->lda;
-	dpotri_ (&uplo, &n, l->data, &lda, &info);
+	F77CALL (dpotri) (&uplo, &n, l->data, &lda, &info);
 	return info;
 }
 

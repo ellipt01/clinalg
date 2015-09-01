@@ -28,7 +28,7 @@ c_linalg_lapack_dgetrf (c_matrix *a, c_vector_int **p)
  	_p = c_vector_int_alloc (a->size1);
 	for (i = 0; i < _p->size; i++) _p->data[i] = i + 1;
 
-	dgetrf_ (&m, &n, a->data, &lda, _p->data, &info);
+	F77CALL (dgetrf) (&m, &n, a->data, &lda, _p->data, &info);
 
 	if (p) *p = _p;
 	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
@@ -55,7 +55,7 @@ c_linalg_lapack_dgesv (c_matrix *a, c_matrix *b, c_vector_int **p)
 	ldb = (int) b->lda;
 
 	_p = c_vector_int_alloc (n);
-	dgesv_ (&n, &nrhs, a->data, &lda, _p->data, b->data, &ldb, &info);
+	F77CALL (dgesv) (&n, &nrhs, a->data, &lda, _p->data, b->data, &ldb, &info);
 
 	if (p) *p = _p;
 	else if (!c_vector_int_is_empty (_p)) c_vector_int_free (_p);
@@ -81,7 +81,7 @@ c_linalg_lapack_dgetrs (char trans, c_matrix *lu, c_matrix *b, c_vector_int *p)
 	nrhs = (int) b->size2;
 	lda = (int) lu->lda;
 	ldb = (int) b->lda;
-	dgetrs_ (&trans, &n, &nrhs, lu->data, &lda, p->data, b->data, &ldb, &info);
+	F77CALL (dgetrs) (&trans, &n, &nrhs, lu->data, &lda, p->data, b->data, &ldb, &info);
 
 	return info;
 }
@@ -104,14 +104,14 @@ c_linalg_lapack_dgetri (c_matrix *lu, c_vector_int *p)
 	lda  = (int) lu->lda;
 
 	lwork = -1;
-	dgetri_(&n, lu->data, &lda, p->data, &wkopt, &lwork, &info);
+	F77CALL (dgetri) (&n, lu->data, &lda, p->data, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgetri", "failed to query workspace.");
 	work = (double *) malloc (lwork * sizeof (double));
 	if (!work) c_error ("c_linalg_lapack_dgetri", "cannot allocate memory work.");
 
-	dgetri_(&n, lu->data, &lda, p->data, work, &lwork, &info);
+	F77CALL (dgetri) (&n, lu->data, &lda, p->data, work, &lwork, &info);
 	free (work);
 
 	return info;

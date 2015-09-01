@@ -6,8 +6,7 @@
  */
 
 #include <c_vector.h>
-#include <c_linalg_utils.h>
-
+#include "../../include/clinalg_utils.h"
 #include "private.h"
 
 /* x = x + c */
@@ -49,7 +48,7 @@ c_vector_asum (const c_vector *x)
 {
 	if (c_vector_is_empty (x)) c_error ("c_vector_asum", "vector is empty.");
 	/* x = sum |x| */
-	return dasum_ (&x->size, x->data, &x->stride);
+	return F77CALL (dasum) (&x->size, x->data, &x->stride);
 }
 
 /* max_i |x(i)| */
@@ -57,7 +56,7 @@ int
 c_vector_amax (const c_vector *x)
 {
 	if (c_vector_is_empty (x)) c_error ("c_vector_amax", "vector is empty.");
-	return (int) idamax_ (&x->size, x->data, &x->stride) - 1;
+	return (int) F77CALL (idamax) (&x->size, x->data, &x->stride) - 1;
 }
 
 /* x = alpha * x */
@@ -65,7 +64,7 @@ void
 c_vector_scale (c_vector *x, const double alpha)
 {
 	if (c_vector_is_empty (x)) c_error ("c_vector_scale", "vector is empty.");
-	dscal_ (&x->size, &alpha, x->data, &x->stride);
+	F77CALL (dscal) (&x->size, &alpha, x->data, &x->stride);
 	return;
 }
 
@@ -74,7 +73,7 @@ double
 c_vector_nrm (const c_vector *x)
 {
 	if (c_vector_is_empty (x)) c_error ("c_vector_nrm", "vector is empty.");
-	return dnrm2_ (&x->size, x->data, &x->stride);
+	return F77CALL (dnrm2) (&x->size, x->data, &x->stride);
 }
 
 /* y = a * x + y */
@@ -84,7 +83,7 @@ c_vector_axpy (const double alpha, const c_vector *x, c_vector *y)
 	if (c_vector_is_empty (x)) c_error ("c_vector_axpy", "first vector is empty.");
 	if (c_vector_is_empty (y)) c_error ("c_vector_axpy", "second vector is empty.");
 	if (x->size != y->size) c_error ("c_vector_axpy", "vector size does not match.");
-	daxpy_ (&x->size, &alpha, x->data, &x->stride, y->data, &y->stride);
+	F77CALL (daxpy) (&x->size, &alpha, x->data, &x->stride, y->data, &y->stride);
 	return;
 }
 
@@ -95,5 +94,5 @@ c_vector_dot_vector (const c_vector *x, const c_vector *y)
 	if (c_vector_is_empty (x)) c_error ("c_vector_dot_vector", "first vector is empty.");
 	if (c_vector_is_empty (y)) c_error ("c_vector_dot_vector", "second vector is empty.");
 	if (x->size != y->size) c_error ("c_vector_dot_vector", "vector size does not match.");
-	return ddot_ (&x->size, x->data, &x->stride, y->data, &y->stride);
+	return F77CALL (ddot) (&x->size, x->data, &x->stride, y->data, &y->stride);
 }

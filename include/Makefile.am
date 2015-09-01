@@ -12,7 +12,8 @@ libclinalg_include_DATA = \
 	linalg/c_linalg_cholesky.h\
 	linalg/c_linalg_qr.h\
 	linalg/c_linalg_sv.h\
-	linalg/c_linalg_utils.h\
-	c_linalg_macros.h\
+	linalg/c_linalg_eigen.h\
+	clinalg_macros.h\
+	clinalg_utils.h\
 	clinalg.h
 	

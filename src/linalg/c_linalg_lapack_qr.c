@@ -30,7 +30,7 @@ c_linalg_lapack_dtrtrs (char uplo, char trans, char diag, c_matrix *a, c_matrix 
 	lda = (int) a->lda;
 	ldb = (int) b->lda;
 
-	dtrtrs_ (&uplo, &trans, &diag, &n, &nrhs, a->data, &lda, b->data, &ldb, &info);
+	F77CALL (dtrtrs) (&uplo, &trans, &diag, &n, &nrhs, a->data, &lda, b->data, &ldb, &info);
 	return info;
 }
 
@@ -63,13 +63,13 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
 	_tau = c_vector_alloc (ltau);
 
  	lwork = -1;
- 	dgeqrf_ (&m, &n, a->data, &lda, _tau->data, &wkopt, &lwork, &info);
+ 	F77CALL (dgeqrf) (&m, &n, a->data, &lda, _tau->data, &wkopt, &lwork, &info);
 
  	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqrf", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgeqrf", "cannot allocate memory for workspace.");
-	dgeqrf_ (&m, &n, a->data, &lda, _tau->data, work, &lwork, &info);
+	F77CALL (dgeqrf) (&m, &n, a->data, &lda, _tau->data, work, &lwork, &info);
 	free (work);
 
 	if (tau) *tau = _tau;
@@ -107,13 +107,13 @@ c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 	for (i = 0; i < _p->size; i++) _p->data[i] = i + 1;
 
 	lwork = -1;
-	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, &wkopt, &lwork, &info);
+	F77CALL (dgeqp3) (&m, &n, a->data, &lda, _p->data, _tau->data, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgeqp3", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgeqp3", "cannot allocate memory for workspace.");
-	dgeqp3_ (&m, &n, a->data, &lda, _p->data, _tau->data, work, &lwork, &info);
+	F77CALL (dgeqp3) (&m, &n, a->data, &lda, _p->data, _tau->data, work, &lwork, &info);
 	free (work);
 
 	if (p) *p = _p;
@@ -148,12 +148,12 @@ c_linalg_lapack_dorgqr (c_matrix *qr, const c_vector *tau)
 	lda = (int) qr->lda;
 
  	lwork = -1;
-	dorgqr_ (&m, &min_mn, &k, qr->data, &lda, tau->data, &wkopt, &lwork, &info);
+ 	F77CALL (dorgqr) (&m, &min_mn, &k, qr->data, &lda, tau->data, &wkopt, &lwork, &info);
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dorgqr", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dorgqr", "cannot allocate memory for workspace.");
-	dorgqr_ (&m, &min_mn, &k, qr->data, &lda, tau->data, work, &lwork, &info);
+	F77CALL (dorgqr) (&m, &min_mn, &k, qr->data, &lda, tau->data, work, &lwork, &info);
 	free (work);
 
 	return info;
@@ -182,12 +182,12 @@ c_linalg_lapack_dgels (char trans, c_matrix *a, c_matrix *b)
 	ldb = (int) C_MAX (1, C_MAX (m, n));
 
 	lwork = -1;
-	dgels_ (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, &wkopt, &lwork, &info);
+	F77CALL (dgels) (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, &wkopt, &lwork, &info);
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgels", "failed to query size of workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgels", "cannot allocate memory for workspace.");
-	dgels_ (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, work, &lwork, &info);
+	F77CALL (dgels) (&trans, &m, &n, &nrhs, a->data, &lda, b->data, &ldb, work, &lwork, &info);
 	free (work);
 
 	return info;
@@ -220,13 +220,13 @@ c_linalg_lapack_dgelsy (double rcond, c_matrix *a, c_matrix *b, c_vector_int **p
 	_p = c_vector_int_alloc (a->size2);
 
 	lwork = -1;
-	dgelsy_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, &wkopt, &lwork, &info);
+	F77CALL (dgelsy) (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgelsy", "failed to query workspace");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgelsy", "cannot allocate memory work");
-	dgelsy_ (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, work, &lwork, &info);
+	F77CALL (dgelsy) (&m, &n, &nrhs, a->data, &lda, b->data, &ldb, _p->data, &rcond, &_rank, work, &lwork, &info);
 	free (work);
 
 	if (p) *p = _p;

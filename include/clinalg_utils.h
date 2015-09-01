@@ -5,8 +5,8 @@
  *      Author: utsugi
  */
 
-#ifndef C_LINALG_UTILS_H_
-#define C_LINALG_UTILS_H_
+#ifndef CLINALG_UTILS_H_
+#define CLINALG_UTILS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,4 +18,4 @@ void	c_error (const char * function_name, const char *error_msg);
 }
 #endif
 
-#endif /* C_LINALG_UTILS_H_ */
+#endif /* CLINALG_UTILS_H_ */

@@ -5,9 +5,9 @@
  *      Author: utsugi
  */
 
-#include <c_linalg_macros.h>
 #include <c_vector.h>
-#include <c_linalg_utils.h>
+#include "../../include/clinalg_macros.h"
+#include "../../include/clinalg_utils.h"
 
 #include "private.h"
 
@@ -121,7 +121,7 @@ c_vector_memcpy (c_vector *dest, const c_vector *src)
 	if (c_vector_is_empty (src)) c_error ("c_vector_memcpy", "first vector is empty.");
 	if (c_vector_is_empty (dest)) c_error ("c_vector_memcpy", "second vector is empty.");
 	if (dest->size != src->size) c_error ("c_vector_memcpy", "vector size does not match.");
-	dcopy_ (&src->size, src->data, &src->stride, dest->data, &dest->stride);
+	F77CALL (dcopy) (&src->size, src->data, &src->stride, dest->data, &dest->stride);
 	return;
 }
 
@@ -135,7 +135,7 @@ c_vector_ncopy (c_vector *dest, const int n0, const int n, const c_vector *src)
 	if (n0 + n < 0 || src->size < n0 + n) c_error ("c_vector_ncopy", "n0 + n must be in [0, src->size]");
 	if (dest->size < n) c_error ("c_vector_ncopy", "index out of range.");
 
-	dcopy_ (&n, src->data + n0, &src->stride, dest->data, &dest->stride);
+	F77CALL (dcopy) (&n, src->data + n0, &src->stride, dest->data, &dest->stride);
 	return;
 }
 

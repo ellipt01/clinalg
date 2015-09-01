@@ -27,7 +27,7 @@ c_linalg_cholesky_decomp (c_matrix *a)
 	c_vector_set_zero (z);
 	for (j = 0; j < a->size2 - 1; j++) {
 		int		n = (int) z->size - (j + 1);
-		dcopy_ (&n, z->data, &inc, POINTER_OF_MATRIX (a, j + 1, j), &inc);
+		F77CALL (dcopy) (&n, z->data, &inc, POINTER_OF_MATRIX (a, j + 1, j), &inc);
 	}
 	c_vector_free (z);
 
@@ -97,7 +97,7 @@ c_linalg_cholesky_1up (c_matrix *l, c_vector *u)
 	n = l->size1;
 	ldr = l->lda;
 	w = (double *) malloc (u->size * sizeof (double));
-	dch1up_ (&n, l->data, &ldr, u->data, w);
+	F77CALL (dch1up) (&n, l->data, &ldr, u->data, w);
 	free (w);
 
 	return;
@@ -120,7 +120,7 @@ c_linalg_cholesky_1down (c_matrix *l, c_vector *u)
 	n = l->size1;
 	ldr = l->lda;
 	w = (double *) malloc (u->size * sizeof (double));
-	dch1dn_ (&n, l->data, &ldr, u->data, w, &info);
+	F77CALL (dch1dn) (&n, l->data, &ldr, u->data, w, &info);
 	free (w);
 
 	return info;
@@ -150,7 +150,7 @@ c_linalg_cholesky_insert (c_matrix *l, const int index, c_vector *u)
 
 	ldr = l->lda;
 	w = (double *) malloc (ldr * sizeof (double));
-	dchinx_ (&n, l->data, &ldr, &j, u->data, w, &info);
+	F77CALL (dchinx) (&n, l->data, &ldr, &j, u->data, w, &info);
 	free (w);
 
 	return info;
@@ -175,7 +175,7 @@ c_linalg_cholesky_delete (c_matrix *l, const int index)
 	ldr = l->lda;
 	w = (double *) malloc (ldr * sizeof (double));
 
-	dchdex_ (&n, l->data, &ldr, &j, w);
+	F77CALL (dchdex) (&n, l->data, &ldr, &j, w);
 	free (w);
 
 	c_matrix_remove_rowcols (l, 1, 1);

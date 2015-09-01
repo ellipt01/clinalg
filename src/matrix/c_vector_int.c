@@ -5,9 +5,9 @@
  *      Author: utsugi
  */
 
-#include <c_linalg_macros.h>
 #include <c_vector.h>
-#include <c_linalg_utils.h>
+#include "../include/clinalg_utils.h"
+#include "../../include/clinalg_macros.h"
 
 static c_vector_int *
 _allocate_c_vector_int (void)

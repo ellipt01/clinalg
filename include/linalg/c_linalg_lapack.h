@@ -38,6 +38,12 @@ int		c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt
 int		c_linalg_lapack_dgelss (double rcond, c_matrix *a, c_matrix *b, c_vector **s, int *rank);
 int		c_linalg_lapack_dgelsd (double rcond, c_matrix *a, c_matrix *b, c_vector **s, int *rank);
 
+/* eigen value decomposition */
+int		c_linalg_lapack_dsyev (const char jobz, const char uplo, c_matrix *a, c_vector **w);
+int		c_linalg_lapack_dsyevd (const char jobz, const char uplo, c_matrix *a, c_vector **w);
+int		c_linalg_lapack_dgeev (const char jobvl, const char jobvr, c_matrix *a, c_vector **wr, c_vector **wi, c_matrix **vl, c_matrix **vr);
+int		c_linalg_lapack_dgees (const char jobvs, const char sort, c_matrix *a, c_vector **wr, c_vector **wi, c_matrix **vs, void *select);
+
 #ifdef __cplusplus
 }
 #endif

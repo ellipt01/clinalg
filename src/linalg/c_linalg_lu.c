@@ -132,7 +132,7 @@ c_linalg_LU_1up (c_matrix *l, c_matrix *u, c_vector_int *p, c_vector *s, c_vecto
 	ldl = (int) l->lda;
 	ldu = (int) u->lda;
 	w = (double *) malloc (l->size1 * sizeof (double));
-	dlup1up_ (&m, &n, l->data, &ldl, u->data, &ldu, p->data, s->data, t->data, w);
+	F77CALL (dlup1up) (&m, &n, l->data, &ldl, u->data, &ldu, p->data, s->data, t->data, w);
 	free (w);
 
 	return;

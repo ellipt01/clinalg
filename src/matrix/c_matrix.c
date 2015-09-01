@@ -5,9 +5,9 @@
  *      Author: utsugi
  */
 
-#include <c_linalg_macros.h>
 #include <c_matrix.h>
-#include <c_linalg_utils.h>
+#include "../../include/clinalg_macros.h"
+#include "../../include/clinalg_utils.h"
 
 #include "private.h"
 
@@ -139,7 +139,7 @@ c_matrix_get_row (c_vector *y, const c_matrix *a, const int index)
 	n = (int) a->size2;
 	incx = (int) a->lda;
 	incy = (int) y->stride;
-	dcopy_ (&n, a->data + index, &incx, y->data, &incy);
+	F77CALL (dcopy) (&n, a->data + index, &incx, y->data, &incy);
 	return;
 }
 
@@ -157,7 +157,7 @@ c_matrix_get_col (c_vector *y, const c_matrix *a, const int index)
 	n = (int) a->size1;
 	incx = 1;
 	incy = (int) y->stride;
-	dcopy_ (&n, a->data + a->lda * index, &incx, y->data, &incy);
+	F77CALL (dcopy) (&n, a->data + a->lda * index, &incx, y->data, &incy);
 	return;
 }
 
@@ -174,7 +174,7 @@ c_matrix_set_row (c_matrix *a, const int index, const c_vector *x)
 	n = (int) x->size;
 	incx = (int) x->stride;
 	incy = (int) a->lda;
-	dcopy_ (&n, x->data, &incx, a->data + index, &incy);
+	F77CALL (dcopy) (&n, x->data, &incx, a->data + index, &incy);
 	return;
 }
 
@@ -191,7 +191,7 @@ c_matrix_set_col (c_matrix *a, const int index, const c_vector *x)
 	n = (int) x->size;
 	incx = (int) x->stride;
 	incy = 1;
-	dcopy_ (&n, x->data, &incx, a->data + a->lda * index, &incy);
+	F77CALL (dcopy) (&n, x->data, &incx, a->data + a->lda * index, &incy);
 	return;
 }
 
@@ -251,7 +251,7 @@ c_matrix_mncopy (c_matrix *dest, const int m0, const int n0, const int m, const 
 
 	len = (int) m;
 	for (j = 0; j < n; j++) {
-		dcopy_ (&len, POINTER_OF_MATRIX (src, m0, n0 + j), &inc, POINTER_OF_MATRIX (dest, 0, j), &inc);
+		F77CALL (dcopy) (&len, POINTER_OF_MATRIX (src, m0, n0 + j), &inc, POINTER_OF_MATRIX (dest, 0, j), &inc);
 	}
 	return;
 }
@@ -267,7 +267,7 @@ c_matrix_upper_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 	int	min_n = C_MIN (tr->size2, a->size2);
 	for (j = 0; j < min_n; j++) {
 		int	n = (j + 1 < min_m) ? (int) (j + 1) : (int) min_m;
-		dcopy_ (&n, a->data + j * a->lda, &incx, tr->data + j * tr->lda, &incy);
+		F77CALL (dcopy) (&n, a->data + j * a->lda, &incx, tr->data + j * tr->lda, &incy);
 	}
 	return;
 }
@@ -285,7 +285,7 @@ c_matrix_lower_triangular_memcpy (c_matrix *tr, const c_matrix *a)
 		int	n;
 		n = min_m - j;
 		if (n <= 0) break;
-		dcopy_ (&n, a->data + j * (a->lda + 1), &incx, tr->data + j * (tr->lda + 1), &incy);
+		F77CALL (dcopy) (&n, a->data + j * (a->lda + 1), &incx, tr->data + j * (tr->lda + 1), &incy);
 	}
 	return;
 }
@@ -323,7 +323,7 @@ c_matrix_get_diagonal (const c_matrix *a)
 	lda = (int) a->lda + 1;
 	d = c_vector_alloc (n);
 	inc = 1;
-	dcopy_ (&n, a->data, &lda, d->data, &inc);
+	F77CALL (dcopy) (&n, a->data, &lda, d->data, &inc);
 
 	return d;
 }
@@ -354,7 +354,7 @@ c_matrix_set_diagonal (const c_vector *d, c_matrix *a)
 	n = (int) C_MIN (a->size1, a->size2);
 	inc = (int) d->stride;
 	lda = (int) a->lda + 1;
-	dcopy_ (&n, d->data, &inc, a->data, &lda);
+	F77CALL (dcopy) (&n, d->data, &inc, a->data, &lda);
 
 	return;
 }
