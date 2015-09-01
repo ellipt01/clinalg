@@ -10,13 +10,17 @@
 
 extern const int		izero;
 extern const int		ione;
-extern const double	dzero;
-extern const double	done;
-extern const double	dmone;
+extern const double		dzero;
+extern const double		done;
+extern const double		dmone;
 
-/* positive infinity  */
-#ifndef CDESCENT_POSINF
-#define CDESCENT_POSINF	((+1.)/(+0.))
+/* positive / negative infinity  */
+#ifndef POSINF
+#define POSINF	((+1.)/(+0.))
+#endif
+
+#ifndef NEGINF
+#define NEGINF	((-1.)/(+0.))
 #endif
 
 /* DBL_EPSILOM */
