@@ -81,16 +81,16 @@ c_linalg_lapack_dgeqrf (c_matrix *a, c_vector **tau)
 int
 c_linalg_lapack_dgeqp3 (c_matrix *a, c_vector **tau, c_vector_int **p)
 {
-	int			i;
-	int   		info;
-	int			m;
-	int			n;
-	int			lda;
-	int			min_mn;
+	int				i;
+	int   			info;
+	int				m;
+	int				n;
+	int				lda;
+	int				min_mn;
 
-	double		wkopt;
-	int			lwork;
-	double		*work;
+	double			wkopt;
+	int				lwork;
+	double			*work;
 
 	c_vector		*_tau;
 	c_vector_int	*_p;

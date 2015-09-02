@@ -207,13 +207,13 @@ c_linalg_lapack_dgees (const char jobvs, const char sort, c_matrix *a, c_vector 
 	double		wkopt;
 	int			lwork;
 
-	int			ldvs = 1;
-	c_vector	*_wr = NULL;
-	double		*__wr = NULL;
-	c_vector	*_wi = NULL;
-	double		*__wi = NULL;
+	int			ldvs;
+	c_vector	*_wr;
+	double		*__wr;
+	c_vector	*_wi;
+	double		*__wi;
 	c_matrix	*_vs = NULL;
-	double		*__vs = NULL;
+	double		*__vs;
 
 	int			info;
 
@@ -227,12 +227,16 @@ c_linalg_lapack_dgees (const char jobvs, const char sort, c_matrix *a, c_vector 
 		case 'S':
 		case 's':
 			if (select == NULL) c_error ("c_linalg_clapack_dgees", "void *select is NULL");
-		break;
+			break;
 
 		case 'N':
 		case 'n':
+			break;
+
 		default:
-		break;
+			c_error ("c_linalg_lapack_dgeev", "jobvr must be 'V' or 'N'");
+			return -1;
+			break;
 	}
 
 	switch (jobvs) {
@@ -241,12 +245,18 @@ c_linalg_lapack_dgees (const char jobvs, const char sort, c_matrix *a, c_vector 
 			ldvs = n;
 			_vs = c_matrix_alloc (a->size1, a->size2);
 			__vs = _vs->data;
-		break;
+			break;
 
 		case 'N':
 		case 'n':
+			ldvs = 1;
+			__vs = NULL;
+			break;
+
 		default:
-		break;
+			c_error ("c_linalg_lapack_dgeev", "jobvr must be 'V' or 'N'");
+			return -1;
+			break;
 	}
 
 	_wr = c_vector_alloc (n);
@@ -268,7 +278,7 @@ c_linalg_lapack_dgees (const char jobvs, const char sort, c_matrix *a, c_vector 
 	else c_vector_free (_wi);
 
 	if (vs) *vs = _vs;
-	else c_matrix_free (_vs);
+	else if (!c_matrix_is_empty (_vs)) c_matrix_free (_vs);
 
 	free (work);
 	free (bwork);

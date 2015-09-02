@@ -18,10 +18,10 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 	int			n;
 	int			min_mn;
 	int			lda;
-	int			ldu = 1;
-	double		*u_data = NULL;
-	int			ldvt = 1;
-	double		*vt_data = NULL;
+	int			ldu;
+	double		*__u;
+	int			ldvt;
+	double		*__vt;
 	int			lwork;
 	double		wkopt;
 	double		*work;
@@ -42,7 +42,7 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 		case 'A':
 		case 'a':
 			_u = c_matrix_alloc (a->size1, a->size1);
-			u_data = _u->data;
+			__u = _u->data;
 			ldu = (int) C_MAX (1, m);
 			break;
 
@@ -50,7 +50,7 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 		case 's':
 			if (a->size1 > a->size2) _u = c_matrix_alloc (a->size1, a->size2);
 			else _u = c_matrix_alloc (a->size1, a->size1);
-			u_data = _u->data;
+			__u = _u->data;
 			ldu = (int) C_MAX (1, m);
 			break;
 
@@ -58,6 +58,8 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 		case 'o':
 		case 'N':
 		case 'n':
+			ldu = 1;
+			__u = NULL;
 			break;
 
 		default:
@@ -69,7 +71,7 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 		case 'A':
 		case 'a':
 			_vt = c_matrix_alloc (a->size2, a->size2);
-			vt_data = _vt->data;
+			__vt = _vt->data;
 			ldvt = (int) C_MAX (1, n);
 			break;
 
@@ -77,7 +79,7 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 		case 's':
 			if (a->size1 > a->size2) _vt = c_matrix_alloc (a->size2, a->size2);
 			else _vt = c_matrix_alloc (a->size1, a->size2);
-			vt_data = _vt->data;
+			__vt = _vt->data;
 			ldvt = (int) min_mn;
 			break;
 
@@ -85,6 +87,8 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 		case 'o':
 		case 'N':
 		case 'n':
+			ldvt = 1;
+			__vt = NULL;
 			break;
 
 		default:
@@ -93,13 +97,13 @@ c_linalg_lapack_dgesvd (char jobu, char jobvt, c_matrix *a, c_matrix **u, c_matr
 	}
 
 	lwork = -1;
-	F77CALL (dgesvd) (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, &wkopt, &lwork, &info);
+	F77CALL (dgesvd) (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, __u, &ldu, __vt, &ldvt, &wkopt, &lwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgesvd", "failed to query workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgesvd", "cannot allocate memory for work.");
-	F77CALL (dgesvd) (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, work, &lwork, &info);
+	F77CALL (dgesvd) (&jobu, &jobvt, &m, &n, a->data, &lda, _s->data, __u, &ldu, __vt, &ldvt, work, &lwork, &info);
 	free (work);
 
 	if (s) *s = _s;
@@ -122,10 +126,10 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 	int			n;
 	int			min_mn;
 	int			lda;
-	int			ldu = 1;
-	double		*u_data = NULL;
-	int			ldvt = 1;
-	double		*vt_data = NULL;
+	int			ldu;
+	double		*__u;
+	int			ldvt;
+	double		*__vt;
 	int			lwork;
 	double		wkopt;
 	double		*work;
@@ -148,8 +152,8 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 		case 'a':
 			_u = c_matrix_alloc (a->size1, a->size1);
 			_vt = c_matrix_alloc (a->size2, a->size2);
-			u_data  = _u->data;
-			vt_data = _vt->data;
+			__u  = _u->data;
+			__vt = _vt->data;
 			ldu  = (int) C_MAX (1, m);
 			ldvt = (int) C_MAX (1, n);
 			break;
@@ -165,12 +169,16 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 			}
 			ldu = (int) C_MAX (1, m);
 			ldvt = (int) min_mn;
-			u_data  = _u->data;
-			vt_data = _vt->data;
+			__u  = _u->data;
+			__vt = _vt->data;
 			break;
 
 		case 'N':
 		case 'n':
+			ldu = 1;
+			ldvt = 1;
+			__u = NULL;
+			__vt = NULL;
 			break;
 
 		default:
@@ -179,14 +187,14 @@ c_linalg_lapack_dgesdd (char jobz, c_matrix *a, c_matrix **u, c_matrix **vt, c_v
 	}
 
 	lwork = -1;
-	F77CALL (dgesdd) (&jobz, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, &wkopt, &lwork, iwork, &info);
+	F77CALL (dgesdd) (&jobz, &m, &n, a->data, &lda, _s->data, __u, &ldu, __vt, &ldvt, &wkopt, &lwork, iwork, &info);
 
 	lwork = (int) wkopt;
 	if (info != 0 || lwork <= 0) c_error ("c_linalg_lapack_dgesdd", "failed to query workspace.");
 	if ((work = (double *) malloc (lwork * sizeof (double))) == NULL)
 		c_error ("c_linalg_lapack_dgesdd", "failed to allocate memory for work.");
 
-	F77CALL (dgesdd) (&jobz, &m, &n, a->data, &lda, _s->data, u_data, &ldu, vt_data, &ldvt, work, &lwork, iwork, &info);
+	F77CALL (dgesdd) (&jobz, &m, &n, a->data, &lda, _s->data, __u, &ldu, __vt, &ldvt, work, &lwork, iwork, &info);
 	free (work);
 	free (iwork);
 
